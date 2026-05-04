@@ -30,7 +30,6 @@
   <a href="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/ci.yml"><img src="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/rocketride-org/rocketride-server/releases/tag/server-v3.1.2"><img src="https://img.shields.io/badge/engine-v3.1.2-5f2167?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTEgMTkxIj48cGF0aCBkPSJNMTU5LjUgMTYxLjRMMTUzLjcgMTY3LjJDMTUxLjkgMTY5IDE0OC45IDE2OSAxNDcgMTY3LjJMMTI2LjYgMTQ2LjhDMTE1LjYgMTM1LjggMTE1LjYgMTE4IDEyNi42IDEwN0MxMzguMSA5NS41IDEzOC4xIDc2LjkgMTI2LjYgNjUuNEwxMjUuMSA2My45QzExMy42IDUyLjQgOTUgNTIuNCA4My41IDYzLjlDNzIuNSA3NC45IDU0LjYgNzQuOSA0My42IDYzLjlMMjMuMiA0My41QzIxLjQgNDEuNyAyMS40IDM4LjcgMjMuMiAzNi44TDI5IDMxQzM3IDIzIDQ5LjEgMjAuNSA1OS42IDI0LjlMODcuNSAzNi4zQzk3LjMgNDAuMSAxMDguNCAzOCAxMTYuMyAzMS4xTDEzNyAxMC40QzEzOC42IDguOSAxNDAuNCA3LjQgMTQyLjUgNi4yQzE0Ni4yIDQuMSAxNTAuMyAzIDE1NC41IDIuNkwxODUuNCAwQzE4OC4zLS4zIDE5MC44IDIuMiAxOTAuNSA1LjFMMTg3LjggMzYuNEMxODcuMyA0Mi44IDE4NC41IDQ4LjggMTgwLjEgNTMuNUwxNjAuNSA3My4xQzE1Mi41IDgxLjIgMTUwLjEgOTMuMyAxNTQuNSAxMDMuOEwxNTUuNSAxMDYuMkwxNjEuMiAxMjBMMTY1LjYgMTMwLjlDMTY5LjkgMTQxLjQgMTY3LjUgMTUzLjUgMTU5LjUgMTYxLjVaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0uOCAxOTAuM0MtLjIgMTg5LjMtLjMgMTg3LjYuNiAxODYuNEwyMS4xIDE2MkMzMS4xIDE1MCAzNy45IDEzNy43IDQxLjMgMTI1LjNDNDMuNiAxMTYuNiA0NC42IDEwOC41IDQ0LjEgMTAxLjJDNDQuMSAxMDAuMyA0NC40IDk5LjQgNDUuMSA5OC44QzQ1LjggOTguMiA0Ni44IDk3LjkgNDcuNyA5OC4xQzY1IDEwMS42IDgzLjUgOTguMyA5OC41IDg4LjlDOTkuNiA4OC4yIDEwMS4xIDg4LjQgMTAyIDg5LjNDMTAyLjkgOTAuMiAxMDMuMSA5MS43IDEwMi40IDkyLjhDOTMgMTA3LjggODkuNyAxMjYuMyA5My4yIDE0My41QzkzLjQgMTQ0LjMgOTMuMiAxNDUuMiA5Mi42IDE0NS45QzkyIDE0Ni42IDkxIDE0Ny4yIDkwLjEgMTQ3LjFDODIuOCAxNDYuNiA3NC42IDE0Ny41IDY2IDE0OS45QzUzLjYgMTUzLjIgNDEuMiAxNjAgMjkuMyAxNzAuMUw0LjkgMTkwLjZDMy44IDE5MS41IDIuMSAxOTEuNSAxIDE5MC40SC44WiIgZmlsbD0iI0Y5MzgyMiIvPjwvc3ZnPgo=" alt="Engine v3.1.2"></a>
   <a href="https://discord.gg/9hr3tdZmEG"><img src="https://img.shields.io/badge/Discord-Join-370b7a?logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/rocketride-org/rocketride-workshops/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-41b6e6" alt="MIT License"></a>
 </p>
 
 </div>
@@ -54,27 +53,20 @@
    cd rocketride-workshops
    ```
 
-2. Install workspace dependencies. The `postinstall` hook downloads the RocketRide runtime release into each workshop's `.dependencies/` directory.
+2. Install everything in one command. Per-workshop `postinstall` hooks download the RocketRide runtime and sync Python dependencies — no follow-up steps required.
 
    ```sh
    pnpm install
    ```
 
-3. Sync Python dependencies for the workshop you want to run.
-
-   ```sh
-   cd workshops/coding-agent/solution/api
-   uv sync
-   ```
-
-4. Boot UI + API + runtime together.
+3. Pick a workshop and boot UI + API + runtime together.
 
    ```sh
    cd workshops/coding-agent/solution
    pnpm dev
    ```
 
-5. Open [http://localhost:5173](http://localhost:5173) — the UI calls `/api/hello`, which exercises the wired RocketRide pipeline.
+4. Open [http://localhost:5173](http://localhost:5173) — the UI calls `/api/hello`, which exercises the wired RocketRide pipeline.
 
 ## Workshops
 
@@ -94,18 +86,10 @@ Each workshop project's `package.json` declares the runtime version:
 ```json
 {
   "rocketride": { "runtime": "latest" },
-  "scripts": { "postinstall": "launchpad install" }
+  "scripts": { "postinstall": "launchpad install && uv sync --directory api --all-groups" }
 }
 ```
 
 `launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it to `./.dependencies/rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`.
 
 See [`tools/launchpad/README.md`](./tools/launchpad/README.md) for details.
-
-## Contributors
-
-Workshops grow with the community — fixes, new workshops, doc improvements, and Discord help all welcome. Check the [contributing guide](CONTRIBUTING.md) to get started.
-
-<a href="https://github.com/rocketride-org/rocketride-workshops/graphs/contributors">
-  <img alt="contributors" src="https://contrib.rocks/image?repo=rocketride-org/rocketride-workshops&columns=16" width="100%" />
-</a>

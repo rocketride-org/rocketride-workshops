@@ -7,7 +7,7 @@
     "runtime": "latest"
   },
   "scripts": {
-    "postinstall": "launchpad install",
+    "postinstall": "launchpad install && uv sync --directory api --all-groups",
     "dev": "pnpm --filter \"./*\" --parallel run dev"
   },
   "devDependencies": {

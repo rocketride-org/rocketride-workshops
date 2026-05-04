@@ -58,13 +58,10 @@ jobs:
       - name: Verify runtime installed
         run: pnpm verify:install
 
-      - name: Sync Python deps (solution)
-        working-directory: workshops/coding-agent/solution/api
-        run: uv sync --all-groups --frozen
-
-      - name: Sync Python deps (exercise)
-        working-directory: workshops/coding-agent/exercise/api
-        run: uv sync --all-groups --frozen
+      - name: Verify Python lockfiles in sync (solution + exercise)
+        run: |
+          uv lock --check --directory workshops/coding-agent/solution/api
+          uv lock --check --directory workshops/coding-agent/exercise/api
 
       - name: Lint (TS/JS)
         run: pnpm lint
