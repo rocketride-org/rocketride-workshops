@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://rocketride.org">
-  <img src="./images/banner-root.png" alt="RocketRide Workshops" width="100%">
+  <img src="./images/banner-root.svg" alt="RocketRide Workshops" width="100%">
 </a>
 
 <p>
