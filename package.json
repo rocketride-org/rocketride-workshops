@@ -1,0 +1,16 @@
+{
+  "name": "rocketride-workshops",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Public home for Rocketride workshop projects.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,yaml,yml}\""
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.dependencies/
+.venv/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+.vite/
+
+# Test / coverage
+coverage/
+htmlcov/
+.coverage
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Lint caches
+.eslintcache
+
+# Packaging output
+*.tgz
+
+# Environment files (any depth)
+.env
+.env.*
+*.env
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Tool state
+.claude/
+.rocketride/

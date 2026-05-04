@@ -1,0 +1,16 @@
+{
+  "name": "@workshops/coding-agent-exercise",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Scaffold for the coding-agent workshop. Fill out the TODOs in api/app/pipelines/.",
+  "rocketride": {
+    "runtime": "latest"
+  },
+  "scripts": {
+    "postinstall": "launchpad install",
+    "dev": "pnpm --filter \"./*\" --parallel run dev"
+  },
+  "devDependencies": {
+    "@rocketride/runtime": "workspace:*"
+  }
+}

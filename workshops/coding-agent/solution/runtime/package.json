@@ -1,0 +1,11 @@
+{
+  "name": "@workshops/coding-agent-solution-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "launchpad start"
+  },
+  "devDependencies": {
+    "@rocketride/runtime": "workspace:*"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@workshops/coding-agent-exercise-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "uv run --no-sync uvicorn app.main:app --reload --port 8000",
+    "install:py": "uv sync"
+  }
+}
