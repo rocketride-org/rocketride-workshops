@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * End-to-end smoke test: starts `pnpm dev` for a workshop's solution,
- * polls the UI's vite proxy for /api/hello until it responds, asserts the
- * payload matches the wired hello pipeline, then shuts everything down.
+ * polls the UI's vite proxy by POSTing to /api/chat until it responds,
+ * asserts the payload echoes the stub reply, then shuts everything down.
  *
  * Cross-platform: uses tree-kill to terminate the process group on Windows
  * (where SIGTERM doesn't reliably reach pnpm's grandchildren).
@@ -12,8 +12,9 @@ import { setTimeout as sleep } from "node:timers/promises";
 
 const PROJECT = process.env.E2E_PROJECT ?? "workshops/coding-agent/solution";
 const UI_URL = "http://localhost:5173";
-const HELLO_URL = `${UI_URL}/api/hello`;
-const EXPECTED_MESSAGE = "hello from rocketride";
+const CHAT_URL = `${UI_URL}/api/chat`;
+const PROBE_MESSAGE = "ci-smoke";
+const EXPECTED_REPLY = `stub: ${PROBE_MESSAGE}`;
 const READY_TIMEOUT_MS = 90_000;
 const SHUTDOWN_TIMEOUT_MS = 15_000;
 
@@ -56,7 +57,7 @@ process.on("SIGINT", () => cleanup(130));
 process.on("SIGTERM", () => cleanup(143));
 
 try {
-  await waitForHello();
+  await waitForChat();
   console.log("e2e: smoke test passed");
   await cleanup(0);
 } catch (err) {
@@ -64,19 +65,23 @@ try {
   await cleanup(1);
 }
 
-async function waitForHello() {
+async function waitForChat() {
   const deadline = Date.now() + READY_TIMEOUT_MS;
   let lastErr;
   while (Date.now() < deadline) {
-    if (exited) throw new Error("dev process exited before /api/hello responded");
+    if (exited) throw new Error("dev process exited before /api/chat responded");
     try {
-      const r = await fetch(HELLO_URL);
+      const r = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: PROBE_MESSAGE }),
+      });
       if (r.ok) {
         const body = await r.json();
-        if (body?.message !== EXPECTED_MESSAGE) {
+        if (body?.reply !== EXPECTED_REPLY) {
           throw new Error(`unexpected body: ${JSON.stringify(body)}`);
         }
-        console.log(`e2e: ${HELLO_URL} → ${JSON.stringify(body)}`);
+        console.log(`e2e: ${CHAT_URL} → ${JSON.stringify(body)}`);
         return;
       }
       lastErr = new Error(`HTTP ${r.status}`);
@@ -86,7 +91,7 @@ async function waitForHello() {
     await sleep(1000);
   }
   throw new Error(
-    `/api/hello did not return expected payload within ${READY_TIMEOUT_MS / 1000}s: ${lastErr?.message ?? "unknown"}`,
+    `/api/chat did not return expected payload within ${READY_TIMEOUT_MS / 1000}s: ${lastErr?.message ?? "unknown"}`,
   );
 }
 
