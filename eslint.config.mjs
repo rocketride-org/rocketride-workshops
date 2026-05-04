@@ -24,6 +24,13 @@ export default [
       sourceType: "module",
       globals: { ...globals.node, ...globals.browser },
     },
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
   },
   {
     files: ["**/ui/**/*.{ts,tsx}"],
