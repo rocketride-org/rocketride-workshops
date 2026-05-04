@@ -44,6 +44,12 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Install Linux runtime libraries (libc++)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libc++1
+
       - name: Cache RocketRide runtime download
         uses: actions/cache@v4
         with:

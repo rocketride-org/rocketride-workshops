@@ -36,13 +36,14 @@
 
 ## Prerequisites
 
-| Tool                                        | Version  | Purpose                                 |
-| ------------------------------------------- | -------- | --------------------------------------- |
-| [Node.js](https://nodejs.org)               | `>=20`   | Runtime for pnpm and Vite tooling       |
-| [pnpm](https://pnpm.io)                     | `>=9`    | Workspace and package manager           |
-| [Python](https://www.python.org/downloads/) | `>=3.11` | Runs each workshop's API                |
-| [uv](https://docs.astral.sh/uv/)            | latest   | Python environment + dependency manager |
-| [Git](https://git-scm.com/)                 | any      | Clone the repository                    |
+| Tool                                        | Version    | Purpose                                                                                                                          |
+| ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [Node.js](https://nodejs.org)               | `>=20`     | Runtime for pnpm and Vite tooling                                                                                                |
+| [pnpm](https://pnpm.io)                     | `>=9`      | Workspace and package manager                                                                                                    |
+| [Python](https://www.python.org/downloads/) | `>=3.11`   | Runs each workshop's API                                                                                                         |
+| [uv](https://docs.astral.sh/uv/)            | latest     | Python environment + dependency manager                                                                                          |
+| [Git](https://git-scm.com/)                 | any        | Clone the repository                                                                                                             |
+| `libc++`                                    | Linux only | The bundled `engine` binary links against `libc++.so.1` — `apt install libc++1` on Debian/Ubuntu, `dnf install libcxx` on Fedora |
 
 ## Setup
 

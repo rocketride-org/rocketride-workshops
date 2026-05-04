@@ -1,0 +1,15 @@
+# Normalise all text files to LF in the repo, regardless of the
+# contributor's core.autocrlf setting. Prettier (.prettierrc.json
+# endOfLine=lf) requires this for cross-platform CI to pass.
+* text=auto eol=lf
+
+# Binary assets — never normalise.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+*.whl binary

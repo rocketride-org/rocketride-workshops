@@ -39,6 +39,8 @@ Server releases publish per-OS archives. `launchpad` matches `process.platform` 
 
 Other platforms throw — file an issue or send a PR.
 
+> **Linux note:** the extracted `engine` binary links against `libc++.so.1`. Install it before `launchpad start` runs — `sudo apt install libc++1` on Debian/Ubuntu, `sudo dnf install libcxx` on Fedora. CI installs it automatically (see `.github/workflows/ci.yml`).
+
 ## Idempotency
 
 After a successful install, `launchpad` writes the resolved version to `./.dependencies/rocketride/.version`. Subsequent `launchpad install` runs that match that version are no-ops.
