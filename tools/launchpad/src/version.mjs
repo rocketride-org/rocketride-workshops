@@ -59,7 +59,11 @@ async function fetchLatestServerTag() {
 }
 
 function compareSemver(a, b) {
-  const parse = (v) => v.replace(/^v/, "").split(".").map((n) => parseInt(n, 10) || 0);
+  const parse = (v) =>
+    v
+      .replace(/^v/, "")
+      .split(".")
+      .map((n) => parseInt(n, 10) || 0);
   const [aMaj, aMin, aPat] = parse(a);
   const [bMaj, bMin, bPat] = parse(b);
   return aMaj - bMaj || aMin - bMin || aPat - bPat;
@@ -88,9 +92,7 @@ export function pickAsset(assets, version) {
   const asset = assets.find((a) => a.name === target);
   if (!asset) {
     const names = assets.map((a) => a.name).join(", ");
-    throw new Error(
-      `No release asset matched \`${target}\`. Available: ${names || "(none)"}.`,
-    );
+    throw new Error(`No release asset matched \`${target}\`. Available: ${names || "(none)"}.`);
   }
   return { asset, ...platformKey };
 }

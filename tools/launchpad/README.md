@@ -31,11 +31,11 @@ Each consuming project's `package.json`:
 
 Server releases publish per-OS archives. `launchpad` matches `process.platform` + `process.arch`:
 
-| Platform | Asset |
-|---|---|
+| Platform           | Asset                                          |
+| ------------------ | ---------------------------------------------- |
 | `darwin` + `arm64` | `rocketride-server-vX.Y.Z-darwin-arm64.tar.gz` |
-| `linux` + `x64` | `rocketride-server-vX.Y.Z-linux-x64.tar.gz` |
-| `win32` + `x64` | `rocketride-server-vX.Y.Z-win64.zip` |
+| `linux` + `x64`    | `rocketride-server-vX.Y.Z-linux-x64.tar.gz`    |
+| `win32` + `x64`    | `rocketride-server-vX.Y.Z-win64.zip`           |
 
 Other platforms throw — file an issue or send a PR.
 

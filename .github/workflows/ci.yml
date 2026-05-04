@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Cache RocketRide runtime download
+        uses: actions/cache@v4
+        with:
+          path: |
+            workshops/coding-agent/solution/.dependencies
+            workshops/coding-agent/exercise/.dependencies
+          key: rocketride-runtime-${{ runner.os }}-${{ hashFiles('workshops/**/package.json') }}
+
+      - name: Install workspace (runs launchpad postinstall)
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify runtime installed
+        run: pnpm verify:install
+
+      - name: Sync Python deps (solution)
+        working-directory: workshops/coding-agent/solution/api
+        run: uv sync --all-groups --frozen
+
+      - name: Sync Python deps (exercise)
+        working-directory: workshops/coding-agent/exercise/api
+        run: uv sync --all-groups --frozen
+
+      - name: Lint (TS/JS)
+        run: pnpm lint
+
+      - name: Lint (Python)
+        run: pnpm -r --filter "*api" run lint
+
+      - name: Format check (TS/JS/JSON/MD/YAML)
+        run: pnpm format:check
+
+      - name: Format check (Python)
+        run: pnpm -r --filter "*api" run format:check
+
+      - name: Type check (TS)
+        run: pnpm typecheck
+
+      - name: Type check (Python)
+        run: pnpm -r --filter "*api" run typecheck
+
+      - name: E2E (boot dev, hit /api/hello, stop cleanly)
+        run: pnpm verify:e2e
+        env:
+          E2E_PROJECT: workshops/coding-agent/solution

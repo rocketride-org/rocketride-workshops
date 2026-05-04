@@ -6,11 +6,25 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,yaml,yml}\""
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,yaml,yml}\"",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "verify:install": "node scripts/verify-runtime-installed.mjs",
+    "verify:e2e": "node scripts/verify-e2e.mjs"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/node": "^22.10.1",
+    "eslint": "^9.16.0",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.18.0"
+  }
 }

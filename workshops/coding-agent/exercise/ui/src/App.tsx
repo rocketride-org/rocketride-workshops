@@ -26,7 +26,11 @@ export function App() {
       </p>
       {error && <p style={{ color: "crimson" }}>API error: {error}</p>}
       {!error && message === null && <p>Waiting for /api/hello…</p>}
-      {message && <p>Pipeline says: <strong>{message}</strong></p>}
+      {message && (
+        <p>
+          Pipeline says: <strong>{message}</strong>
+        </p>
+      )}
     </main>
   );
 }

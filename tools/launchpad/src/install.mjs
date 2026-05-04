@@ -6,12 +6,7 @@ import { tmpdir } from "node:os";
 import { randomBytes } from "node:crypto";
 import { extract as extractTar } from "tar";
 import extractZip from "extract-zip";
-import {
-  findProjectRoot,
-  getReleaseAssets,
-  pickAsset,
-  resolveVersion,
-} from "./version.mjs";
+import { findProjectRoot, getReleaseAssets, pickAsset, resolveVersion } from "./version.mjs";
 
 export async function install({ force = false } = {}) {
   const { dir: projectDir, spec } = await findProjectRoot();

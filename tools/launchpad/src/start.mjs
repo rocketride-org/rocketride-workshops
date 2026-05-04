@@ -3,8 +3,7 @@ import { access } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { findProjectRoot } from "./version.mjs";
 
-const CANDIDATE_BINARIES =
-  process.platform === "win32" ? ["engine.exe"] : ["engine"];
+const CANDIDATE_BINARIES = process.platform === "win32" ? ["engine.exe"] : ["engine"];
 
 const DEFAULT_ENTRY_SCRIPT = join("ai", "eaas.py");
 

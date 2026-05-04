@@ -37,13 +37,13 @@
 
 ## Prerequisites
 
-| Tool | Version | Purpose |
-|---|---|---|
-| [Node.js](https://nodejs.org) | `>=20` | Runtime for pnpm and Vite tooling |
-| [pnpm](https://pnpm.io) | `>=9` | Workspace and package manager |
-| [Python](https://www.python.org/downloads/) | `>=3.11` | Runs each workshop's API |
-| [uv](https://docs.astral.sh/uv/) | latest | Python environment + dependency manager |
-| [Git](https://git-scm.com/) | any | Clone the repository |
+| Tool                                        | Version  | Purpose                                 |
+| ------------------------------------------- | -------- | --------------------------------------- |
+| [Node.js](https://nodejs.org)               | `>=20`   | Runtime for pnpm and Vite tooling       |
+| [pnpm](https://pnpm.io)                     | `>=9`    | Workspace and package manager           |
+| [Python](https://www.python.org/downloads/) | `>=3.11` | Runs each workshop's API                |
+| [uv](https://docs.astral.sh/uv/)            | latest   | Python environment + dependency manager |
+| [Git](https://git-scm.com/)                 | any      | Clone the repository                    |
 
 ## Setup
 
@@ -78,8 +78,8 @@
 
 ## Workshops
 
-| Workshop | Stack | Status |
-|---|---|---|
+| Workshop                                 | Stack                           | Status                                   |
+| ---------------------------------------- | ------------------------------- | ---------------------------------------- |
 | [coding-agent](./workshops/coding-agent) | Python · FastAPI · Vite + React | Scaffolding ready · workshop content WIP |
 
 Each workshop ships paired directories:
@@ -109,4 +109,3 @@ Workshops grow with the community — fixes, new workshops, doc improvements, an
 <a href="https://github.com/rocketride-org/rocketride-workshops/graphs/contributors">
   <img alt="contributors" src="https://contrib.rocks/image?repo=rocketride-org/rocketride-workshops&columns=16" width="100%" />
 </a>
-

@@ -21,7 +21,11 @@ export function App() {
       <h1>Coding Agent — Solution</h1>
       {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
       {!error && message === null && <p>Loading…</p>}
-      {message && <p>Pipeline says: <strong>{message}</strong></p>}
+      {message && (
+        <p>
+          Pipeline says: <strong>{message}</strong>
+        </p>
+      )}
     </main>
   );
 }
