@@ -1,6 +1,288 @@
 {
-  "components": [],
+  "components": [
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "name": "Web Hook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "webhook",
+        "name": "Web Hook"
+      },
+      "ui": {
+        "position": {
+          "x": 890,
+          "y": 530
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "name": "Transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "name": "Transcribe"
+      },
+      "ui": {
+        "position": {
+          "x": 1110,
+          "y": 530
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "audio",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "name": "Question",
+      "config": {
+        "type": "question",
+        "name": "Question"
+      },
+      "ui": {
+        "position": {
+          "x": 1320,
+          "y": 540
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "audio_transcribe_1"
+        },
+        {
+          "lane": "text",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "agent_crewai_1",
+      "provider": "agent_crewai",
+      "name": "CrewAI",
+      "config": {
+        "agent_description": "Cody — a coding agent that helps the user build a full-stack project. Asks clarifying questions when scope is unclear and builds incrementally.",
+        "instructions": [
+          "All project files live under ${ROCKETRIDE_OUTPUT_DIR}. Treat that path as the project root.",
+          "Use tool_shell for command execution, tool_filesystem for direct file edits, tool_git for version control.",
+          "Confirm major scope decisions with the user before generating files.",
+          "Keep replies concise unless the user asks for detail."
+        ],
+        "name": "CrewAI"
+      },
+      "ui": {
+        "position": {
+          "x": 1540,
+          "y": 540
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "question_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_anthropic_1",
+      "provider": "llm_anthropic",
+      "name": "Anthropic",
+      "config": {
+        "profile": "claude-sonnet-4-6",
+        "claude-sonnet-4-6": {
+          "modelSource": "manual",
+          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
+        },
+        "name": "Anthropic",
+        "parameters": {
+          "google": {}
+        }
+      },
+      "ui": {
+        "position": {
+          "x": 1380,
+          "y": 690
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "llm",
+          "from": "agent_crewai_1"
+        }
+      ]
+    },
+    {
+      "id": "memory_internal_1",
+      "provider": "memory_internal",
+      "name": "Memory",
+      "config": {
+        "type": "memory_internal",
+        "name": "Memory"
+      },
+      "ui": {
+        "position": {
+          "x": 1700,
+          "y": 690
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "memory",
+          "from": "agent_crewai_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "name": "Return Answers",
+      "config": {
+        "laneName": "answers",
+        "name": "Return Answers"
+      },
+      "ui": {
+        "position": {
+          "x": 1790,
+          "y": 540
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "agent_crewai_1"
+        }
+      ]
+    },
+    {
+      "id": "tool_shell_1",
+      "provider": "tool_shell",
+      "name": "Shell",
+      "config": {
+        "allowExternalEnv": false,
+        "commandAllowlist": [],
+        "envVars": [],
+        "maxOutputBytes": 1048576,
+        "timeout": 30,
+        "type": "tool_shell",
+        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
+        "name": "Shell"
+      },
+      "ui": {
+        "position": {
+          "x": 1640,
+          "y": 810
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_crewai_1"
+        }
+      ]
+    },
+    {
+      "id": "tool_filesystem_1",
+      "provider": "tool_filesystem",
+      "name": "File System",
+      "config": {
+        "allowDelete": false,
+        "allowList": true,
+        "allowMkdir": true,
+        "allowRead": true,
+        "allowStat": true,
+        "allowWrite": true,
+        "pathWhitelist": [
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
+        ],
+        "type": "tool_filesystem",
+        "name": "File System"
+      },
+      "ui": {
+        "position": {
+          "x": 1480,
+          "y": 810
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_crewai_1"
+        }
+      ]
+    },
+    {
+      "id": "tool_git_1",
+      "provider": "tool_git",
+      "name": "Git",
+      "config": {
+        "authType": "none",
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": true,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git"
+      },
+      "ui": {
+        "position": {
+          "x": 1800,
+          "y": 810
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_crewai_1"
+        }
+      ]
+    }
+  ],
   "project_id": "a4aa287b-e1fd-4ffc-9676-fd3a8e29540b",
-  "viewport": { "x": 0, "y": 0, "zoom": 1 },
-  "version": 1
+  "version": 1,
+  "isLocked": false,
+  "snapToGrid": true,
+  "snapGridSize": [
+    10,
+    10
+  ],
+  "docRevision": 42
 }

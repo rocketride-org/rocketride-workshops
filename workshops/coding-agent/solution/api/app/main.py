@@ -1,11 +1,40 @@
 import json
+import logging
+import os
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
-from app.libs.rocketride import send_message  # noqa: F401  re-wired in next step
+from app.libs.rocketride import disconnect, send_audio, send_text, start_coding_agent
 
-app = FastAPI(title="coding-agent solution")
+logger = logging.getLogger("coding-agent")
+logging.basicConfig(level=logging.INFO)
+
+OUTPUT_DIR = Path(__file__).resolve().parents[1] / ".output"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    os.environ["ROCKETRIDE_OUTPUT_DIR"] = str(OUTPUT_DIR).replace("\\", "/")
+    logger.info("ROCKETRIDE_OUTPUT_DIR=%s", os.environ["ROCKETRIDE_OUTPUT_DIR"])
+    logger.info("starting coding-agent pipeline (this may take a while on first launch)...")
+    try:
+        app.state.chat_token = await start_coding_agent()
+        logger.info("pipeline started, token=%s", app.state.chat_token)
+    except Exception:
+        logger.exception("failed to start coding-agent pipeline")
+        raise
+    try:
+        yield
+    finally:
+        await disconnect()
+
+
+app = FastAPI(title="coding-agent solution", lifespan=lifespan)
 
 
 class ChatRequest(BaseModel):
@@ -18,21 +47,26 @@ class ChatResponse(BaseModel):
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
-    # TODO: wire to send_message(app.state.chat_token, request.message)
-    # once coding-agent.pipe has real components.
-    return ChatResponse(reply=f"stub: {request.message}")
+    token: str = app.state.chat_token
+    try:
+        reply = await send_text(token, request.message)
+    except Exception as exc:
+        logger.exception("send_text failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return ChatResponse(reply=reply)
 
 
 @app.websocket("/api/ws/chat")
 async def chat_ws(websocket: WebSocket) -> None:
     await websocket.accept()
-    audio_bytes = 0
+    token: str = websocket.app.state.chat_token
+    buffer = bytearray()
     try:
         while True:
             message = await websocket.receive()
             data_bytes = message.get("bytes")
             if data_bytes is not None:
-                audio_bytes += len(data_bytes)
+                buffer.extend(data_bytes)
                 continue
             data_text = message.get("text")
             if data_text is None:
@@ -43,13 +77,14 @@ async def chat_ws(websocket: WebSocket) -> None:
                 continue
             event_type = event.get("type")
             if event_type == "start":
-                audio_bytes = 0
+                buffer.clear()
             elif event_type == "end":
-                # TODO: forward audio buffer to RocketRide pipeline via
-                # app.libs.rocketride once audio_transcribe node is wired.
-                await websocket.send_json(
-                    {"type": "reply", "text": f"stub: heard {audio_bytes} bytes of audio"}
-                )
-                audio_bytes = 0
+                try:
+                    reply = await send_audio(token, bytes(buffer))
+                    await websocket.send_json({"type": "reply", "text": reply})
+                except Exception as exc:
+                    logger.exception("send_audio failed")
+                    await websocket.send_json({"type": "error", "message": str(exc)})
+                buffer.clear()
     except WebSocketDisconnect:
         return

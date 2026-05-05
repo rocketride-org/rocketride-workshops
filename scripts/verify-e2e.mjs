@@ -13,9 +13,8 @@ import { setTimeout as sleep } from "node:timers/promises";
 const PROJECT = process.env.E2E_PROJECT ?? "workshops/coding-agent/solution";
 const UI_URL = "http://localhost:5173";
 const CHAT_URL = `${UI_URL}/api/chat`;
-const PROBE_MESSAGE = "ci-smoke";
-const EXPECTED_REPLY = `stub: ${PROBE_MESSAGE}`;
-const READY_TIMEOUT_MS = 90_000;
+const PROBE_MESSAGE = "ci-smoke: respond with the single word 'ok'";
+const READY_TIMEOUT_MS = 180_000;
 const SHUTDOWN_TIMEOUT_MS = 15_000;
 
 const isWindows = process.platform === "win32";
@@ -78,10 +77,10 @@ async function waitForChat() {
       });
       if (r.ok) {
         const body = await r.json();
-        if (body?.reply !== EXPECTED_REPLY) {
+        if (typeof body?.reply !== "string" || body.reply.length === 0) {
           throw new Error(`unexpected body: ${JSON.stringify(body)}`);
         }
-        console.log(`e2e: ${CHAT_URL} → ${JSON.stringify(body)}`);
+        console.log(`e2e: ${CHAT_URL} → reply length ${body.reply.length}`);
         return;
       }
       lastErr = new Error(`HTTP ${r.status}`);

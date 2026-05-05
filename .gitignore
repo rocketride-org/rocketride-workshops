@@ -10,6 +10,9 @@ build/
 *.tsbuildinfo
 .vite/
 
+# Workshop agent output
+.output/
+
 # Test / coverage
 coverage/
 htmlcov/
@@ -35,6 +38,7 @@ __pycache__/
 .env
 .env.*
 *.env
+!.env.example
 
 # Editor / OS
 .idea/

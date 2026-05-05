@@ -5,8 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, cast
 
-from rocketride.schema import Question
-
 from app.libs.rocketride.client import get_client
 
 PIPELINE_PATH = Path(__file__).resolve().parents[2] / "pipelines" / "coding-agent.pipe"
@@ -18,12 +16,33 @@ async def start_coding_agent() -> str:
     return cast(str, result["token"])
 
 
-async def send_message(token: str, text: str) -> str:
+async def send_text(token: str, text: str) -> str:
     client = await get_client()
-    question = Question()  # type: ignore[call-arg]
-    question.addQuestion(text)
-    response = cast(dict[str, Any], await client.chat(token=token, question=question))
-    answers = response.get("answers") or []
+    result = cast(
+        dict[str, Any],
+        await client.send(token=token, data=text, mimetype="text/plain"),
+    )
+    return _first_answer(result)
+
+
+async def send_audio(
+    token: str,
+    data: bytes,
+    mimetype: str = "audio/webm;codecs=opus",
+) -> str:
+    client = await get_client()
+    result = cast(
+        dict[str, Any],
+        await client.send(token=token, data=data, mimetype=mimetype),
+    )
+    return _first_answer(result)
+
+
+def _first_answer(result: dict[str, Any]) -> str:
+    answers = result.get("answers") or []
     if not answers:
         return ""
-    return cast(str, answers[0])
+    first = answers[0]
+    if isinstance(first, str):
+        return first
+    return str(first)
