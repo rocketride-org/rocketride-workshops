@@ -4,7 +4,7 @@
   "private": true,
   "description": "Scaffold for the coding-agent workshop. Fill out the TODOs in api/app/pipelines/.",
   "rocketride": {
-    "runtime": "latest"
+    "runtime": "3.1.2-prerelease"
   },
   "scripts": {
     "postinstall": "launchpad install && uv sync --directory api --all-groups",
