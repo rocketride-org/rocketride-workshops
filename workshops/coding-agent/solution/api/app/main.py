@@ -8,7 +8,13 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
-from app.libs.rocketride import disconnect, send_audio, send_text, start_coding_agent
+from app.libs.rocketride import (
+    connect_with_retry,
+    disconnect,
+    send_audio,
+    send_text,
+    start_coding_agent,
+)
 
 logger = logging.getLogger("coding-agent")
 logging.basicConfig(level=logging.INFO)
@@ -24,12 +30,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("starting coding-agent pipeline (this may take a while on first launch)...")
     app.state.chat_token = None
     try:
+        await connect_with_retry()
         app.state.chat_token = await start_coding_agent()
         logger.info("pipeline started, token=%s", app.state.chat_token)
     except Exception:
         logger.exception(
             "failed to start coding-agent pipeline; "
-            "API will respond to /health but /api/chat will return 503 until restarted"
+            "API will respond to /api/health but /api/chat will return 503 until restarted"
         )
     try:
         yield

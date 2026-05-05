@@ -11,9 +11,14 @@ keeps both old and new servers happy.
 
 from __future__ import annotations
 
+import asyncio
+import contextlib
+import logging
 from typing import Any
 
 from rocketride import RocketRideClient
+
+logger = logging.getLogger("coding-agent")
 
 _client: RocketRideClient | None = None
 
@@ -41,6 +46,38 @@ async def get_client() -> RocketRideClient:
         _client = RocketRideClient()
         await _client.connect()
     return _client
+
+
+async def connect_with_retry(
+    timeout: float = 60.0,
+    interval: float = 1.0,
+) -> RocketRideClient:
+    """Wait for the runtime to come up, then connect.
+
+    `pnpm dev` boots api and runtime in parallel; the api lifespan
+    usually wins the race and hits a connection-refused. Retry every
+    `interval` seconds until the runtime listens or `timeout` elapses.
+    """
+    global _client
+    deadline = asyncio.get_event_loop().time() + timeout
+    warned = False
+    last_error: Exception | None = None
+    while True:
+        try:
+            return await get_client()
+        except (ConnectionError, OSError) as exc:
+            last_error = exc
+            if not warned:
+                logger.info("waiting for runtime to accept connections...")
+                warned = True
+            if _client is not None:
+                with contextlib.suppress(Exception):
+                    await _client.disconnect()
+                _client = None
+            if asyncio.get_event_loop().time() >= deadline:
+                raise
+            await asyncio.sleep(interval)
+            assert last_error is not None  # for mypy
 
 
 async def disconnect() -> None:
