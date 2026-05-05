@@ -261,6 +261,141 @@ body {
   gap: 0.45rem;
 }
 
+.bubble-md {
+  display: block;
+  width: 100%;
+  white-space: normal;
+}
+
+.bubble-md pre,
+.bubble-md code {
+  white-space: pre;
+}
+
+.bubble-md pre {
+  white-space: pre-wrap;
+}
+
+.bubble-md > *:first-child {
+  margin-top: 0;
+}
+
+.bubble-md > *:last-child {
+  margin-bottom: 0;
+}
+
+.bubble-md p {
+  margin: 10px 10px;
+  line-height: 2;
+}
+
+.bubble-md h1,
+.bubble-md h2,
+.bubble-md h3,
+.bubble-md h4 {
+  margin: 0.55rem 0 0.2rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.bubble-md h1 {
+  font-size: 1.25rem;
+}
+
+.bubble-md h2 {
+  font-size: 1.15rem;
+}
+
+.bubble-md h3 {
+  font-size: 1.05rem;
+}
+
+.bubble-md h4 {
+  font-size: 1rem;
+}
+
+.bubble-md ul,
+.bubble-md ol {
+  margin: 0.25rem 0;
+  padding-left: 1.4rem;
+}
+
+.bubble-md li {
+  margin: 0.05rem 0;
+}
+
+.bubble-md li > p {
+  margin: 0;
+}
+
+.bubble-md a {
+  color: var(--horizon-blue);
+  text-decoration: underline;
+}
+
+.bubble-md strong {
+  font-weight: 700;
+}
+
+.bubble-md em {
+  font-style: italic;
+}
+
+.bubble-md hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  margin: 0.7rem 0;
+}
+
+.bubble-md blockquote {
+  margin: 0.5rem 0;
+  padding: 0.1rem 0.75rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  color: rgba(245, 245, 247, 0.85);
+}
+
+.bubble-md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.bubble-md pre {
+  margin: 0.55rem 0;
+  padding: 0.7rem 0.85rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.92em;
+  line-height: 1.45;
+}
+
+.bubble-md pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.bubble-md table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  width: 100%;
+  font-size: 0.95em;
+}
+
+.bubble-md th,
+.bubble-md td {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.3rem 0.55rem;
+  text-align: left;
+}
+
+.bubble-md th {
+  background: rgba(0, 0, 0, 0.18);
+}
+
 .composer {
   display: flex;
   gap: 0.5rem;
