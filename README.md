@@ -1,16 +1,16 @@
 <div align="center">
 
-<a href="https://rocketride.org">
+<a href="https://rocketride.ai">
   <img src="./images/banner-root.svg" alt="RocketRide Workshops" width="100%">
 </a>
 
 <p>
   Public, hands-on workshops for the RocketRide AI runtime.<br/>
-  Build real apps that integrate RocketRide — UI, API, and the runtime, end to end.
+  Build real apps that integrate RocketRide. UI, API, and the runtime, end to end.
 </p>
 
 <p>
-  Each workshop is a self-contained project pairing a scaffolded <code>exercise/</code> for attendees with a fully-wired <code>solution/</code> reference. Workshops focus on RocketRide integration: pipeline definitions, SDK calls, and runtime orchestration. The surrounding stack (Vite + React, FastAPI, etc.) is intentionally minimal so the spotlight stays on RocketRide.
+  Each workshop is a self-contained project pairing a scaffolded <code>exercise/</code> for attendees with a fully-wired <code>solution/</code> reference. Workshops focus on RocketRide integration: pipeline definitions, SDK calls, and runtime orchestration. The surrounding stack (Vite + React, FastAPI, etc.) is intentionally minimal.
 </p>
 
 <p>
