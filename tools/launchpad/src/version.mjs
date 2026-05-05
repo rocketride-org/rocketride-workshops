@@ -36,8 +36,8 @@ function normalize(spec) {
   if (!spec) return "latest";
   if (spec === "latest") return "latest";
   if (spec.startsWith(SERVER_TAG_PREFIX)) return spec.slice(SERVER_TAG_PREFIX.length);
-  if (spec.startsWith("v")) return spec;
-  return `v${spec}`;
+  if (spec.startsWith("v")) return spec.slice(1);
+  return spec;
 }
 
 async function fetchLatestServerTag() {
@@ -88,13 +88,18 @@ async function ghJson(url) {
 
 export function pickAsset(assets, version) {
   const platformKey = currentPlatformKey();
-  const target = `rocketride-server-v${version}-${platformKey.name}.${platformKey.ext}`;
+  const assetVersion = baseSemver(version);
+  const target = `rocketride-server-v${assetVersion}-${platformKey.name}.${platformKey.ext}`;
   const asset = assets.find((a) => a.name === target);
   if (!asset) {
     const names = assets.map((a) => a.name).join(", ");
     throw new Error(`No release asset matched \`${target}\`. Available: ${names || "(none)"}.`);
   }
   return { asset, ...platformKey };
+}
+
+function baseSemver(version) {
+  return version.replace(/[-+].+$/, "");
 }
 
 export function currentPlatformKey() {
