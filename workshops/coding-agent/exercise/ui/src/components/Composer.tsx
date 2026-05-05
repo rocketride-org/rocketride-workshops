@@ -1,3 +1,6 @@
+import { MicIcon } from "./MicIcon";
+import { SendIcon } from "./SendIcon";
+
 type Props = {
   onUserText: (text: string) => Promise<void> | void;
   onUserVoice: () => void;
@@ -11,11 +14,11 @@ export function Composer(_props: Props) {
   return (
     <form className="composer">
       <button type="button" className="mic" disabled>
-        🎙
+        <MicIcon size={26} />
       </button>
-      <input className="composer-input" placeholder="TODO Composer" disabled />
+      <input className="composer-input" placeholder="TODO Composer — message Cody" disabled />
       <button type="submit" className="send" disabled>
-        ↑
+        <SendIcon size={22} />
       </button>
     </form>
   );

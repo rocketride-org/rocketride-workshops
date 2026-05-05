@@ -4,10 +4,12 @@ import { MessageBubble } from "./MessageBubble";
 // TODO: render all messages and auto-scroll to the bottom on new messages.
 export function MessageList({ messages }: { messages: Message[] }) {
   return (
-    <div className="message-list">
-      {messages.map((m) => (
-        <MessageBubble key={m.id} message={m} />
-      ))}
+    <div className="message-scroll">
+      <div className="message-list">
+        {messages.map((m) => (
+          <MessageBubble key={m.id} message={m} />
+        ))}
+      </div>
     </div>
   );
 }

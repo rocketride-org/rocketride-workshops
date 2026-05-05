@@ -36,7 +36,7 @@ export function ChatScreen() {
   );
 
   const handleUserVoice = useCallback(() => {
-    append(userMessage("🎙 voice message"));
+    append({ ...userMessage("voice message"), kind: "voice" });
   }, [append]);
 
   const handleAgentReply = useCallback(
@@ -67,7 +67,10 @@ export function ChatScreen() {
         />
       ) : (
         <>
-          <header className="chat-header">coding-agent</header>
+          <header className="chat-header">
+            <img src="/rocketride-icon.svg" alt="RocketRide" />
+            <span>Cody</span>
+          </header>
           <MessageList messages={messages} />
           <Composer
             onUserText={handleUserText}

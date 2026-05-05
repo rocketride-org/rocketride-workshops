@@ -1,10 +1,13 @@
 export type ChatRole = "user" | "agent";
 
+export type MessageKind = "text" | "voice";
+
 export type Message = {
   id: string;
   role: ChatRole;
   text: string;
   createdAt: number;
+  kind?: MessageKind;
 };
 
 export type WsClientStart = { type: "start" };

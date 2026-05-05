@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useVoiceStream } from "../hooks/useVoiceStream";
+import { MicIcon } from "./MicIcon";
+import { SendIcon } from "./SendIcon";
 
 type Props = {
   onUserText: (text: string) => Promise<void> | void;
@@ -46,13 +48,13 @@ export function Composer({ onUserText, onUserVoice, onAgentReply, onError }: Pro
         aria-label={isRecording ? "stop recording" : "start recording"}
         onClick={() => void toggleMic()}
       >
-        🎙
+        <MicIcon size={26} />
       </button>
       <input
         className="composer-input"
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        placeholder={isRecording ? "listening — click mic to send" : "message coding-agent…"}
+        placeholder={isRecording ? "listening — click mic to send" : "message Cody…"}
         disabled={isRecording}
       />
       <button
@@ -61,7 +63,7 @@ export function Composer({ onUserText, onUserVoice, onAgentReply, onError }: Pro
         disabled={isRecording || draft.trim().length === 0}
         aria-label="send"
       >
-        ↑
+        <SendIcon size={22} />
       </button>
     </form>
   );

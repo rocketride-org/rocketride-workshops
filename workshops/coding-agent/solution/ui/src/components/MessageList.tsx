@@ -10,11 +10,13 @@ export function MessageList({ messages }: { messages: Message[] }) {
   }, [messages]);
 
   return (
-    <div className="message-list" role="log" aria-live="polite">
-      {messages.map((m) => (
-        <MessageBubble key={m.id} message={m} />
-      ))}
-      <div ref={endRef} />
+    <div className="message-scroll">
+      <div className="message-list" role="log" aria-live="polite">
+        {messages.map((m) => (
+          <MessageBubble key={m.id} message={m} />
+        ))}
+        <div ref={endRef} />
+      </div>
     </div>
   );
 }
