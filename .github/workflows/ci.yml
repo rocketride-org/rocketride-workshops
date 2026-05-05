@@ -87,7 +87,7 @@ jobs:
       - name: Type check (Python)
         run: pnpm -r --filter "*api" run typecheck
 
-      - name: E2E (boot dev, POST /api/chat, stop cleanly)
+      - name: E2E (boot dev, GET /api/health, stop cleanly)
         run: pnpm verify:e2e
         env:
           E2E_PROJECT: workshops/coding-agent/solution

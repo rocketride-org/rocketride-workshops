@@ -22,16 +22,22 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     os.environ["ROCKETRIDE_OUTPUT_DIR"] = str(OUTPUT_DIR).replace("\\", "/")
     logger.info("ROCKETRIDE_OUTPUT_DIR=%s", os.environ["ROCKETRIDE_OUTPUT_DIR"])
     logger.info("starting coding-agent pipeline (this may take a while on first launch)...")
+    app.state.chat_token = None
     try:
         app.state.chat_token = await start_coding_agent()
         logger.info("pipeline started, token=%s", app.state.chat_token)
     except Exception:
-        logger.exception("failed to start coding-agent pipeline")
-        raise
+        logger.exception(
+            "failed to start coding-agent pipeline; "
+            "API will respond to /health but /api/chat will return 503 until restarted"
+        )
     try:
         yield
     finally:
-        await disconnect()
+        try:
+            await disconnect()
+        except Exception:
+            logger.exception("disconnect failed")
 
 
 app = FastAPI(title="coding-agent solution", lifespan=lifespan)
@@ -45,9 +51,22 @@ class ChatResponse(BaseModel):
     reply: str
 
 
+class HealthResponse(BaseModel):
+    status: str
+    pipeline: str
+
+
+@app.get("/api/health", response_model=HealthResponse)
+async def health() -> HealthResponse:
+    pipeline = "ready" if getattr(app.state, "chat_token", None) else "unavailable"
+    return HealthResponse(status="ok", pipeline=pipeline)
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
-    token: str = app.state.chat_token
+    token: str | None = getattr(app.state, "chat_token", None)
+    if not token:
+        raise HTTPException(status_code=503, detail="coding-agent pipeline not available")
     try:
         reply = await send_text(token, request.message)
     except Exception as exc:
@@ -59,7 +78,13 @@ async def chat(request: ChatRequest) -> ChatResponse:
 @app.websocket("/api/ws/chat")
 async def chat_ws(websocket: WebSocket) -> None:
     await websocket.accept()
-    token: str = websocket.app.state.chat_token
+    token: str | None = getattr(websocket.app.state, "chat_token", None)
+    if not token:
+        await websocket.send_json(
+            {"type": "error", "message": "coding-agent pipeline not available"}
+        )
+        await websocket.close()
+        return
     buffer = bytearray()
     try:
         while True:
