@@ -8,11 +8,14 @@ export type Message = {
   text: string;
   createdAt: number;
   kind?: MessageKind;
+  pending?: boolean;
+  hint?: string;
 };
 
 export type WsClientStart = { type: "start" };
 export type WsClientEnd = { type: "end" };
-export type WsClientEvent = WsClientStart | WsClientEnd;
+export type WsClientText = { type: "text"; text: string };
+export type WsClientEvent = WsClientStart | WsClientEnd | WsClientText;
 
 export type WsServerReply = { type: "reply"; text: string };
 export type WsServerError = { type: "error"; message: string };

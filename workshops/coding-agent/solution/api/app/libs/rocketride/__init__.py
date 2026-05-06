@@ -5,7 +5,12 @@ directly, so client lifecycle and chat helpers live in one place.
 """
 
 from app.libs.rocketride.chat import send_audio, send_text, start_coding_agent
-from app.libs.rocketride.client import connect_with_retry, disconnect, get_client
+from app.libs.rocketride.client import (
+    connect_with_retry,
+    disconnect,
+    get_client,
+    set_event_handler,
+)
 
 __all__ = [
     "connect_with_retry",
@@ -13,5 +18,6 @@ __all__ = [
     "get_client",
     "send_audio",
     "send_text",
+    "set_event_handler",
     "start_coding_agent",
 ]

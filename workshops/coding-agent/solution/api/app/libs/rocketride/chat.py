@@ -2,18 +2,31 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any, cast
 
 from app.libs.rocketride.client import get_client
 
+logger = logging.getLogger("coding-agent")
+
 PIPELINE_PATH = Path(__file__).resolve().parents[2] / "pipelines" / "coding-agent.pipe"
+
+RUNTIME_EVENT_TYPES = ["task", "summary", "sse"]
 
 
 async def start_coding_agent() -> str:
     client = await get_client()
-    result = cast(dict[str, Any], await client.use(filepath=str(PIPELINE_PATH)))
-    return cast(str, result["token"])
+    result = cast(
+        dict[str, Any],
+        await client.use(filepath=str(PIPELINE_PATH), pipelineTraceLevel="none"),
+    )
+    token = cast(str, result["token"])
+    try:
+        await client.set_events(token, RUNTIME_EVENT_TYPES)
+    except Exception:
+        logger.exception("set_events failed; continuing without runtime observability")
+    return token
 
 
 async def send_text(token: str, text: str) -> str:

@@ -189,7 +189,7 @@ body {
 .screen-chat .message-list,
 .screen-chat .composer {
   width: 100%;
-  max-width: 760px;
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -269,11 +269,9 @@ body {
 
 .bubble-md pre,
 .bubble-md code {
-  white-space: pre;
-}
-
-.bubble-md pre {
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .bubble-md > *:first-child {
@@ -367,6 +365,7 @@ body {
   padding: 0.7rem 0.85rem;
   background: rgba(0, 0, 0, 0.35);
   border-radius: 8px;
+  max-width: 100%;
   overflow-x: auto;
   font-size: 0.92em;
   line-height: 1.45;
@@ -476,4 +475,53 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
+}
+
+.bubble-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 1.4em;
+  padding: 0.5rem 0.75rem;
+}
+
+.bubble-pending .bubble-hint {
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.bubble-pending .dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bubble-pending .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(245, 245, 247, 0.7);
+  animation: bubble-typing 1.2s infinite ease-in-out;
+}
+
+.bubble-pending .dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.bubble-pending .dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bubble-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }

@@ -3,11 +3,18 @@ import type { WsClientEvent, WsServerEvent } from "../lib/types";
 
 type Listener = (event: WsServerEvent) => void;
 
+const CONNECT_MAX_ATTEMPTS = 60;
+const CONNECT_BACKOFF_MS = 500;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function useChatSocket() {
   const socketRef = useRef<WebSocket | null>(null);
   const listenersRef = useRef<Set<Listener>>(new Set());
 
-  const ensureOpen = useCallback((): Promise<WebSocket> => {
+  const tryOpen = useCallback((): Promise<WebSocket> => {
     return new Promise((resolve, reject) => {
       const existing = socketRef.current;
       if (existing && existing.readyState === WebSocket.OPEN) {
@@ -40,6 +47,19 @@ export function useChatSocket() {
       });
     });
   }, []);
+
+  const ensureOpen = useCallback(async (): Promise<WebSocket> => {
+    let lastErr: unknown;
+    for (let attempt = 0; attempt < CONNECT_MAX_ATTEMPTS; attempt++) {
+      try {
+        return await tryOpen();
+      } catch (err) {
+        lastErr = err;
+        await sleep(CONNECT_BACKOFF_MS);
+      }
+    }
+    throw lastErr instanceof Error ? lastErr : new Error("ws connect failed");
+  }, [tryOpen]);
 
   const send = useCallback(
     async (event: WsClientEvent) => {

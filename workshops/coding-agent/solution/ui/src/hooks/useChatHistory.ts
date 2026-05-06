@@ -41,7 +41,15 @@ export function useChatHistory() {
         setWasReset(true);
         return [];
       }
-      writeStored(next);
+      writeStored(next.filter((m) => !m.pending));
+      return next;
+    });
+  }, []);
+
+  const update = useCallback((id: string, patch: Partial<Message>) => {
+    setMessages((prev) => {
+      const next = prev.map((m) => (m.id === id ? { ...m, ...patch } : m));
+      writeStored(next.filter((m) => !m.pending));
       return next;
     });
   }, []);
@@ -53,5 +61,5 @@ export function useChatHistory() {
 
   const dismissReset = useCallback(() => setWasReset(false), []);
 
-  return { messages, append, clear, wasReset, dismissReset };
+  return { messages, append, update, clear, wasReset, dismissReset };
 }

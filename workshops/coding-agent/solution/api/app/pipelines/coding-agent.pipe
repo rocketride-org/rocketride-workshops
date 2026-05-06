@@ -87,7 +87,11 @@
           "All project files live under ${ROCKETRIDE_OUTPUT_DIR}. Treat that path as the project root.",
           "Use tool_shell for command execution, tool_filesystem for direct file edits, tool_git for version control.",
           "Confirm major scope decisions with the user before generating files.",
-          "Keep replies concise unless the user asks for detail."
+          "Keep replies concise unless the user asks for detail.",
+          "Default to a single tool call per turn. Only chain multiple tool calls when the user explicitly asks for multi-step work.",
+          "For conversational turns (greetings, clarifications, planning), reply directly without invoking any tool.",
+          "Do not run shell commands unless the user explicitly asks you to execute something or you are writing code that requires a build step.",
+          "Prefer one decisive action over exploratory iteration. If unsure, ask the user instead of looping."
         ],
         "name": "CrewAI"
       },
