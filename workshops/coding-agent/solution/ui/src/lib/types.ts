@@ -17,6 +17,7 @@ export type WsClientEnd = { type: "end" };
 export type WsClientText = { type: "text"; text: string };
 export type WsClientEvent = WsClientStart | WsClientEnd | WsClientText;
 
+export type WsServerStatus = { type: "status"; text: string };
 export type WsServerReply = { type: "reply"; text: string };
 export type WsServerError = { type: "error"; message: string };
-export type WsServerEvent = WsServerReply | WsServerError;
+export type WsServerEvent = WsServerStatus | WsServerReply | WsServerError;

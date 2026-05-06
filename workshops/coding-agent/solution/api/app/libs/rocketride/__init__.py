@@ -9,6 +9,7 @@ from app.libs.rocketride.client import (
     connect_with_retry,
     disconnect,
     get_client,
+    reset_client,
     set_event_handler,
 )
 
@@ -16,6 +17,7 @@ __all__ = [
     "connect_with_retry",
     "disconnect",
     "get_client",
+    "reset_client",
     "send_audio",
     "send_text",
     "set_event_handler",

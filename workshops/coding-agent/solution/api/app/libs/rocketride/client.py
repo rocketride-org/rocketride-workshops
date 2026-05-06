@@ -118,3 +118,15 @@ async def disconnect() -> None:
     if _client is not None:
         await _client.disconnect()
         _client = None
+
+
+async def reset_client() -> None:
+    """Drop the cached client without raising — used for recovery after the
+    engine WS dies. Best-effort: any disconnect failure is swallowed so the
+    caller can immediately call `get_client()` to rebuild."""
+    global _client
+    if _client is None:
+        return
+    with contextlib.suppress(Exception):
+        await _client.disconnect()
+    _client = None

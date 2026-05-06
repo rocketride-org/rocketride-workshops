@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatHistory } from "../hooks/useChatHistory";
 import { useChatSocket } from "../hooks/useChatSocket";
 import type { Message } from "../lib/types";
@@ -8,6 +8,9 @@ import { MessageList } from "./MessageList";
 import { ResetBanner } from "./ResetBanner";
 
 const WARMING_HINT = "warming up coding agent — first reply takes longer…";
+const HERO_FADE_MS = 220;
+
+type Phase = "hero" | "transitioning" | "chat";
 
 function newId(): string {
   return crypto.randomUUID();
@@ -29,9 +32,17 @@ export function ChatScreen() {
   const { messages, append, update, wasReset, dismissReset } = useChatHistory();
   const socket = useChatSocket();
   const hasSentRef = useRef(false);
+  const [phase, setPhase] = useState<Phase>(() => (messages.length > 0 ? "chat" : "hero"));
+
+  useEffect(() => {
+    if (phase !== "transitioning") return;
+    const id = window.setTimeout(() => setPhase("chat"), HERO_FADE_MS);
+    return () => window.clearTimeout(id);
+  }, [phase]);
 
   const handleUserText = useCallback(
     async (text: string) => {
+      setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
       append(userMessage(text));
       const isFirst = !hasSentRef.current;
       hasSentRef.current = true;
@@ -39,7 +50,9 @@ export function ChatScreen() {
       append(pending);
 
       const off = socket.onMessage((event) => {
-        if (event.type === "reply") {
+        if (event.type === "status") {
+          update(pending.id, { hint: event.text });
+        } else if (event.type === "reply") {
           off();
           update(pending.id, { text: event.text, pending: false, hint: undefined });
         } else if (event.type === "error") {
@@ -67,6 +80,7 @@ export function ChatScreen() {
   );
 
   const handleUserVoice = useCallback(() => {
+    setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
     append({ ...userMessage("voice message"), kind: "voice" });
   }, [append]);
 
@@ -84,12 +98,17 @@ export function ChatScreen() {
     [append],
   );
 
-  const isEmpty = messages.length === 0;
+  const screenClass =
+    phase === "hero"
+      ? "screen screen-hero"
+      : phase === "transitioning"
+        ? "screen screen-hero screen-transitioning"
+        : "screen screen-chat";
 
   return (
-    <div className={isEmpty ? "screen screen-hero" : "screen screen-chat"}>
+    <div className={screenClass}>
       {wasReset && <ResetBanner onDismiss={dismissReset} />}
-      {isEmpty ? (
+      {phase !== "chat" ? (
         <HeroStart
           onUserText={handleUserText}
           onUserVoice={handleUserVoice}

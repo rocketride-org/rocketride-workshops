@@ -9,6 +9,7 @@ export default [
       "**/dist/**",
       "**/build/**",
       "**/.dependencies/**",
+      "**/.output/**",
       "**/.venv/**",
       "**/__pycache__/**",
       "**/*.tsbuildinfo",
