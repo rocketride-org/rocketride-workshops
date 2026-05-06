@@ -21,17 +21,21 @@ export function MessageBubble({ message }: { message: Message }) {
   const roleClass = message.role === "user" ? "bubble-user" : "bubble-agent";
   const className = isVoice ? `bubble ${roleClass} bubble-voice` : `bubble ${roleClass}`;
   const renderMarkdown = message.role === "agent" && !isVoice;
+  const showAttribution = message.role === "agent" && !isVoice;
 
   return (
-    <div className={className}>
-      {isVoice && <MicIcon size={16} />}
-      {renderMarkdown ? (
-        <div className="bubble-md">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
-        </div>
-      ) : (
-        <span>{message.text}</span>
-      )}
-    </div>
+    <>
+      <div className={className}>
+        {isVoice && <MicIcon size={16} />}
+        {renderMarkdown ? (
+          <div className="bubble-md">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
+          </div>
+        ) : (
+          <span>{message.text}</span>
+        )}
+      </div>
+      {showAttribution && <div className="bubble-attribution">Cody Rider</div>}
+    </>
   );
 }

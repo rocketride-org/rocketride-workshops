@@ -180,6 +180,42 @@ body {
   height: 44px;
 }
 
+.chat-header-powered {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.chat-header-poweredby {
+  font-size: 0.7rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.chat-header-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, var(--horizon-blue), var(--rocket-red));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bubble-attribution {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+  letter-spacing: 0.08em;
+  margin-top: -0.1rem;
+  margin-left: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
 .message-scroll {
   flex: 1;
   overflow-y: auto;

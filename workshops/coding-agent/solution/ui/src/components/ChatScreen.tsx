@@ -99,8 +99,11 @@ export function ChatScreen() {
       ) : (
         <>
           <header className="chat-header">
+            <span className="chat-header-powered">
+              <span className="chat-header-poweredby">Powered by</span>
+              <span className="chat-header-brand">RocketRide</span>
+            </span>
             <img src="/rocketride-icon.svg" alt="RocketRide" />
-            <span>Cody Rider</span>
           </header>
           <MessageList messages={messages} />
           <Composer
