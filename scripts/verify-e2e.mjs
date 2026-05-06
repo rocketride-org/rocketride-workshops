@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 /**
- * End-to-end smoke test: starts `pnpm dev` for a workshop's solution,
+ * End-to-end smoke test: starts the workshop's api + ui workspaces,
  * polls the UI's vite proxy at /health until the API responds 200,
  * then shuts everything down. The probe avoids /api/chat because that
  * route depends on a live RocketRide runtime + LLM key, neither of
  * which CI provides.
+ *
+ * Skips the runtime workspace on purpose: pnpm `--parallel` cascade-
+ * kills siblings when one exits non-zero, and the runtime engine fails
+ * to compile its python deps in CI (transitive `docopt` build needs
+ * setuptools, which the engine bundle doesn't ship). The api lifespan
+ * tolerates a missing runtime — it logs the connect failure and serves
+ * /api/health with `pipeline: "unavailable"`.
  *
  * Cross-platform: uses tree-kill to terminate the process group on Windows
  * (where SIGTERM doesn't reliably reach pnpm's grandchildren).
@@ -20,12 +27,12 @@ const SHUTDOWN_TIMEOUT_MS = 15_000;
 
 const isWindows = process.platform === "win32";
 
-console.log(`e2e: starting \`pnpm dev\` in ${PROJECT}`);
-const child = spawn("pnpm", ["dev"], {
+console.log(`e2e: starting api + ui workspaces in ${PROJECT}`);
+const child = spawn("pnpm", ["--filter", "./api", "--filter", "./ui", "--parallel", "run", "dev"], {
   cwd: PROJECT,
   stdio: ["ignore", "inherit", "inherit"],
   shell: isWindows,
-  env: process.env,
+  env: { ...process.env, ROCKETRIDE_CONNECT_TIMEOUT: "5" },
   detached: !isWindows,
 });
 

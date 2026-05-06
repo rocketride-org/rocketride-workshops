@@ -14,12 +14,15 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import os
 from collections.abc import Awaitable, Callable
 from typing import Any
 
 from rocketride import RocketRideClient
 
 logger = logging.getLogger("coding-agent")
+
+DEFAULT_CONNECT_TIMEOUT = 60.0
 
 _client: RocketRideClient | None = None
 
@@ -73,7 +76,7 @@ async def get_client() -> RocketRideClient:
 
 
 async def connect_with_retry(
-    timeout: float = 60.0,
+    timeout: float | None = None,
     interval: float = 1.0,
 ) -> RocketRideClient:
     """Wait for the runtime to come up, then connect.
@@ -81,8 +84,14 @@ async def connect_with_retry(
     `pnpm dev` boots api and runtime in parallel; the api lifespan
     usually wins the race and hits a connection-refused. Retry every
     `interval` seconds until the runtime listens or `timeout` elapses.
+    Override the default with `ROCKETRIDE_CONNECT_TIMEOUT` (seconds) —
+    CI sets this low so the api yields quickly when no runtime is
+    expected.
     """
     global _client
+    if timeout is None:
+        env_timeout = os.environ.get("ROCKETRIDE_CONNECT_TIMEOUT")
+        timeout = float(env_timeout) if env_timeout else DEFAULT_CONNECT_TIMEOUT
     deadline = asyncio.get_event_loop().time() + timeout
     warned = False
     last_error: Exception | None = None
