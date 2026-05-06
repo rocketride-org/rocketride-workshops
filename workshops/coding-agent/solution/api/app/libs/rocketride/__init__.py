@@ -4,7 +4,12 @@ Routes import from `app.libs.rocketride` rather than touching the SDK
 directly, so client lifecycle and chat helpers live in one place.
 """
 
-from app.libs.rocketride.chat import send_audio, send_text, start_coding_agent
+from app.libs.rocketride.chat import (
+    send_audio,
+    send_text,
+    start_chat_only,
+    start_coding_agent,
+)
 from app.libs.rocketride.client import (
     connect_with_retry,
     disconnect,
@@ -21,5 +26,6 @@ __all__ = [
     "send_audio",
     "send_text",
     "set_event_handler",
+    "start_chat_only",
     "start_coding_agent",
 ]

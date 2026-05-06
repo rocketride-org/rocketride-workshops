@@ -11,25 +11,35 @@ from app.libs.rocketride.client import get_client
 
 logger = logging.getLogger("coding-agent")
 
-PIPELINE_PATH = Path(__file__).resolve().parents[2] / "pipelines" / "coding-agent.pipe"
+PIPELINES_DIR = Path(__file__).resolve().parents[2] / "pipelines"
+PIPELINE_PATH = PIPELINES_DIR / "coding-agent.pipe"
+CHAT_PIPELINE_PATH = PIPELINES_DIR / "chat-only.pipe"
 
 RUNTIME_EVENT_TYPES = ["task", "summary", "sse"]
 
 StatusCallback = Callable[[str], Awaitable[None]]
 
 
-async def start_coding_agent() -> str:
+async def _start_pipeline(pipeline_path: Path, label: str) -> str:
     client = await get_client()
     result = cast(
         dict[str, Any],
-        await client.use(filepath=str(PIPELINE_PATH), pipelineTraceLevel="none"),
+        await client.use(filepath=str(pipeline_path), pipelineTraceLevel="none"),
     )
     token = cast(str, result["token"])
     try:
         await client.set_events(token, RUNTIME_EVENT_TYPES)
     except Exception:
-        logger.exception("set_events failed; continuing without runtime observability")
+        logger.exception("%s set_events failed; continuing without runtime observability", label)
     return token
+
+
+async def start_coding_agent() -> str:
+    return await _start_pipeline(PIPELINE_PATH, "coding-agent")
+
+
+async def start_chat_only() -> str:
+    return await _start_pipeline(CHAT_PIPELINE_PATH, "chat-only")
 
 
 async def send_text(

@@ -85,14 +85,10 @@
         "agent_description": "Cody Rider — a coding agent that helps the user build a full-stack project. Asks clarifying questions when scope is unclear and builds incrementally.",
         "instructions": [
           "Project root: ${ROCKETRIDE_OUTPUT_DIR}.",
-          "Tools: tool_shell (commands), tool_filesystem (file edits), tool_git (version control).",
-          "Confirm major scope decisions before generating files.",
+          "Tools: tool_shell, tool_filesystem, tool_git. One tool call per turn.",
           "Reply concise unless the user asks for detail.",
-          "One tool call per turn unless the user asks for multi-step work.",
-          "Conversational turns (greetings, clarifications, planning): reply directly, no tools.",
-          "Run shell only when the user asks to execute, or a build step requires it.",
-          "One decisive action over exploratory iteration. Ask the user when unsure instead of looping.",
-          "Long-running processes (servers, watchers, daemons): spawn detached and redirect output. Windows: `start /b cmd /c \"<cmd> > server.log 2>&1\"`. Unix: `nohup <cmd> > server.log 2>&1 &`. Capture the PID at spawn, probe to verify (`curl -fsS http://localhost:<port>/` or `Invoke-WebRequest`), and stop later by that PID only (`taskkill /F /PID <pid>` / `kill <pid>`). Never kill by image name (`taskkill /IM`, `pkill <name>`, `Get-Process X | Stop-Process`) — that kills the rocketride engine running this chat."
+          "Run shell only when the task requires it (build step, install, server, etc).",
+          "Long-running processes: spawn detached, redirect to server.log, capture PID, probe to verify. Windows `start /b cmd /c`, Unix `nohup ... &`. Stop by PID only — never by image name (`taskkill /IM`, `pkill <name>`, `Get-Process X | Stop-Process`); those kill the engine running this chat."
         ],
         "name": "CrewAI"
       },
@@ -137,29 +133,6 @@
       "control": [
         {
           "classType": "llm",
-          "from": "agent_crewai_1"
-        }
-      ]
-    },
-    {
-      "id": "memory_internal_1",
-      "provider": "memory_internal",
-      "name": "Memory",
-      "config": {
-        "type": "memory_internal",
-        "name": "Memory"
-      },
-      "ui": {
-        "position": {
-          "x": 1700,
-          "y": 690
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "memory",
           "from": "agent_crewai_1"
         }
       ]
@@ -289,5 +262,5 @@
     10,
     10
   ],
-  "docRevision": 42
+  "docRevision": 44
 }

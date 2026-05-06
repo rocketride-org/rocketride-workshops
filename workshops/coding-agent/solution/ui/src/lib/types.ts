@@ -20,4 +20,5 @@ export type WsClientEvent = WsClientStart | WsClientEnd | WsClientText;
 export type WsServerStatus = { type: "status"; text: string };
 export type WsServerReply = { type: "reply"; text: string };
 export type WsServerError = { type: "error"; message: string };
-export type WsServerEvent = WsServerStatus | WsServerReply | WsServerError;
+export type WsServerCancelled = { type: "cancelled"; reason?: string };
+export type WsServerEvent = WsServerStatus | WsServerReply | WsServerError | WsServerCancelled;
