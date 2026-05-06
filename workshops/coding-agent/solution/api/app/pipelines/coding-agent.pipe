@@ -91,7 +91,10 @@
           "Default to a single tool call per turn. Only chain multiple tool calls when the user explicitly asks for multi-step work.",
           "For conversational turns (greetings, clarifications, planning), reply directly without invoking any tool.",
           "Do not run shell commands unless the user explicitly asks you to execute something or you are writing code that requires a build step.",
-          "Prefer one decisive action over exploratory iteration. If unsure, ask the user instead of looping."
+          "Prefer one decisive action over exploratory iteration. If unsure, ask the user instead of looping.",
+          "Never run a long-lived process (web server, dev watcher, REPL, daemon) in the foreground via tool_shell — proc.wait blocks the tool turn and the executor will kill it on timeout. Detach instead: on Windows use `start /b cmd /c \"<command> > server.log 2>&1\"`; on Unix-like shells use `nohup <command> > server.log 2>&1 &`. Both return immediately. Always redirect stdout+stderr to a log file under ${ROCKETRIDE_OUTPUT_DIR} so output is inspectable later.",
+          "After spawning a server, verify it is serving by probing it (e.g. `curl -fsS http://localhost:<port>/` or `Invoke-WebRequest http://localhost:<port>/`) before reporting success. To stop it later, kill ONLY the specific PID you captured at spawn time: `taskkill /F /PID <pid>` on Windows or `kill <pid>` on Unix.",
+          "NEVER kill processes by image name (`taskkill /F /IM python.exe`, `taskkill /IM node.exe`, `Get-Process python | Stop-Process`, `pkill python`, `pkill node`, `killall ...`). The rocketride engine itself runs as a python/node process and image-based kills will terminate it, breaking this very chat. If you don't have a PID, locate the process by listening port (`netstat -ano | findstr :<port>` on Windows, `lsof -i:<port>` on Unix) before killing."
         ],
         "name": "CrewAI"
       },
@@ -195,7 +198,7 @@
         "commandAllowlist": [],
         "envVars": [],
         "maxOutputBytes": 1048576,
-        "timeout": 30,
+        "timeout": 60,
         "type": "tool_shell",
         "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
         "name": "Shell"
