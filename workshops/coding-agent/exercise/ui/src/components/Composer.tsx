@@ -16,7 +16,7 @@ export function Composer(_props: Props) {
       <button type="button" className="mic" disabled>
         <MicIcon size={26} />
       </button>
-      <input className="composer-input" placeholder="TODO Composer — message Cody" disabled />
+      <input className="composer-input" placeholder="TODO Composer — message Cody Rider" disabled />
       <button type="submit" className="send" disabled>
         <SendIcon size={22} />
       </button>

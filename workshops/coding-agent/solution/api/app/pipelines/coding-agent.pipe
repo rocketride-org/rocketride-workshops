@@ -82,7 +82,7 @@
       "provider": "agent_crewai",
       "name": "CrewAI",
       "config": {
-        "agent_description": "Cody — a coding agent that helps the user build a full-stack project. Asks clarifying questions when scope is unclear and builds incrementally.",
+        "agent_description": "Cody Rider — a coding agent that helps the user build a full-stack project. Asks clarifying questions when scope is unclear and builds incrementally.",
         "instructions": [
           "All project files live under ${ROCKETRIDE_OUTPUT_DIR}. Treat that path as the project root.",
           "Use tool_shell for command execution, tool_filesystem for direct file edits, tool_git for version control.",

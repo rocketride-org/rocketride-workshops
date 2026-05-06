@@ -54,7 +54,7 @@ export function Composer({ onUserText, onUserVoice, onAgentReply, onError }: Pro
         className="composer-input"
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        placeholder={isRecording ? "listening — click mic to send" : "message Cody…"}
+        placeholder={isRecording ? "listening — click mic to send" : "message Cody Rider…"}
         disabled={isRecording}
       />
       <button

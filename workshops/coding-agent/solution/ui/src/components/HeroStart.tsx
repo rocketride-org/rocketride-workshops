@@ -36,7 +36,7 @@ export function HeroStart({ onUserText, onUserVoice, onAgentReply, onError }: Pr
     <section className="hero">
       <div className="hero-brand">
         <img src="/rocketride-icon-dark.svg" alt="RocketRide" />
-        <p className="hero-brand-name">Cody</p>
+        <p className="hero-brand-name">Cody Rider</p>
       </div>
       <h1 className="hero-title">what shall we build?</h1>
       <button
@@ -62,7 +62,7 @@ export function HeroStart({ onUserText, onUserVoice, onAgentReply, onError }: Pr
           className="hero-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="tell Cody what to build…"
+          placeholder="tell Cody Rider what to build…"
           disabled={isRecording}
         />
       </form>

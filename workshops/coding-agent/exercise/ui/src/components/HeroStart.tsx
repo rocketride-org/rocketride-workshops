@@ -13,7 +13,7 @@ export function HeroStart(_props: Props) {
     <section className="hero">
       <div className="hero-brand">
         <img src="/rocketride-icon-dark.svg" alt="RocketRide" />
-        <p className="hero-brand-name">Cody</p>
+        <p className="hero-brand-name">Cody Rider</p>
       </div>
       <h1 className="hero-title">what shall we build?</h1>
       <button type="button" className="hero-mic" disabled>

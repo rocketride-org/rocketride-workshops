@@ -71,7 +71,7 @@ export function ChatScreen() {
         <>
           <header className="chat-header">
             <img src="/rocketride-icon.svg" alt="RocketRide" />
-            <span>Cody — exercise</span>
+            <span>Cody Rider — exercise</span>
           </header>
           <MessageList messages={messages} />
           <Composer
