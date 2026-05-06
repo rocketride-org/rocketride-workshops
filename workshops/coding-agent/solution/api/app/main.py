@@ -98,7 +98,7 @@ logging.getLogger().addFilter(SecretScrubFilter())
 logger = logging.getLogger("coding-agent")
 runtime_logger = _make_runtime_logger()
 
-OUTPUT_DIR = Path(__file__).resolve().parents[1] / ".output"
+OUTPUT_DIR = Path(__file__).resolve().parents[2] / ".output"
 
 
 async def _on_runtime_event(message: dict[str, Any]) -> None:
