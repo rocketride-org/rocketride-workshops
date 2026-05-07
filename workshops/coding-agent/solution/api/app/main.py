@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from app.libs.rocketride import (
     connect_with_retry,
     disconnect,
+    record_runtime_event,
     reset_client,
     send_text,
     set_event_handler,
@@ -153,8 +154,11 @@ async def _on_runtime_event(message: dict[str, Any]) -> None:
     formatter = _RUNTIME_EVENT_FORMATTERS.get(event_type)
     if formatter:
         runtime_logger.info("%s", formatter(seq, event_type, body))
-        return
-    runtime_logger.info("seq=%s %s %s", seq, event_type, _trunc(repr(body)))
+    else:
+        runtime_logger.info("seq=%s %s %s", seq, event_type, _trunc(repr(body)))
+    # Tee into the per-turn tracer buffer (no-op outside a chat turn) so the
+    # log file gets the per-node invoke stream Studio renders.
+    record_runtime_event(event_type, seq, body)
 
 
 # ----------------------------------------------------------------------------

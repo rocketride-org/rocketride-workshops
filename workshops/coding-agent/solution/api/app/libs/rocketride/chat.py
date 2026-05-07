@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterator
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -23,6 +24,13 @@ RUNTIME_EVENT_TYPES = ["task", "summary", "sse"]
 TRACE_LEVEL = "full"
 
 StatusCallback = Callable[[str], Awaitable[None]]
+
+# Per-turn buffer for global runtime events. Set by `_capture_runtime_events`
+# while a chat turn is in flight, then drained into the tracer file. Module-
+# level (not contextvar) because the SDK dispatches global events from its WS
+# task, which doesn't share context with the request task. Single-user
+# workshop only — main.py's send_lock guarantees one turn at a time.
+_active_capture: list[dict[str, Any]] | None = None
 
 
 async def start_coding_agent() -> str:
@@ -77,31 +85,70 @@ async def send_text(
     q = Question()  # type: ignore[call-arg]  # pydantic Field defaults; mypy can't infer
     q.addQuestion(text)
     started = datetime.now()
-    try:
-        result = cast(
-            dict[str, Any],
-            await client.chat(token=token, question=q, on_sse=_sse),
-        )
-        _dump_tracer(started, text, sse_events, result, error=None)
-    except Exception as exc:
-        _dump_tracer(started, text, sse_events, None, error=exc)
-        raise
+    with _capture_runtime_events() as runtime_events:
+        try:
+            result = cast(
+                dict[str, Any],
+                await client.chat(token=token, question=q, on_sse=_sse),
+            )
+            _dump_tracer(started, text, sse_events, runtime_events, result, error=None)
+        except Exception as exc:
+            _dump_tracer(started, text, sse_events, runtime_events, None, error=exc)
+            raise
     return _first_answer(result)
+
+
+@contextmanager
+def _capture_runtime_events() -> Iterator[list[dict[str, Any]]]:
+    """Open a per-turn buffer for global runtime events.
+
+    main.py's `_on_runtime_event` tees every non-noise event into the
+    active buffer via `record_runtime_event`. Buffer is reset on exit so
+    later turns don't inherit stale events.
+    """
+    global _active_capture
+    buffer: list[dict[str, Any]] = []
+    _active_capture = buffer
+    try:
+        yield buffer
+    finally:
+        _active_capture = None
+
+
+def record_runtime_event(event_type: str, seq: Any, body: Any) -> None:
+    """Append a global runtime event to the active per-turn capture buffer.
+
+    No-op when no turn is in flight. Called from main.py's runtime event
+    handler so the tracer dump can include per-node invokes (the same
+    detail Studio renders).
+    """
+    if _active_capture is None:
+        return
+    _active_capture.append(
+        {
+            "ts": datetime.now().isoformat(),
+            "event": event_type,
+            "seq": seq,
+            "body": body,
+        }
+    )
 
 
 def _dump_tracer(
     started: datetime,
     prompt: str,
     sse_events: list[dict[str, Any]],
+    runtime_events: list[dict[str, Any]],
     result: dict[str, Any] | None,
     error: BaseException | None,
 ) -> None:
     """Append one run's raw tracer payload to ``logs/{YYYY-MM-DD}_tracer.log``.
 
-    Writes the prompt, every SSE event captured during the chat call, the
-    full ``result`` dict (which carries ``_trace`` when ``pipelineTraceLevel``
-    is set), and any terminating exception. Nothing is filtered or
-    summarised — the goal is to keep raw material for later review.
+    Writes the prompt, every SSE event captured during the chat call, every
+    global runtime event captured during the chat call (the per-node invoke
+    stream Studio renders), the full ``result`` dict, and any terminating
+    exception. Nothing is filtered or summarised — the goal is to keep raw
+    material for later review.
     """
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     ended = datetime.now()
@@ -111,6 +158,7 @@ def _dump_tracer(
         "run_ended": ended.isoformat(),
         "prompt": prompt,
         "sse_events": sse_events,
+        "runtime_events": runtime_events,
         "result": result,
         "error": repr(error) if error is not None else None,
     }
