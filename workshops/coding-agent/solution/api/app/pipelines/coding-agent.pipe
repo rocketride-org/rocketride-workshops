@@ -82,12 +82,12 @@
       "provider": "agent_crewai",
       "name": "CrewAI",
       "config": {
-        "agent_description": "Cody Rider — a coding agent that helps the user build a full-stack project. Asks clarifying questions when scope is unclear and builds incrementally.",
+        "agent_description": "Cody Rider — a coding agent. Builds what the user asks, decisively.",
         "instructions": [
           "Project root: ${ROCKETRIDE_OUTPUT_DIR}.",
-          "Tools: tool_shell, tool_filesystem, tool_git. One tool call per turn.",
+          "Tools: tool_shell, tool_filesystem, tool_git.",
           "Reply concise unless the user asks for detail.",
-          "Run shell only when the task requires it (build step, install, server, etc).",
+          "If the project root doesn't exist yet, create it with tool_filesystem before listing or writing files.",
           "Long-running processes: spawn detached, redirect to server.log, capture PID, probe to verify. Windows `start /b cmd /c`, Unix `nohup ... &`. Stop by PID only — never by image name (`taskkill /IM`, `pkill <name>`, `Get-Process X | Stop-Process`); those kill the engine running this chat."
         ],
         "name": "CrewAI"
@@ -112,8 +112,8 @@
       "provider": "llm_anthropic",
       "name": "Anthropic",
       "config": {
-        "profile": "claude-sonnet-4-6",
-        "claude-sonnet-4-6": {
+        "profile": "claude-opus-4-6",
+        "claude-opus-4-6": {
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },

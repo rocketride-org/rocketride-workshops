@@ -268,7 +268,11 @@ async def _recover_pipeline(label: str) -> str | None:
 # ----------------------------------------------------------------------------
 
 _PIPELINE_WAIT_SECONDS = 180.0
-_PIPELINE_TURN_TIMEOUT = float(os.environ.get("PIPELINE_TURN_TIMEOUT", "300"))
+_LEGACY_TURN_TIMEOUT = os.environ.get("PIPELINE_TURN_TIMEOUT")
+_TURN_TIMEOUTS: dict[str, float] = {
+    "chat": float(os.environ.get("CHAT_TURN_TIMEOUT", _LEGACY_TURN_TIMEOUT or "60")),
+    "coding": float(os.environ.get("CODING_TURN_TIMEOUT", _LEGACY_TURN_TIMEOUT or "1800")),
+}
 _STATUS_THROTTLE_SECONDS = 0.25  # ~4 Hz max
 _CODING_VERBS = (
     "build",
@@ -392,22 +396,24 @@ async def chat_ws(websocket: WebSocket) -> None:
             terminal_sent = True
             await _send_safe(payload)
 
+        turn_timeout = _TURN_TIMEOUTS.get(label, 1800.0)
         try:
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
             reply = await asyncio.wait_for(
                 _send_with_recovery(label, payload),
-                timeout=_PIPELINE_TURN_TIMEOUT,
+                timeout=turn_timeout,
             )
             await _emit_terminal({"type": "reply", "text": reply})
         except TimeoutError:
             logger.warning(
-                "%s turn exceeded PIPELINE_TURN_TIMEOUT=%.0fs; cancelling",
+                "%s turn exceeded %.0fs timeout; cancelling",
                 label,
-                _PIPELINE_TURN_TIMEOUT,
+                turn_timeout,
             )
             await _emit_terminal(
                 {
                     "type": "error",
-                    "message": f"pipeline took longer than {int(_PIPELINE_TURN_TIMEOUT)}s — cancelled",
+                    "message": f"{label} pipeline took longer than {int(turn_timeout)}s — cancelled",
                 }
             )
         except asyncio.CancelledError:
