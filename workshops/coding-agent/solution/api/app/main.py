@@ -376,6 +376,8 @@ async def chat_ws(websocket: WebSocket) -> None:
 
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            for sub in ("frontend", "backend", "db", "tests"):
+                (OUTPUT_DIR / sub).mkdir(parents=True, exist_ok=True)
             reply = await asyncio.wait_for(
                 _send_with_recovery(payload),
                 timeout=_TURN_TIMEOUT,
