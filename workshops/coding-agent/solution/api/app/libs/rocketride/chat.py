@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from datetime import datetime
@@ -17,7 +18,10 @@ from app.libs.rocketride.client import get_client
 logger = logging.getLogger("coding-agent")
 
 PIPELINES_DIR = Path(__file__).resolve().parents[2] / "pipelines"
-PIPELINE_PATH = PIPELINES_DIR / "coding-agent.pipe"
+# Swap pipelines for A/B speed comparisons via env, e.g.
+# `CODING_PIPELINE=coding-agent-new.pipe` selects the single-Cody-Rider
+# baseline; default is the Deep Agent fan-out pipeline.
+PIPELINE_PATH = PIPELINES_DIR / os.environ.get("CODING_PIPELINE", "coding-agent.pipe")
 LOG_DIR = Path(__file__).resolve().parents[4] / "logs"
 
 # Subscribe to the full observability fan: task lifecycle, periodic status,
@@ -40,6 +44,7 @@ _active_capture: list[dict[str, Any]] | None = None
 
 async def start_coding_agent() -> str:
     client = await get_client()
+    logger.info("loading pipeline: %s", PIPELINE_PATH.name)
     # ttl=0 disables the engine's idle-pipeline GC so the cached token stays
     # valid across turns. Without this, long fan-outs (35-node deepagent) push
     # past the server-default idle window and the next pipe.open() raises
