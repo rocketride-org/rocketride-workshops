@@ -9,9 +9,6 @@ import { ResetBanner } from "./ResetBanner";
 
 const WARMING_HINT = "warming up coding agent — first reply takes longer…";
 const HERO_FADE_MS = 220;
-const STUCK_WATCHDOG_MS = 90_000;
-const STUCK_MESSAGE =
-  "no response from the agent — try again, or restart the pipeline if this keeps happening";
 
 type Phase = "hero" | "transitioning" | "chat";
 
@@ -52,46 +49,32 @@ export function ChatScreen() {
       const pending = pendingAgentMessage(isFirst ? WARMING_HINT : undefined);
       append(pending);
 
-      let watchdog = window.setTimeout(fireStuck, STUCK_WATCHDOG_MS);
-      function resetWatchdog() {
-        window.clearTimeout(watchdog);
-        watchdog = window.setTimeout(fireStuck, STUCK_WATCHDOG_MS);
-      }
-      function clearWatchdog() {
-        window.clearTimeout(watchdog);
-      }
-      function fireStuck() {
-        off();
-        update(pending.id, {
-          text: STUCK_MESSAGE,
-          pending: false,
-          hint: undefined,
-        });
-      }
-
       const off = socket.onMessage((event) => {
-        resetWatchdog();
         if (event.type === "status") {
           update(pending.id, { hint: event.text });
         } else if (event.type === "reply") {
-          clearWatchdog();
           off();
-          update(pending.id, { text: event.text, pending: false, hint: undefined });
+          update(pending.id, {
+            text: event.text,
+            pending: false,
+            hint: undefined,
+            createdAt: Date.now(),
+          });
         } else if (event.type === "cancelled") {
-          clearWatchdog();
           off();
           update(pending.id, {
             text: event.reason ?? "pipeline restarted — re-send your message",
             pending: false,
             hint: undefined,
+            createdAt: Date.now(),
           });
         } else if (event.type === "error") {
-          clearWatchdog();
           off();
           update(pending.id, {
             text: `error: ${event.message}`,
             pending: false,
             hint: undefined,
+            createdAt: Date.now(),
           });
         }
       });
@@ -99,12 +82,12 @@ export function ChatScreen() {
       try {
         await socket.send({ type: "text", text });
       } catch (err) {
-        clearWatchdog();
         off();
         update(pending.id, {
           text: err instanceof Error ? `error: ${err.message}` : "error",
           pending: false,
           hint: undefined,
+          createdAt: Date.now(),
         });
       }
     },
