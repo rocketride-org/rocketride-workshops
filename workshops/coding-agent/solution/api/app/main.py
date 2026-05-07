@@ -103,9 +103,13 @@ runtime_logger = _make_runtime_logger()
 OUTPUT_DIR = Path(__file__).resolve().parents[2] / ".output"
 
 
-# Engine emits these every second per node (cpu/memory/gpu metrics) and they
-# drown the dev console without adding signal. Skip them outright.
-_RUNTIME_EVENT_NOISE = frozenset({"apaevt_status_update"})
+# apaevt_status_update is a per-second per-node heartbeat (cpu/mem/gpu rates)
+# — useless raw, would balloon the tracer file. Drop everywhere.
+_TRACER_DROP = frozenset({"apaevt_status_update"})
+# apaevt_flow + output fire per-lane-write / per-line — fine for the tracer
+# file (that's where the exact per-node payloads live), too granular for the
+# live dev console.
+_CONSOLE_NOISE = frozenset({"apaevt_status_update", "apaevt_flow", "output"})
 
 _BODY_TRUNCATE = 200
 
@@ -147,18 +151,20 @@ _RUNTIME_EVENT_FORMATTERS: dict[str, Callable[[Any, str, Any], str]] = {
 
 async def _on_runtime_event(message: dict[str, Any]) -> None:
     event_type = message.get("event") or "?"
-    if event_type in _RUNTIME_EVENT_NOISE:
-        return
     seq = message.get("seq")
     body = message.get("body")
+    # Tee into the per-turn tracer buffer FIRST (no-op outside a chat turn) so
+    # the log file gets every flow/output payload verbatim — the exact data
+    # Studio renders, regardless of whether console suppresses it.
+    if event_type not in _TRACER_DROP:
+        record_runtime_event(event_type, seq, body)
+    if event_type in _CONSOLE_NOISE:
+        return
     formatter = _RUNTIME_EVENT_FORMATTERS.get(event_type)
     if formatter:
         runtime_logger.info("%s", formatter(seq, event_type, body))
     else:
         runtime_logger.info("seq=%s %s %s", seq, event_type, _trunc(repr(body)))
-    # Tee into the per-turn tracer buffer (no-op outside a chat turn) so the
-    # log file gets the per-node invoke stream Studio renders.
-    record_runtime_event(event_type, seq, body)
 
 
 # ----------------------------------------------------------------------------

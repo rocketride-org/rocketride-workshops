@@ -20,7 +20,12 @@ PIPELINES_DIR = Path(__file__).resolve().parents[2] / "pipelines"
 PIPELINE_PATH = PIPELINES_DIR / "coding-agent.pipe"
 LOG_DIR = Path(__file__).resolve().parents[4] / "logs"
 
-RUNTIME_EVENT_TYPES = ["task", "summary", "sse"]
+# Subscribe to the full observability fan: task lifecycle, periodic status,
+# per-component flow traces (input/output/error per node — only delivered when
+# the pipeline was started with pipelineTraceLevel != "none"), engine output
+# lines, and node→UI SSE. FLOW is what carries the exact per-node payloads
+# Studio renders; without it the tracer file is just lifecycle confetti.
+RUNTIME_EVENT_TYPES = ["task", "summary", "flow", "output", "sse"]
 TRACE_LEVEL = "full"
 
 StatusCallback = Callable[[str], Awaitable[None]]
