@@ -53,6 +53,7 @@ Desktop.ini
 
 # Logs
 *.log
+logs/
 
 # Tool state
 .claude/
