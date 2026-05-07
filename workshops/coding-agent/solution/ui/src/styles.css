@@ -240,6 +240,18 @@ body {
   height: 30px;
 }
 
+.chat-header-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.chat-header-link:hover .chat-header-brand {
+  filter: brightness(1.15);
+}
+
 .chat-header-powered {
   display: inline-flex;
   align-items: baseline;

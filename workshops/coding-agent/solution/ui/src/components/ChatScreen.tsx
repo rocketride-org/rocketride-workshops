@@ -133,11 +133,18 @@ export function ChatScreen() {
       ) : (
         <>
           <header className="chat-header">
-            <span className="chat-header-powered">
-              <span className="chat-header-poweredby">Powered by</span>
-              <span className="chat-header-brand">RocketRide</span>
-            </span>
-            <img src="/rocketride-icon.svg" alt="RocketRide" />
+            <a
+              className="chat-header-link"
+              href="https://rocketride.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="chat-header-powered">
+                <span className="chat-header-poweredby">Powered by</span>
+                <span className="chat-header-brand">RocketRide</span>
+              </span>
+              <img src="/rocketride-icon.svg" alt="RocketRide" />
+            </a>
           </header>
           <MessageList messages={messages} />
           <Composer
