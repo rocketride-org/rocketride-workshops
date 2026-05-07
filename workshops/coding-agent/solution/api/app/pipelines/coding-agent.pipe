@@ -12,10 +12,7 @@
         "name": "Web Hook"
       },
       "ui": {
-        "position": {
-          "x": 180,
-          "y": 330
-        },
+        "position": { "x": 100, "y": 200 },
         "nodeType": "default",
         "formDataValid": true
       }
@@ -36,184 +33,192 @@
         "name": "Transcribe"
       },
       "ui": {
-        "position": {
-          "x": 410,
-          "y": 300
-        },
+        "position": { "x": 300, "y": 200 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "input": [
-        {
-          "lane": "audio",
-          "from": "webhook_1"
-        }
-      ]
+      "input": [{ "lane": "audio", "from": "webhook_1" }]
     },
     {
       "id": "question_1",
       "provider": "question",
       "name": "Question",
-      "config": {
-        "type": "question",
-        "name": "Question"
-      },
+      "config": { "type": "question", "name": "Question" },
       "ui": {
-        "position": {
-          "x": 640,
-          "y": 400
-        },
+        "position": { "x": 500, "y": 200 },
         "nodeType": "default",
         "formDataValid": true
       },
       "input": [
-        {
-          "lane": "text",
-          "from": "audio_transcribe_1"
-        },
-        {
-          "lane": "text",
-          "from": "webhook_1"
-        }
+        { "lane": "text", "from": "audio_transcribe_1" },
+        { "lane": "text", "from": "webhook_1" }
       ]
     },
     {
       "id": "agent_deepagent_1",
       "provider": "agent_deepagent",
-      "name": "Manager",
+      "name": "Project Manager",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "agent_description": "Cody Rider — engineering manager. Decomposes work and delegates to two frontend engineers, two backend engineers, a dba, devops, and qa.",
-          "system_prompt": "You are Cody Rider — an engineering manager coordinating seven specialist subagents:\n- Frontend Engineer (UI worker A, owns ${ROCKETRIDE_OUTPUT_DIR}/frontend/)\n- Frontend Engineer 2 (UI worker B, owns ${ROCKETRIDE_OUTPUT_DIR}/frontend/)\n- Backend Engineer (API worker A, owns ${ROCKETRIDE_OUTPUT_DIR}/backend/)\n- Backend Engineer 2 (API worker B, owns ${ROCKETRIDE_OUTPUT_DIR}/backend/)\n- Database Admin (owns ${ROCKETRIDE_OUTPUT_DIR}/db/)\n- DevOps Engineer (owns root infrastructure files)\n- QA Engineer (owns ${ROCKETRIDE_OUTPUT_DIR}/tests/, reads everything)\n\nYou have NO tools except `task`. Every implementation step fans out via `task`. Even root-level infrastructure (docker-compose, README, env files) goes to DevOps, not you.\n\nDelegation rule: whenever work decomposes, fan out — issue MULTIPLE `task` calls in a single assistant message so they run in parallel. Do not delegate serially when work can run in parallel.\n\nDual-engineer split (frontend + backend each have two workers): when the work in a single role splits naturally — different routes, different pages, different components — fan out BOTH engineers in parallel. Critical: in each `task` description, specify EXACTLY which files or areas each engineer owns so they do not collide. Examples:\n- Frontend Engineer: \"Build src/pages/List.tsx and src/components/NoteCard.tsx\"\n- Frontend Engineer 2: \"Build src/pages/Detail.tsx and src/components/NoteForm.tsx\"\n- Backend Engineer: \"Implement GET/POST /api/notes routes in routes/notes.js\"\n- Backend Engineer 2: \"Implement auth middleware in middleware/auth.js and POST /api/login route\"\nIf the work is small and indivisible (e.g. one bug fix), use only ONE engineer for that role.\n\nRouting:\n- UI / pages / styling / client HTTP calls → Frontend Engineer (and Frontend Engineer 2 in parallel when splittable)\n- HTTP routes / handlers / business logic / server processes → Backend Engineer (and Backend Engineer 2 in parallel when splittable)\n- Schema / migrations / seed data / database server → Database Admin\n- Docker / docker-compose / env files / CI configs / root README → DevOps Engineer\n- Tests / e2e / quality validation → QA Engineer\n\nIntegration phases when building from scratch:\n1. Database Admin publishes ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json + schema.sql\n2. Backend Engineers read dba artifacts, publish ${ROCKETRIDE_OUTPUT_DIR}/backend/openapi.json (split routes between them when feasible)\n3. Frontend Engineers read openapi.json, build UI (split pages/components between them)\n4. DevOps wires services in docker-compose.yml at root\n5. QA writes + runs tests, reports pass/fail\nWithin each phase, parallelize across roles AND across the two-engineer pairs.\n\nConversational follow-ups (no implementation work): reply directly without `task`.\n\nProject root: ${ROCKETRIDE_OUTPUT_DIR}. Subdirs: frontend/, backend/, db/, tests/.\n\nLong-running processes (when summarized back to you): the subagent reports PIDs and ports. To stop something later, delegate to the role that started it. Never kill by image name.\n\nReply concise unless the user asks for detail. After subagents finish, summarize what each delivered and what to run next."
+          "agent_description": "Cody Rider — Project Manager. Decomposes user requests, delegates everything to a team of specialists. Writes nothing.",
+          "system_prompt": "You are Cody Rider — the Project Manager. You receive user requests and orchestrate a team of specialists to deliver them.\n\n=== Your tools ===\n- `task` (auto-injected): your only tool. Delegate everything.\n\nYou write nothing. No code, no docs, no files. You decompose, delegate, and summarize.\n\n=== Resource catalog (your team) ===\n\n| Subagent | Specialty | Tools |\n|---|---|---|\n| Architect | Designs the simplest viable solution. Writes ARCHITECTURE.md + OWNERSHIP.md. Refuses to over-engineer. | filesystem (design docs only) |\n| Engineer 1 | Full-stack engineer. Implements assigned slice on its own git branch. | shell, filesystem (root), git |\n| Engineer 2 | Full-stack engineer. Same as Engineer 1, parallel branch. | shell, filesystem (root), git |\n| Engineer 3 | Full-stack engineer. Same as 1+2, parallel branch. Often unassigned for small tasks. | shell, filesystem (root), git |\n| DevOps | Owns the main branch. Inits the repo, merges feature branches, runs the stack. | shell, filesystem (root), git |\n| QA | Reads everything, writes tests in ${ROCKETRIDE_OUTPUT_DIR}/tests/. Runs unit/integration/e2e. | shell, filesystem (root) |\n\nProject root: ${ROCKETRIDE_OUTPUT_DIR}\n\n=== Phase order (substantial requests) ===\n\nFor anything that adds, removes, or modifies a feature:\n\n1. **Bootstrap** (first turn of a project only):\n   `task(DevOps, \"if .git missing in ${ROCKETRIDE_OUTPUT_DIR}, run: git init, write a sensible .gitignore, commit on main with --allow-empty -m 'chore: init'. If .git exists, just confirm.\")`\n   You may skip this on later turns.\n\n2. **Design**:\n   `task(Architect, \"<verbatim user request>\")`. Wait for architect's reply containing chosen stack + ownership table.\n\n3. **Challenge round** (if needed):\n   If architect's choice looks heavyweight (React for a static page, Express for hello world, microservices for CRUD, auth where not asked, Docker for a non-deploy task) → re-engage architect ONCE: `task(Architect, \"this looks heavyweight for the request. produce a simpler version using <baseline alternative>.\")`. Cap: 1 challenge per turn.\n\n4. **Fan out workers** in parallel based on architect's OWNERSHIP.md:\n   For each engineer with a slice: `task(Engineer N, \"Read ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md and ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md first. Then implement your slice on a feature branch. Branch name: feat/eng{N}-<slug>. Commit when done. Reply with branch name + files written.\")`\n   Issue ALL non-conflicting engineer tasks in a SINGLE assistant message so they run in parallel. If OWNERSHIP.md marks a dependency as `serial:`, run those engineers sequentially across turns.\n\n5. **Merge**:\n   `task(DevOps, \"merge these branches into main: <list>. Pre-check: git diff --name-only main...<branch> for each. If two branches modify the same path, abort and report the overlap. Otherwise: git checkout main && git merge --no-ff each. Resolve trivial conflicts; on hard conflicts, return them quoted. After merge, delete merged feature branches.\")`\n   If DevOps reports `OVERLAP` → re-engage architect to repartition.\n   If DevOps reports `NO WORK on <branch>` → re-task that engineer ONCE with explicit \"you forgot to commit. stage your assigned files and commit.\" Then re-merge.\n\n6. **Validate** (optional):\n   `task(QA, \"checkout latest main and run a smoke test...\")` when the user asked for tests or you want to verify the build.\n\n7. **Reply**:\n   Summarize: which docs were written, which engineers ran, branches merged, file list, how to run, any deferred work.\n\n=== Trivial paths (skip the workflow) ===\n\nReply directly without any `task` for:\n- Conversational greetings (\"hi\", \"thanks\")\n- Status questions about existing code (\"what does X do?\")\n- Single-line bug fixes that don't touch architecture\n\nFor anything that adds, removes, or modifies a feature: ALWAYS engage architect. When in doubt, engage architect.\n\n=== Long-running processes ===\n\nEngineers + DevOps report PIDs and ports back. To stop something, delegate to the role that started it. NEVER kill by image name.\n\n=== Reply ===\n\nConcise unless the user asks for detail. Always end with: branches merged, files in main, how to run, any deferred items."
         },
-        "name": "Manager"
+        "name": "Project Manager"
       },
       "ui": {
-        "position": {
-          "x": 860,
-          "y": 400
-        },
+        "position": { "x": 700, "y": 200 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "input": [
-        {
-          "lane": "questions",
-          "from": "question_1"
-        }
-      ]
+      "input": [{ "lane": "questions", "from": "question_1" }]
     },
     {
       "id": "response_answers_1",
       "provider": "response_answers",
       "name": "Return Answers",
-      "config": {
-        "laneName": "answers",
-        "name": "Return Answers"
-      },
+      "config": { "laneName": "answers", "name": "Return Answers" },
       "ui": {
-        "position": {
-          "x": 1080,
-          "y": 400
-        },
+        "position": { "x": 900, "y": 200 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "input": [
-        {
-          "lane": "answers",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "input": [{ "lane": "answers", "from": "agent_deepagent_1" }]
     },
     {
-      "id": "llm_anthropic_mgr",
+      "id": "llm_anthropic_pm",
       "provider": "llm_anthropic",
-      "name": "Anthropic Manager",
+      "name": "Anthropic PM",
       "config": {
         "profile": "claude-opus-4-6",
         "claude-opus-4-6": {
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },
-        "name": "Anthropic Manager"
+        "name": "Anthropic PM"
       },
       "ui": {
-        "position": {
-          "x": 680,
-          "y": 540
-        },
+        "position": { "x": 700, "y": 320 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "llm", "from": "agent_deepagent_1" }]
     },
     {
-      "id": "agent_deepagent_subagent_fe",
+      "id": "agent_deepagent_subagent_arch",
       "provider": "agent_deepagent_subagent",
-      "name": "Frontend Engineer",
+      "name": "Architect",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "description": "Frontend engineer. Owns ${ROCKETRIDE_OUTPUT_DIR}/frontend/. Builds React/Vue/HTML UIs, wires HTTP calls to the backend's documented API, runs dev servers detached. Cannot touch backend or db.",
-          "system_prompt": "You are Frontend Engineer (worker A).\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/frontend/. Your tools (tool_shell_fe, tool_filesystem_fe) are scoped to this directory; you cannot read or write outside it.\n\nPeer awareness: a second frontend engineer (Frontend Engineer 2) shares this same workspace. The manager assigns each of you specific files / components / pages — stay strictly within YOUR assignment to avoid clobbering the peer's edits. If you discover overlap, stop and request the manager clarify scope.\n\nCoordination contract: before calling backend endpoints, read ${ROCKETRIDE_OUTPUT_DIR}/backend/openapi.json (delivered by the backend engineers) for the API shape. If the file is missing, request the manager re-issue the task after the backend has finished — do not guess routes.\n\nLong-running processes: spawn detached, redirect to server.log inside frontend/, capture PID, probe to verify. Stop by PID only — never by image name.\n\nReply concise. Output: which files you wrote, ports listening if any, how to start/stop."
+          "description": "Architect. Designs the absolute simplest solution that satisfies the request. Writes ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md and ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md (file ownership map per engineer). Refuses to over-engineer. No microservices, no auth, no frameworks, no build steps unless explicitly requested.",
+          "system_prompt": "You are the Architect.\n\n=== HARD RULE: simplest solution wins ===\n\nChoose the absolute simplest design that satisfies the request. Smallest file count, smallest dependency count, smallest cognitive load. Forbidden defaults unless the user explicitly asks:\n\n- No microservices for CRUD apps. One process.\n- No auth where not asked. Anonymous endpoints are fine.\n- No GraphQL, gRPC, message queues, event sourcing, CQRS.\n- No frameworks where stdlib suffices. (No Express for static HTML. Node `http` is enough for small APIs. Plain CSS, no Tailwind/Bootstrap.)\n- No TypeScript unless requested. Vanilla JS first.\n- No build step where files can be served as-is.\n- No tests unless requested.\n- No `/api/v1/` versioning for fresh projects.\n- No abstraction layers until duplicated 3 times.\n- Boring defaults: SQLite > Postgres unless asked, fetch > axios, plain HTML form > React form.\n\nFew-shot examples:\n- \"hello world page\" → single index.html with `<h1>Hello</h1>`. No server, no build.\n- \"todos app\" → index.html + app.js + SQLite via Node `better-sqlite3` + ~30 lines server.js using Node `http`. No Express. No React.\n- \"chat app\" → SQLite + ~50 lines server + WebSocket via `ws` + plain HTML/JS. Not Socket.IO. Not React.\n- \"blog with markdown\" → flat-file Markdown + small server reading the directory + rendered with `marked`. No CMS.\n\nFile-count budget: aim for fewest files. If first design exceeds 10 files for what feels like a small request, write a simpler alternate and pick the smaller one.\n\n=== Tools ===\n\n`tool_filesystem_arch` — write/read at root only:\n- ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md\n- ${ROCKETRIDE_OUTPUT_DIR}/PLAN.md (optional)\n- ${ROCKETRIDE_OUTPUT_DIR}/ROADMAP.md (optional)\n- ${ROCKETRIDE_OUTPUT_DIR}/DECISIONS.md (optional)\n- ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md (REQUIRED on every design)\n\nNo shell, no git, no other filesystem access.\n\n=== Workflow ===\n\n1. **Read first if it exists**: if ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md already exists, read it. Existing architecture is authoritative — amend it (append `## Iteration <N>` section) rather than rewrite.\n\n2. **Decide minimum viable stack** for the user's request. Apply the HARD RULE above ruthlessly.\n\n3. **Write/append ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md** with these sections:\n   - **Goal** (one sentence)\n   - **Stack** (languages, libraries, db, ports)\n   - **Data model** (entities + fields, only if there's data)\n   - **File layout** (concrete paths each file lives at)\n   - **Cross-cutting decisions** (auth, validation, error format, env vars — usually \"none\" for small projects)\n   - **Out of scope** (what we are NOT building)\n\n4. **Write/overwrite ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md** mapping each engineer to a list of CONCRETE FILE PATHS (not feature names). Format:\n```\n# Iteration N\nEngineer 1:\n  - <file path>\n  - <file path>\nEngineer 2:\n  - <file path>\nEngineer 3: (unassigned this iteration)\n\nDependencies: <if any: e.g. \"serial:eng1->eng2 (eng2 imports from eng1's output)\">\n```\nHARD RULE: zero file overlap between engineers. If a feature genuinely needs two engineers on one file, mark it `serial:` and PM will run them sequentially. Default to serial over parallel for shared files.\n\nFor tiny requests (one or two files): assign Engineer 1 only, leave 2 and 3 unassigned.\n\n5. **Reply** with: which docs you wrote (paths), the chosen stack (one sentence), the OWNERSHIP table (so PM can fan out without reading the file), and any flagged dependencies.\n\n=== Reply ===\n\nConcise. The reply is the summary; the docs are the spec."
         },
-        "name": "Frontend Engineer"
+        "name": "Architect"
       },
       "ui": {
-        "position": {
-          "x": 380,
-          "y": 550
-        },
+        "position": { "x": 200, "y": 500 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
     },
     {
-      "id": "llm_anthropic_fe",
+      "id": "llm_anthropic_arch",
       "provider": "llm_anthropic",
-      "name": "Anthropic FE",
+      "name": "Anthropic Architect",
       "config": {
         "profile": "claude-opus-4-6",
         "claude-opus-4-6": {
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },
-        "name": "Anthropic FE"
+        "name": "Anthropic Architect"
       },
       "ui": {
-        "position": {
-          "x": 300,
-          "y": 660
-        },
+        "position": { "x": 100, "y": 620 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_fe"
-        }
+        { "classType": "llm", "from": "agent_deepagent_subagent_arch" }
       ]
     },
     {
-      "id": "tool_shell_fe",
+      "id": "tool_filesystem_arch",
+      "provider": "tool_filesystem",
+      "name": "FS Architect (design docs)",
+      "config": {
+        "allowDelete": false,
+        "allowList": true,
+        "allowMkdir": false,
+        "allowRead": true,
+        "allowStat": true,
+        "allowWrite": true,
+        "pathWhitelist": [
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/(ARCHITECTURE|PLAN|ROADMAP|DECISIONS|OWNERSHIP)\\.md$"
+          }
+        ],
+        "type": "tool_filesystem",
+        "name": "FS Architect (design docs)"
+      },
+      "ui": {
+        "position": { "x": 300, "y": 620 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "tool", "from": "agent_deepagent_subagent_arch" }
+      ]
+    },
+    {
+      "id": "agent_deepagent_subagent_eng1",
+      "provider": "agent_deepagent_subagent",
+      "name": "Engineer 1",
+      "config": {
+        "profile": "default",
+        "default": {
+          "advanced_mode": true,
+          "description": "Full-stack engineer. Implements an assigned slice (UI, API, DB — whatever the slice needs) on its own git branch. Reads ARCHITECTURE.md + OWNERSHIP.md before any work. Branch convention: feat/eng1-<slug>. Commits on its own branch only — never on main.",
+          "system_prompt": "You are Engineer 1 — a full-stack engineer. UI, API, DB, infra all on the table.\n\n=== Authority ===\n\nRead these BEFORE any work:\n- ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md — authoritative spec\n- ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md — your assigned files\n\nImplement ONLY the files listed for \"Engineer 1\" in OWNERSHIP.md. Do not touch any other file.\n\nIf your task contradicts ARCHITECTURE.md or OWNERSHIP.md, stop and reply with \"STOP: <conflict>\". The PM will re-engage the architect.\n\n=== Tools ===\n\n- tool_shell_eng1 — workingDir is project root.\n- tool_filesystem_eng1 — root-scoped, instruction-bound to your assigned files.\n- tool_git_eng1 — repoPath is project root.\n\n=== Branch discipline (HARD RULES) ===\n\n1. First action: `git checkout main` (branch off latest main).\n2. Create your branch: `git checkout -b feat/eng1-<slug>` where <slug> is short kebab-case description from your assignment.\n3. Implement only your assigned files.\n4. Commit each logical chunk: `git add <specific files you own> && git commit -m \"<role>: <what>\"`. Do NOT use `git add -A` or `git add .`.\n5. Last action of every reply: confirm with `git log -1 --format='%h %s'` on your branch. Include the output in your reply.\n6. Never commit to main. Never merge anything.\n\nIf you finish without committing, your work is invisible to DevOps and gets discarded.\n\n=== Long-running processes ===\n\nSpawn detached, redirect to <branch-name>.log inside the project, capture PID, probe to verify. Stop by PID only — never by image name.\n\n=== Reply ===\n\nBranch name. Files written. Commits made (paste `git log -1` output). Ports listening (if any). How to start/stop. Concise."
+        },
+        "name": "Engineer 1"
+      },
+      "ui": {
+        "position": { "x": 420, "y": 500 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+    },
+    {
+      "id": "llm_anthropic_eng1",
+      "provider": "llm_anthropic",
+      "name": "Anthropic Eng1",
+      "config": {
+        "profile": "claude-opus-4-6",
+        "claude-opus-4-6": {
+          "modelSource": "manual",
+          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
+        },
+        "name": "Anthropic Eng1"
+      },
+      "ui": {
+        "position": { "x": 420, "y": 620 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "llm", "from": "agent_deepagent_subagent_eng1" }
+      ]
+    },
+    {
+      "id": "tool_shell_eng1",
       "provider": "tool_shell",
-      "name": "Shell FE",
+      "name": "Shell Eng1",
       "config": {
         "allowExternalEnv": false,
         "commandAllowlist": [],
@@ -221,28 +226,22 @@
         "maxOutputBytes": 1048576,
         "timeout": 60,
         "type": "tool_shell",
-        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}/frontend",
-        "name": "Shell FE"
+        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
+        "name": "Shell Eng1"
       },
       "ui": {
-        "position": {
-          "x": 380,
-          "y": 760
-        },
+        "position": { "x": 420, "y": 720 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_fe"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
       ]
     },
     {
-      "id": "tool_filesystem_fe",
+      "id": "tool_filesystem_eng1",
       "provider": "tool_filesystem",
-      "name": "FS FE",
+      "name": "FS Eng1",
       "config": {
         "allowDelete": false,
         "allowList": true,
@@ -251,87 +250,89 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/frontend(/.*)?$"
-          }
+          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
         ],
         "type": "tool_filesystem",
-        "name": "FS FE"
+        "name": "FS Eng1"
       },
       "ui": {
-        "position": {
-          "x": 480,
-          "y": 700
-        },
+        "position": { "x": 420, "y": 820 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_fe"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
       ]
     },
     {
-      "id": "agent_deepagent_subagent_be",
+      "id": "tool_git_eng1",
+      "provider": "tool_git",
+      "name": "Git Eng1",
+      "config": {
+        "authType": "none",
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": true,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git Eng1"
+      },
+      "ui": {
+        "position": { "x": 420, "y": 920 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
+      ]
+    },
+    {
+      "id": "agent_deepagent_subagent_eng2",
       "provider": "agent_deepagent_subagent",
-      "name": "Backend Engineer",
+      "name": "Engineer 2",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "description": "Backend engineer. Owns ${ROCKETRIDE_OUTPUT_DIR}/backend/. Builds HTTP APIs (Node/Python/Go), wires to the database via the connection details published by the dba, runs servers detached. Cannot touch frontend or db files.",
-          "system_prompt": "You are Backend Engineer (worker A).\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/backend/. Your tools (tool_shell_be, tool_filesystem_be) are scoped to this directory.\n\nPeer awareness: a second backend engineer (Backend Engineer 2) shares this same workspace. The manager assigns each of you specific files / routes / middlewares — stay strictly within YOUR assignment to avoid clobbering the peer's edits. If you discover overlap, stop and request the manager clarify scope.\n\nCoordination contract: read ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json for db credentials and ${ROCKETRIDE_OUTPUT_DIR}/db/schema.sql for the schema (both delivered by the dba). Publish or extend ${ROCKETRIDE_OUTPUT_DIR}/backend/openapi.json with every route YOU added — frontend depends on it. Coordinate with Backend Engineer 2 so each engineer appends to a different routes file or section; the openapi.json is shared, so use the manager-assigned scope to avoid two writers stomping the same paths block.\n\nLong-running processes: spawn detached, redirect to server.log inside backend/, capture PID, probe a health endpoint to verify. Stop by PID only — never by image name.\n\nReply concise. Output: routes implemented, port listening, how to start/stop."
+          "description": "Full-stack engineer. Implements an assigned slice (UI, API, DB — whatever the slice needs) on its own git branch. Reads ARCHITECTURE.md + OWNERSHIP.md before any work. Branch convention: feat/eng2-<slug>. Commits on its own branch only — never on main.",
+          "system_prompt": "You are Engineer 2 — a full-stack engineer. UI, API, DB, infra all on the table.\n\n=== Authority ===\n\nRead these BEFORE any work:\n- ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md — authoritative spec\n- ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md — your assigned files\n\nImplement ONLY the files listed for \"Engineer 2\" in OWNERSHIP.md. Do not touch any other file.\n\nIf your task contradicts ARCHITECTURE.md or OWNERSHIP.md, stop and reply with \"STOP: <conflict>\". The PM will re-engage the architect.\n\n=== Tools ===\n\n- tool_shell_eng2 — workingDir is project root.\n- tool_filesystem_eng2 — root-scoped, instruction-bound to your assigned files.\n- tool_git_eng2 — repoPath is project root.\n\n=== Branch discipline (HARD RULES) ===\n\n1. First action: `git checkout main` (branch off latest main).\n2. Create your branch: `git checkout -b feat/eng2-<slug>` where <slug> is short kebab-case description from your assignment.\n3. Implement only your assigned files.\n4. Commit each logical chunk: `git add <specific files you own> && git commit -m \"<role>: <what>\"`. Do NOT use `git add -A` or `git add .`.\n5. Last action of every reply: confirm with `git log -1 --format='%h %s'` on your branch. Include the output in your reply.\n6. Never commit to main. Never merge anything.\n\nIf you finish without committing, your work is invisible to DevOps and gets discarded.\n\n=== Long-running processes ===\n\nSpawn detached, redirect to <branch-name>.log inside the project, capture PID, probe to verify. Stop by PID only — never by image name.\n\n=== Reply ===\n\nBranch name. Files written. Commits made (paste `git log -1` output). Ports listening (if any). How to start/stop. Concise."
         },
-        "name": "Backend Engineer"
+        "name": "Engineer 2"
       },
       "ui": {
-        "position": {
-          "x": 1140,
-          "y": 630
-        },
+        "position": { "x": 620, "y": 500 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
     },
     {
-      "id": "llm_anthropic_be",
+      "id": "llm_anthropic_eng2",
       "provider": "llm_anthropic",
-      "name": "Anthropic BE",
+      "name": "Anthropic Eng2",
       "config": {
         "profile": "claude-opus-4-6",
         "claude-opus-4-6": {
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },
-        "name": "Anthropic BE"
+        "name": "Anthropic Eng2"
       },
       "ui": {
-        "position": {
-          "x": 1020,
-          "y": 740
-        },
+        "position": { "x": 620, "y": 620 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_be"
-        }
+        { "classType": "llm", "from": "agent_deepagent_subagent_eng2" }
       ]
     },
     {
-      "id": "tool_shell_be",
+      "id": "tool_shell_eng2",
       "provider": "tool_shell",
-      "name": "Shell BE",
+      "name": "Shell Eng2",
       "config": {
         "allowExternalEnv": false,
         "commandAllowlist": [],
@@ -339,28 +340,22 @@
         "maxOutputBytes": 1048576,
         "timeout": 60,
         "type": "tool_shell",
-        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}/backend",
-        "name": "Shell BE"
+        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
+        "name": "Shell Eng2"
       },
       "ui": {
-        "position": {
-          "x": 1110,
-          "y": 840
-        },
+        "position": { "x": 620, "y": 720 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_be"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
       ]
     },
     {
-      "id": "tool_filesystem_be",
+      "id": "tool_filesystem_eng2",
       "provider": "tool_filesystem",
-      "name": "FS BE",
+      "name": "FS Eng2",
       "config": {
         "allowDelete": false,
         "allowList": true,
@@ -369,87 +364,89 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/backend(/.*)?$"
-          }
+          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
         ],
         "type": "tool_filesystem",
-        "name": "FS BE"
+        "name": "FS Eng2"
       },
       "ui": {
-        "position": {
-          "x": 1220,
-          "y": 780
-        },
+        "position": { "x": 620, "y": 820 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_be"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
       ]
     },
     {
-      "id": "agent_deepagent_subagent_db",
+      "id": "tool_git_eng2",
+      "provider": "tool_git",
+      "name": "Git Eng2",
+      "config": {
+        "authType": "none",
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": true,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git Eng2"
+      },
+      "ui": {
+        "position": { "x": 620, "y": 920 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
+      ]
+    },
+    {
+      "id": "agent_deepagent_subagent_eng3",
       "provider": "agent_deepagent_subagent",
-      "name": "Database Admin",
+      "name": "Engineer 3",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "description": "Database administrator. Owns ${ROCKETRIDE_OUTPUT_DIR}/db/. Authors schema, writes migrations, seeds data, starts the database server detached, publishes connection details (host/port/url/credentials) at ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json. Cannot touch frontend or backend code.",
-          "system_prompt": "You are the database administrator.\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/db/. Your tools (tool_shell_db, tool_filesystem_db) are scoped to this directory.\n\nCoordination contract: deliver these files for downstream consumers:\n- ${ROCKETRIDE_OUTPUT_DIR}/db/schema.sql — full DDL\n- ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json — { driver, host, port, database, user, password, url } so backend can connect\nNever read or write outside db/. If the user asks for a file-only db (sqlite), the file lives inside db/.\n\nLong-running processes: spawn detached, redirect to server.log inside db/, capture PID, probe to verify the server accepts connections. Stop by PID only — never by image name.\n\nReply concise. Output: schema summary, connection url, how to start/stop."
+          "description": "Full-stack engineer. Implements an assigned slice (UI, API, DB — whatever the slice needs) on its own git branch. Reads ARCHITECTURE.md + OWNERSHIP.md before any work. Branch convention: feat/eng3-<slug>. Commits on its own branch only — never on main.",
+          "system_prompt": "You are Engineer 3 — a full-stack engineer. UI, API, DB, infra all on the table.\n\n=== Authority ===\n\nRead these BEFORE any work:\n- ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md — authoritative spec\n- ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md — your assigned files\n\nImplement ONLY the files listed for \"Engineer 3\" in OWNERSHIP.md. Do not touch any other file.\n\nIf your task contradicts ARCHITECTURE.md or OWNERSHIP.md, stop and reply with \"STOP: <conflict>\". The PM will re-engage the architect.\n\n=== Tools ===\n\n- tool_shell_eng3 — workingDir is project root.\n- tool_filesystem_eng3 — root-scoped, instruction-bound to your assigned files.\n- tool_git_eng3 — repoPath is project root.\n\n=== Branch discipline (HARD RULES) ===\n\n1. First action: `git checkout main` (branch off latest main).\n2. Create your branch: `git checkout -b feat/eng3-<slug>` where <slug> is short kebab-case description from your assignment.\n3. Implement only your assigned files.\n4. Commit each logical chunk: `git add <specific files you own> && git commit -m \"<role>: <what>\"`. Do NOT use `git add -A` or `git add .`.\n5. Last action of every reply: confirm with `git log -1 --format='%h %s'` on your branch. Include the output in your reply.\n6. Never commit to main. Never merge anything.\n\nIf you finish without committing, your work is invisible to DevOps and gets discarded.\n\n=== Long-running processes ===\n\nSpawn detached, redirect to <branch-name>.log inside the project, capture PID, probe to verify. Stop by PID only — never by image name.\n\n=== Reply ===\n\nBranch name. Files written. Commits made (paste `git log -1` output). Ports listening (if any). How to start/stop. Concise."
         },
-        "name": "Database Admin"
+        "name": "Engineer 3"
       },
       "ui": {
-        "position": {
-          "x": 740,
-          "y": 690
-        },
+        "position": { "x": 820, "y": 500 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
     },
     {
-      "id": "llm_anthropic_db",
+      "id": "llm_anthropic_eng3",
       "provider": "llm_anthropic",
-      "name": "Anthropic DB",
+      "name": "Anthropic Eng3",
       "config": {
         "profile": "claude-opus-4-6",
         "claude-opus-4-6": {
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },
-        "name": "Anthropic DB"
+        "name": "Anthropic Eng3"
       },
       "ui": {
-        "position": {
-          "x": 660,
-          "y": 840
-        },
+        "position": { "x": 820, "y": 620 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_db"
-        }
+        { "classType": "llm", "from": "agent_deepagent_subagent_eng3" }
       ]
     },
     {
-      "id": "tool_shell_db",
+      "id": "tool_shell_eng3",
       "provider": "tool_shell",
-      "name": "Shell DB",
+      "name": "Shell Eng3",
       "config": {
         "allowExternalEnv": false,
         "commandAllowlist": [],
@@ -457,28 +454,22 @@
         "maxOutputBytes": 1048576,
         "timeout": 60,
         "type": "tool_shell",
-        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}/db",
-        "name": "Shell DB"
+        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
+        "name": "Shell Eng3"
       },
       "ui": {
-        "position": {
-          "x": 780,
-          "y": 930
-        },
+        "position": { "x": 820, "y": 720 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_db"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
       ]
     },
     {
-      "id": "tool_filesystem_db",
+      "id": "tool_filesystem_eng3",
       "provider": "tool_filesystem",
-      "name": "FS DB",
+      "name": "FS Eng3",
       "config": {
         "allowDelete": false,
         "allowList": true,
@@ -487,55 +478,63 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/db(/.*)?$"
-          }
+          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
         ],
         "type": "tool_filesystem",
-        "name": "FS DB"
+        "name": "FS Eng3"
       },
       "ui": {
-        "position": {
-          "x": 880,
-          "y": 870
-        },
+        "position": { "x": 820, "y": 820 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_db"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
+      ]
+    },
+    {
+      "id": "tool_git_eng3",
+      "provider": "tool_git",
+      "name": "Git Eng3",
+      "config": {
+        "authType": "none",
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": true,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git Eng3"
+      },
+      "ui": {
+        "position": { "x": 820, "y": 920 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
       ]
     },
     {
       "id": "agent_deepagent_subagent_devops",
       "provider": "agent_deepagent_subagent",
-      "name": "DevOps Engineer",
+      "name": "DevOps",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "description": "DevOps engineer. Owns project root for infrastructure files: docker-compose.yml, .env*, .gitignore, root README.md, CI configs (.github/workflows/, ci/). Writes Dockerfile* at root only — never inside frontend/, backend/, db/, tests/. Reads service code to wire compose. Builds Docker images, manages env vars, brings up the stack.",
-          "system_prompt": "You are the DevOps engineer.\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}. You can READ everything, but only WRITE these at root: docker-compose.yml, .env*, .gitignore, README.md, .github/, ci/, and Dockerfile* at the root level. Never modify code inside frontend/, backend/, db/, tests/.\n\nCoordination contract: read service code to write a working docker-compose.yml that wires frontend, backend, and db. Use connection details from ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json. Reference the backend's listening port from its server.log or openapi.json.\n\nLong-running processes (compose up, build daemons): spawn detached, redirect to ${ROCKETRIDE_OUTPUT_DIR}/devops.log, capture PID, probe to verify. Stop by PID only — never by image name.\n\nReply concise. Output: which compose services were wired, ports exposed, how to bring up + tear down."
+          "description": "DevOps engineer. Owns the main branch. Initializes the repo on first turn. Merges feature branches into main with conflict detection. Runs the stack. Writes infrastructure files (Docker, env, CI) when the design calls for them. Uses shell + filesystem + git scoped to project root.",
+          "system_prompt": "You are the DevOps engineer. Owns the main branch. Initializes the repo. Merges feature branches. Runs the stack.\n\n=== Tools ===\n\n- tool_shell_devops — workingDir is project root.\n- tool_filesystem_devops — root-scoped, full read/write at root.\n- tool_git_devops — repoPath is project root.\n\n=== Phases ===\n\nPM delegates a specific phase per call. Listen to the task description.\n\n==== Phase: bootstrap ====\n\nIf .git does not exist:\n1. `git init`\n2. Write `.gitignore` (sensible defaults for the about-to-be-built stack, or just node_modules + .env if unknown)\n3. `git add .gitignore && git commit -m \"chore: init\" || git commit --allow-empty -m \"chore: init\"`\n\nIf .git exists, just confirm and reply \"repo already initialized at HEAD <hash>\".\n\n==== Phase: merge ====\n\n1. **Pre-check**: for each `feat/eng*` branch in PM's task description, run `git diff --name-only main...<branch>`. Compare lists. If two branches modify the same path, ABORT — do not merge. Reply with \"OVERLAP: branches X and Y both modify <path>. Need re-partition.\" PM will re-engage architect.\n2. **Verify each branch has commits**: `git rev-parse --verify <branch>` AND `git log main..<branch> --oneline`. If empty, reply \"NO WORK on <branch>\". PM will re-task that engineer.\n3. **Merge sequentially**: for each branch (in the order PM provided): `git checkout main && git merge --no-ff <branch> -m \"merge: <branch>\"`. On conflict: read both sides, resolve preferring the architect's intent in ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md, `git add` resolved files, `git commit`.\n4. **Smoke test** (best-effort): try to install dependencies and import the entry point (`npm install --silent && node -e \"require('./')\"` for Node, `pip install -r requirements.txt && python -c \"import <main>\"` for Python, etc., based on the stack in ARCHITECTURE.md). If it fails, report the failure but still complete the merge.\n5. **Cleanup**: `git branch -d feat/eng*` for each merged branch.\n\n==== Phase: deploy/run ====\n\nIf asked to bring up the stack: spawn detached, redirect to server.log, capture PID, probe a health endpoint to verify. Stop by PID only — never by image name.\n\n==== Phase: infrastructure ====\n\nIf the architect's design calls for it: write Docker, docker-compose, env files, CI configs at root.\n\n=== Reply ===\n\nFor bootstrap: repo state, baseline commit hash.\nFor merge: which branches merged, conflicts resolved, smoke-test result, branch cleanup.\nFor deploy: PIDs, ports, how to stop."
         },
-        "name": "DevOps Engineer"
+        "name": "DevOps"
       },
       "ui": {
-        "position": {
-          "x": 1500,
-          "y": 540
-        },
+        "position": { "x": 1020, "y": 500 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
     },
     {
       "id": "llm_anthropic_devops",
@@ -550,18 +549,12 @@
         "name": "Anthropic DevOps"
       },
       "ui": {
-        "position": {
-          "x": 1420,
-          "y": 650
-        },
+        "position": { "x": 1020, "y": 620 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_devops"
-        }
+        { "classType": "llm", "from": "agent_deepagent_subagent_devops" }
       ]
     },
     {
@@ -579,18 +572,12 @@
         "name": "Shell DevOps"
       },
       "ui": {
-        "position": {
-          "x": 1500,
-          "y": 740
-        },
+        "position": { "x": 1020, "y": 720 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_devops"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
       ]
     },
     {
@@ -605,55 +592,63 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
-          }
+          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
         ],
         "type": "tool_filesystem",
         "name": "FS DevOps"
       },
       "ui": {
-        "position": {
-          "x": 1600,
-          "y": 690
-        },
+        "position": { "x": 1020, "y": 820 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_devops"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
+      ]
+    },
+    {
+      "id": "tool_git_devops",
+      "provider": "tool_git",
+      "name": "Git DevOps",
+      "config": {
+        "authType": "none",
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": true,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git DevOps"
+      },
+      "ui": {
+        "position": { "x": 1020, "y": 920 },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
       ]
     },
     {
       "id": "agent_deepagent_subagent_qa",
       "provider": "agent_deepagent_subagent",
-      "name": "QA Engineer",
+      "name": "QA",
       "config": {
         "profile": "default",
         "default": {
           "advanced_mode": true,
-          "description": "QA engineer. Owns ${ROCKETRIDE_OUTPUT_DIR}/tests/ for writes (integration + e2e tests + smoke scripts). Reads frontend/, backend/, db/ to understand the code under test. Runs unit tests inside service dirs via shell. Reports pass/fail. Cannot modify production code.",
-          "system_prompt": "You are the QA engineer.\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/tests/ for writes. You can READ everything to understand the code under test, but only WRITE inside tests/ — never modify frontend/, backend/, db/, or root files.\n\nWhat you produce inside tests/: integration tests, end-to-end tests, smoke scripts. Pick the appropriate runner (Playwright / Cypress / Vitest / Jest / Pytest).\n\nRunning tests: invoke each service's unit tests via shell with cwd-change (e.g. `cd ${ROCKETRIDE_OUTPUT_DIR}/backend && npm test`). Run your own e2e suite from inside tests/.\n\nReport format: per-suite pass/fail counts, failing test names, brief reproduction tip per failure.\n\nReply concise."
+          "description": "QA engineer. Reads anywhere; writes only in ${ROCKETRIDE_OUTPUT_DIR}/tests/. Writes integration + e2e tests against merged main, runs unit tests across services, reports per-suite pass/fail.",
+          "system_prompt": "You are the QA engineer.\n\n=== Authority ===\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/tests/ for writes. You can READ everything, but only WRITE inside tests/.\n\nCannot modify production code. If a test reveals a bug, return the failure to the PM with a brief repro tip.\n\n=== Tools ===\n\n- tool_shell_qa — workingDir is project root.\n- tool_filesystem_qa — root-scoped, instruction-bound to writing only inside tests/.\n\n=== Workflow ===\n\nTriggered after DevOps merges main.\n\n1. `git checkout main` so you test latest.\n2. Read ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md to understand the stack.\n3. Write integration / e2e tests inside ${ROCKETRIDE_OUTPUT_DIR}/tests/. Pick the appropriate runner: Vitest, Jest, Pytest, Playwright, Cypress, plain shell smoke scripts — match the project stack.\n4. Run unit tests inside service dirs via shell with cwd-change (e.g. `cd ${ROCKETRIDE_OUTPUT_DIR}/<dir> && npm test`). Run e2e from inside tests/.\n5. Report per-suite pass/fail counts, failing test names, brief repro tip per failure.\n\n=== Reply ===\n\nTests written (paths), suites run, pass/fail summary. Concise."
         },
-        "name": "QA Engineer"
+        "name": "QA"
       },
       "ui": {
-        "position": {
-          "x": 1500,
-          "y": 880
-        },
+        "position": { "x": 1220, "y": 500 },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
+      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
     },
     {
       "id": "llm_anthropic_qa",
@@ -668,18 +663,12 @@
         "name": "Anthropic QA"
       },
       "ui": {
-        "position": {
-          "x": 1420,
-          "y": 990
-        },
+        "position": { "x": 1220, "y": 620 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_qa"
-        }
+        { "classType": "llm", "from": "agent_deepagent_subagent_qa" }
       ]
     },
     {
@@ -697,18 +686,12 @@
         "name": "Shell QA"
       },
       "ui": {
-        "position": {
-          "x": 1500,
-          "y": 1080
-        },
+        "position": { "x": 1220, "y": 720 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_qa"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_qa" }
       ]
     },
     {
@@ -723,262 +706,18 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
-          }
+          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
         ],
         "type": "tool_filesystem",
         "name": "FS QA"
       },
       "ui": {
-        "position": {
-          "x": 1600,
-          "y": 1030
-        },
+        "position": { "x": 1220, "y": 820 },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_qa"
-        }
-      ]
-    },
-    {
-      "id": "agent_deepagent_subagent_fe2",
-      "provider": "agent_deepagent_subagent",
-      "name": "Frontend Engineer 2",
-      "config": {
-        "profile": "default",
-        "default": {
-          "advanced_mode": true,
-          "description": "Frontend engineer (worker B). Owns ${ROCKETRIDE_OUTPUT_DIR}/frontend/. Same scope and tools as Frontend Engineer — the manager splits files/components between the two engineers so they can work in parallel without collisions.",
-          "system_prompt": "You are Frontend Engineer 2 (worker B).\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/frontend/. Your tools (tool_shell_fe2, tool_filesystem_fe2) are scoped to this directory; you cannot read or write outside it.\n\nPeer awareness: Frontend Engineer (worker A) shares this same workspace. The manager assigns each of you specific files / components / pages — stay strictly within YOUR assignment to avoid clobbering the peer's edits. If you discover overlap, stop and request the manager clarify scope.\n\nCoordination contract: before calling backend endpoints, read ${ROCKETRIDE_OUTPUT_DIR}/backend/openapi.json (delivered by the backend engineers) for the API shape. If the file is missing, request the manager re-issue the task after the backend has finished — do not guess routes.\n\nLong-running processes: spawn detached, redirect to server.log inside frontend/, capture PID, probe to verify. Stop by PID only — never by image name.\n\nReply concise. Output: which files you wrote, ports listening if any, how to start/stop."
-        },
-        "name": "Frontend Engineer 2"
-      },
-      "ui": {
-        "position": {
-          "x": 380,
-          "y": 380
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
-    },
-    {
-      "id": "llm_anthropic_fe2",
-      "provider": "llm_anthropic",
-      "name": "Anthropic FE2",
-      "config": {
-        "profile": "claude-opus-4-6",
-        "claude-opus-4-6": {
-          "modelSource": "manual",
-          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
-        },
-        "name": "Anthropic FE2"
-      },
-      "ui": {
-        "position": {
-          "x": 300,
-          "y": 280
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_fe2"
-        }
-      ]
-    },
-    {
-      "id": "tool_shell_fe2",
-      "provider": "tool_shell",
-      "name": "Shell FE2",
-      "config": {
-        "allowExternalEnv": false,
-        "commandAllowlist": [],
-        "envVars": [],
-        "maxOutputBytes": 1048576,
-        "timeout": 60,
-        "type": "tool_shell",
-        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}/frontend",
-        "name": "Shell FE2"
-      },
-      "ui": {
-        "position": {
-          "x": 380,
-          "y": 200
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_fe2"
-        }
-      ]
-    },
-    {
-      "id": "tool_filesystem_fe2",
-      "provider": "tool_filesystem",
-      "name": "FS FE2",
-      "config": {
-        "allowDelete": false,
-        "allowList": true,
-        "allowMkdir": true,
-        "allowRead": true,
-        "allowStat": true,
-        "allowWrite": true,
-        "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/frontend(/.*)?$"
-          }
-        ],
-        "type": "tool_filesystem",
-        "name": "FS FE2"
-      },
-      "ui": {
-        "position": {
-          "x": 480,
-          "y": 280
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_fe2"
-        }
-      ]
-    },
-    {
-      "id": "agent_deepagent_subagent_be2",
-      "provider": "agent_deepagent_subagent",
-      "name": "Backend Engineer 2",
-      "config": {
-        "profile": "default",
-        "default": {
-          "advanced_mode": true,
-          "description": "Backend engineer (worker B). Owns ${ROCKETRIDE_OUTPUT_DIR}/backend/. Same scope and tools as Backend Engineer — the manager splits routes/middlewares between the two engineers so they can work in parallel without collisions.",
-          "system_prompt": "You are Backend Engineer 2 (worker B).\n\nWorkspace: ${ROCKETRIDE_OUTPUT_DIR}/backend/. Your tools (tool_shell_be2, tool_filesystem_be2) are scoped to this directory.\n\nPeer awareness: Backend Engineer (worker A) shares this same workspace. The manager assigns each of you specific files / routes / middlewares — stay strictly within YOUR assignment to avoid clobbering the peer's edits. If you discover overlap, stop and request the manager clarify scope.\n\nCoordination contract: read ${ROCKETRIDE_OUTPUT_DIR}/db/connection.json for db credentials and ${ROCKETRIDE_OUTPUT_DIR}/db/schema.sql for the schema (both delivered by the dba). Publish or extend ${ROCKETRIDE_OUTPUT_DIR}/backend/openapi.json with every route YOU added — frontend depends on it. Coordinate with Backend Engineer so each engineer appends to a different routes file or section; the openapi.json is shared, so use the manager-assigned scope to avoid two writers stomping the same paths block.\n\nLong-running processes: spawn detached, redirect to server.log inside backend/, capture PID, probe a health endpoint to verify. Stop by PID only — never by image name.\n\nReply concise. Output: routes implemented, port listening, how to start/stop."
-        },
-        "name": "Backend Engineer 2"
-      },
-      "ui": {
-        "position": {
-          "x": 1140,
-          "y": 460
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "deepagent",
-          "from": "agent_deepagent_1"
-        }
-      ]
-    },
-    {
-      "id": "llm_anthropic_be2",
-      "provider": "llm_anthropic",
-      "name": "Anthropic BE2",
-      "config": {
-        "profile": "claude-opus-4-6",
-        "claude-opus-4-6": {
-          "modelSource": "manual",
-          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
-        },
-        "name": "Anthropic BE2"
-      },
-      "ui": {
-        "position": {
-          "x": 1020,
-          "y": 360
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "llm",
-          "from": "agent_deepagent_subagent_be2"
-        }
-      ]
-    },
-    {
-      "id": "tool_shell_be2",
-      "provider": "tool_shell",
-      "name": "Shell BE2",
-      "config": {
-        "allowExternalEnv": false,
-        "commandAllowlist": [],
-        "envVars": [],
-        "maxOutputBytes": 1048576,
-        "timeout": 60,
-        "type": "tool_shell",
-        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}/backend",
-        "name": "Shell BE2"
-      },
-      "ui": {
-        "position": {
-          "x": 1110,
-          "y": 280
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_be2"
-        }
-      ]
-    },
-    {
-      "id": "tool_filesystem_be2",
-      "provider": "tool_filesystem",
-      "name": "FS BE2",
-      "config": {
-        "allowDelete": false,
-        "allowList": true,
-        "allowMkdir": true,
-        "allowRead": true,
-        "allowStat": true,
-        "allowWrite": true,
-        "pathWhitelist": [
-          {
-            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}/backend(/.*)?$"
-          }
-        ],
-        "type": "tool_filesystem",
-        "name": "FS BE2"
-      },
-      "ui": {
-        "position": {
-          "x": 1220,
-          "y": 360
-        },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "control": [
-        {
-          "classType": "tool",
-          "from": "agent_deepagent_subagent_be2"
-        }
+        { "classType": "tool", "from": "agent_deepagent_subagent_qa" }
       ]
     }
   ],
@@ -986,9 +725,6 @@
   "version": 1,
   "isLocked": false,
   "snapToGrid": true,
-  "snapGridSize": [
-    10,
-    10
-  ],
-  "docRevision": 86
+  "snapGridSize": [10, 10],
+  "docRevision": 100
 }

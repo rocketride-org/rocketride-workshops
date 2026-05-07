@@ -246,7 +246,11 @@ def _is_disconnect_error(exc: BaseException) -> bool:
     # defensive without catching unrelated runtime errors.
     if isinstance(exc, RuntimeError):
         msg = str(exc).lower()
-        return "not connected" in msg or "could not send request" in msg
+        return (
+            "not connected" in msg
+            or "could not send request" in msg
+            or "pipeline is not currently running" in msg
+        )
     return False
 
 
@@ -376,8 +380,6 @@ async def chat_ws(websocket: WebSocket) -> None:
 
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-            for sub in ("frontend", "backend", "db", "tests"):
-                (OUTPUT_DIR / sub).mkdir(parents=True, exist_ok=True)
             reply = await asyncio.wait_for(
                 _send_with_recovery(payload),
                 timeout=_TURN_TIMEOUT,

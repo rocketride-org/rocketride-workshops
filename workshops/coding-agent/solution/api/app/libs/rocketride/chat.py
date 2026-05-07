@@ -21,9 +21,17 @@ StatusCallback = Callable[[str], Awaitable[None]]
 
 async def start_coding_agent() -> str:
     client = await get_client()
+    # ttl=0 disables the engine's idle-pipeline GC so the cached token stays
+    # valid across turns. Without this, long fan-outs (35-node deepagent) push
+    # past the server-default idle window and the next pipe.open() raises
+    # "Your pipeline is not currently running."
     result = cast(
         dict[str, Any],
-        await client.use(filepath=str(PIPELINE_PATH), pipelineTraceLevel="none"),
+        await client.use(
+            filepath=str(PIPELINE_PATH),
+            pipelineTraceLevel="none",
+            ttl=0,
+        ),
     )
     token = cast(str, result["token"])
     try:
