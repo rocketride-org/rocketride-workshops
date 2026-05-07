@@ -7,6 +7,8 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any, cast
 
+from rocketride.schema import Question
+
 from app.libs.rocketride.client import get_client
 
 logger = logging.getLogger("coding-agent")
@@ -46,24 +48,13 @@ async def send_text(
     text: str,
     on_status: StatusCallback | None = None,
 ) -> str:
-    return await _send(token, text.encode(), "text/plain", on_status)
+    """Send a text turn through the chat source. Returns the first answer.
 
-
-async def send_audio(
-    token: str,
-    data: bytes,
-    mimetype: str = "audio/webm;codecs=opus",
-    on_status: StatusCallback | None = None,
-) -> str:
-    return await _send(token, data, mimetype, on_status)
-
-
-async def _send(
-    token: str,
-    data: bytes,
-    mimetype: str,
-    on_status: StatusCallback | None,
-) -> str:
+    The pipe's source is `provider: "chat"`, so we use the SDK's
+    `client.chat()` (which wraps a Question into a `chat://` pipe under the
+    hood) instead of `client.pipe(...).write()`. The chat source emits the
+    `questions` lane directly — no audio_transcribe / question node needed.
+    """
     client = await get_client()
 
     async def _sse(event_type: str, body: dict[str, Any]) -> None:
@@ -77,10 +68,9 @@ async def _send(
         except Exception:
             logger.exception("on_status raised; dropping event")
 
-    pipe = await client.pipe(token, mime_type=mimetype, on_sse=_sse)
-    async with pipe:
-        await pipe.write(data)
-        result = cast(dict[str, Any], await pipe.close())
+    q = Question()  # type: ignore[call-arg]  # pydantic Field defaults; mypy can't infer
+    q.addQuestion(text)
+    result = cast(dict[str, Any], await client.chat(token=token, question=q, on_sse=_sse))
     return _first_answer(result)
 
 

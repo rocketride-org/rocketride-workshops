@@ -17,7 +17,6 @@ from app.libs.rocketride import (
     connect_with_retry,
     disconnect,
     reset_client,
-    send_audio,
     send_text,
     set_event_handler,
     start_coding_agent,
@@ -317,7 +316,6 @@ async def _await_pipeline_ready(websocket: WebSocket) -> str | None:
 @app.websocket("/api/ws/chat")
 async def chat_ws(websocket: WebSocket) -> None:
     await websocket.accept()
-    buffer = bytearray()
     send_lock = asyncio.Lock()
     last_status_at = 0.0
 
@@ -342,17 +340,15 @@ async def chat_ws(websocket: WebSocket) -> None:
             return token
         return await _await_pipeline_ready(websocket)
 
-    async def _send_with_recovery(payload: bytes | str) -> str:
-        """Run send_text/send_audio against the coding pipeline, recovering
-        once if the engine WS drops mid-request."""
+    async def _send_with_recovery(payload: str) -> str:
+        """Run send_text against the coding pipeline, recovering once if the
+        engine WS drops mid-request."""
         token = await _resolve_token()
         if not token:
             raise RuntimeError("coding pipeline not available")
 
         async def _do_send(active_token: str) -> str:
-            if isinstance(payload, str):
-                return await send_text(active_token, payload, on_status=_emit_status)
-            return await send_audio(active_token, payload, on_status=_emit_status)
+            return await send_text(active_token, payload, on_status=_emit_status)
 
         try:
             return await _do_send(token)
@@ -365,7 +361,7 @@ async def chat_ws(websocket: WebSocket) -> None:
                 raise
             return await _do_send(new_token)
 
-    async def _run_turn(payload: bytes | str) -> None:
+    async def _run_turn(payload: str) -> None:
         """Run one user turn through the coding pipeline. Always emits
         exactly one terminal frame (reply | error | cancelled), even if
         the inner send raises, the engine times out, or the WS drops."""
@@ -408,10 +404,6 @@ async def chat_ws(websocket: WebSocket) -> None:
     try:
         while True:
             message = await websocket.receive()
-            data_bytes = message.get("bytes")
-            if data_bytes is not None:
-                buffer.extend(data_bytes)
-                continue
             data_text = message.get("text")
             if data_text is None:
                 continue
@@ -419,14 +411,7 @@ async def chat_ws(websocket: WebSocket) -> None:
                 event = json.loads(data_text)
             except json.JSONDecodeError:
                 continue
-            event_type = event.get("type")
-            if event_type == "start":
-                buffer.clear()
-            elif event_type == "end":
-                audio = bytes(buffer)
-                buffer.clear()
-                await _run_turn(audio)
-            elif event_type == "text":
+            if event.get("type") == "text":
                 text = event.get("text") or ""
                 if not text:
                     continue

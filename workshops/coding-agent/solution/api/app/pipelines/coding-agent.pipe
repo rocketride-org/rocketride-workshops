@@ -1,58 +1,24 @@
 {
   "components": [
     {
-      "id": "webhook_1",
-      "provider": "webhook",
-      "name": "Web Hook",
+      "id": "chat_1",
+      "provider": "chat",
+      "name": "Chat",
       "config": {
         "hideForm": true,
         "mode": "Source",
         "parameters": {},
-        "type": "webhook",
-        "name": "Web Hook"
+        "type": "chat",
+        "name": "Chat"
       },
       "ui": {
-        "position": { "x": 100, "y": 200 },
+        "position": {
+          "x": 410,
+          "y": 100
+        },
         "nodeType": "default",
         "formDataValid": true
       }
-    },
-    {
-      "id": "audio_transcribe_1",
-      "provider": "audio_transcribe",
-      "name": "Transcribe",
-      "config": {
-        "profile": "default",
-        "default": {
-          "max_seconds": 300,
-          "min_seconds": 240,
-          "model": "base",
-          "silence_threshold": 0.25,
-          "vad_level": 1
-        },
-        "name": "Transcribe"
-      },
-      "ui": {
-        "position": { "x": 300, "y": 200 },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "input": [{ "lane": "audio", "from": "webhook_1" }]
-    },
-    {
-      "id": "question_1",
-      "provider": "question",
-      "name": "Question",
-      "config": { "type": "question", "name": "Question" },
-      "ui": {
-        "position": { "x": 500, "y": 200 },
-        "nodeType": "default",
-        "formDataValid": true
-      },
-      "input": [
-        { "lane": "text", "from": "audio_transcribe_1" },
-        { "lane": "text", "from": "webhook_1" }
-      ]
     },
     {
       "id": "agent_deepagent_1",
@@ -68,23 +34,42 @@
         "name": "Project Manager"
       },
       "ui": {
-        "position": { "x": 700, "y": 200 },
+        "position": {
+          "x": 700,
+          "y": 200
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "input": [{ "lane": "questions", "from": "question_1" }]
+      "input": [
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
+      ]
     },
     {
       "id": "response_answers_1",
       "provider": "response_answers",
       "name": "Return Answers",
-      "config": { "laneName": "answers", "name": "Return Answers" },
+      "config": {
+        "laneName": "answers",
+        "name": "Return Answers"
+      },
       "ui": {
-        "position": { "x": 900, "y": 200 },
+        "position": {
+          "x": 900,
+          "y": 200
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "input": [{ "lane": "answers", "from": "agent_deepagent_1" }]
+      "input": [
+        {
+          "lane": "answers",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_pm",
@@ -99,11 +84,19 @@
         "name": "Anthropic PM"
       },
       "ui": {
-        "position": { "x": 700, "y": 320 },
+        "position": {
+          "x": 700,
+          "y": 320
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "llm", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "agent_deepagent_subagent_arch",
@@ -119,11 +112,19 @@
         "name": "Architect"
       },
       "ui": {
-        "position": { "x": 200, "y": 500 },
+        "position": {
+          "x": -30,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_arch",
@@ -138,12 +139,18 @@
         "name": "Anthropic Architect"
       },
       "ui": {
-        "position": { "x": 100, "y": 620 },
+        "position": {
+          "x": -130,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_arch" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_arch"
+        }
       ]
     },
     {
@@ -166,12 +173,18 @@
         "name": "FS Architect (design docs)"
       },
       "ui": {
-        "position": { "x": 300, "y": 620 },
+        "position": {
+          "x": 70,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_arch" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_arch"
+        }
       ]
     },
     {
@@ -188,11 +201,19 @@
         "name": "Engineer 1"
       },
       "ui": {
-        "position": { "x": 420, "y": 500 },
+        "position": {
+          "x": 420,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_eng1",
@@ -207,12 +228,18 @@
         "name": "Anthropic Eng1"
       },
       "ui": {
-        "position": { "x": 420, "y": 620 },
+        "position": {
+          "x": 420,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_eng1" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_eng1"
+        }
       ]
     },
     {
@@ -230,12 +257,18 @@
         "name": "Shell Eng1"
       },
       "ui": {
-        "position": { "x": 420, "y": 720 },
+        "position": {
+          "x": 420,
+          "y": 720
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng1"
+        }
       ]
     },
     {
@@ -250,18 +283,26 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
         ],
         "type": "tool_filesystem",
         "name": "FS Eng1"
       },
       "ui": {
-        "position": { "x": 420, "y": 820 },
+        "position": {
+          "x": 420,
+          "y": 820
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng1"
+        }
       ]
     },
     {
@@ -280,12 +321,18 @@
         "name": "Git Eng1"
       },
       "ui": {
-        "position": { "x": 420, "y": 920 },
+        "position": {
+          "x": 420,
+          "y": 920
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng1" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng1"
+        }
       ]
     },
     {
@@ -302,11 +349,19 @@
         "name": "Engineer 2"
       },
       "ui": {
-        "position": { "x": 620, "y": 500 },
+        "position": {
+          "x": 620,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_eng2",
@@ -321,12 +376,18 @@
         "name": "Anthropic Eng2"
       },
       "ui": {
-        "position": { "x": 620, "y": 620 },
+        "position": {
+          "x": 620,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_eng2" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_eng2"
+        }
       ]
     },
     {
@@ -344,12 +405,18 @@
         "name": "Shell Eng2"
       },
       "ui": {
-        "position": { "x": 620, "y": 720 },
+        "position": {
+          "x": 620,
+          "y": 720
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng2"
+        }
       ]
     },
     {
@@ -364,18 +431,26 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
         ],
         "type": "tool_filesystem",
         "name": "FS Eng2"
       },
       "ui": {
-        "position": { "x": 620, "y": 820 },
+        "position": {
+          "x": 620,
+          "y": 820
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng2"
+        }
       ]
     },
     {
@@ -394,12 +469,18 @@
         "name": "Git Eng2"
       },
       "ui": {
-        "position": { "x": 620, "y": 920 },
+        "position": {
+          "x": 620,
+          "y": 920
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng2" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng2"
+        }
       ]
     },
     {
@@ -416,11 +497,19 @@
         "name": "Engineer 3"
       },
       "ui": {
-        "position": { "x": 820, "y": 500 },
+        "position": {
+          "x": 820,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_eng3",
@@ -435,12 +524,18 @@
         "name": "Anthropic Eng3"
       },
       "ui": {
-        "position": { "x": 820, "y": 620 },
+        "position": {
+          "x": 820,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_eng3" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_eng3"
+        }
       ]
     },
     {
@@ -458,12 +553,18 @@
         "name": "Shell Eng3"
       },
       "ui": {
-        "position": { "x": 820, "y": 720 },
+        "position": {
+          "x": 820,
+          "y": 720
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng3"
+        }
       ]
     },
     {
@@ -478,18 +579,26 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
         ],
         "type": "tool_filesystem",
         "name": "FS Eng3"
       },
       "ui": {
-        "position": { "x": 820, "y": 820 },
+        "position": {
+          "x": 820,
+          "y": 820
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng3"
+        }
       ]
     },
     {
@@ -508,12 +617,18 @@
         "name": "Git Eng3"
       },
       "ui": {
-        "position": { "x": 820, "y": 920 },
+        "position": {
+          "x": 820,
+          "y": 920
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_eng3" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_eng3"
+        }
       ]
     },
     {
@@ -530,11 +645,19 @@
         "name": "DevOps"
       },
       "ui": {
-        "position": { "x": 1020, "y": 500 },
+        "position": {
+          "x": 1230,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_devops",
@@ -549,12 +672,18 @@
         "name": "Anthropic DevOps"
       },
       "ui": {
-        "position": { "x": 1020, "y": 620 },
+        "position": {
+          "x": 1230,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_devops" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_devops"
+        }
       ]
     },
     {
@@ -572,12 +701,18 @@
         "name": "Shell DevOps"
       },
       "ui": {
-        "position": { "x": 1020, "y": 720 },
+        "position": {
+          "x": 1230,
+          "y": 720
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_devops"
+        }
       ]
     },
     {
@@ -592,18 +727,26 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
         ],
         "type": "tool_filesystem",
         "name": "FS DevOps"
       },
       "ui": {
-        "position": { "x": 1020, "y": 820 },
+        "position": {
+          "x": 1230,
+          "y": 820
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_devops"
+        }
       ]
     },
     {
@@ -622,12 +765,18 @@
         "name": "Git DevOps"
       },
       "ui": {
-        "position": { "x": 1020, "y": 920 },
+        "position": {
+          "x": 1230,
+          "y": 920
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_devops" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_devops"
+        }
       ]
     },
     {
@@ -644,11 +793,19 @@
         "name": "QA"
       },
       "ui": {
-        "position": { "x": 1220, "y": 500 },
+        "position": {
+          "x": 1430,
+          "y": 500
+        },
         "nodeType": "default",
         "formDataValid": true
       },
-      "control": [{ "classType": "deepagent", "from": "agent_deepagent_1" }]
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
     },
     {
       "id": "llm_anthropic_qa",
@@ -663,12 +820,18 @@
         "name": "Anthropic QA"
       },
       "ui": {
-        "position": { "x": 1220, "y": 620 },
+        "position": {
+          "x": 1430,
+          "y": 620
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "llm", "from": "agent_deepagent_subagent_qa" }
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_qa"
+        }
       ]
     },
     {
@@ -686,12 +849,18 @@
         "name": "Shell QA"
       },
       "ui": {
-        "position": { "x": 1220, "y": 720 },
+        "position": {
+          "x": 1430,
+          "y": 720
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_qa" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_qa"
+        }
       ]
     },
     {
@@ -706,18 +875,26 @@
         "allowStat": true,
         "allowWrite": true,
         "pathWhitelist": [
-          { "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$" }
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
         ],
         "type": "tool_filesystem",
         "name": "FS QA"
       },
       "ui": {
-        "position": { "x": 1220, "y": 820 },
+        "position": {
+          "x": 1430,
+          "y": 820
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        { "classType": "tool", "from": "agent_deepagent_subagent_qa" }
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_qa"
+        }
       ]
     }
   ],
@@ -725,6 +902,9 @@
   "version": 1,
   "isLocked": false,
   "snapToGrid": true,
-  "snapGridSize": [10, 10],
-  "docRevision": 100
+  "snapGridSize": [
+    10,
+    10
+  ],
+  "docRevision": 109
 }
