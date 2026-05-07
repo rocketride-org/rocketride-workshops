@@ -7,7 +7,6 @@ directly, so client lifecycle and chat helpers live in one place.
 from app.libs.rocketride.chat import (
     send_audio,
     send_text,
-    start_chat_only,
     start_coding_agent,
 )
 from app.libs.rocketride.client import (
@@ -26,6 +25,5 @@ __all__ = [
     "send_audio",
     "send_text",
     "set_event_handler",
-    "start_chat_only",
     "start_coding_agent",
 ]

@@ -78,19 +78,23 @@
       ]
     },
     {
-      "id": "agent_crewai_1",
-      "provider": "agent_crewai",
-      "name": "CrewAI",
+      "id": "agent_deepagent_1",
+      "provider": "agent_deepagent",
+      "name": "Deep Agent",
       "config": {
-        "agent_description": "Cody Rider — a coding agent. Builds what the user asks, decisively.",
-        "instructions": [
-          "Project root: ${ROCKETRIDE_OUTPUT_DIR}.",
-          "Tools: tool_shell, tool_filesystem, tool_git.",
-          "Reply concise unless the user asks for detail.",
-          "If the project root doesn't exist yet, create it with tool_filesystem before listing or writing files.",
-          "Long-running processes: spawn detached, redirect to server.log, capture PID, probe to verify. Windows `start /b cmd /c`, Unix `nohup ... &`. Stop by PID only — never by image name (`taskkill /IM`, `pkill <name>`, `Get-Process X | Stop-Process`); those kill the engine running this chat."
-        ],
-        "name": "CrewAI"
+        "profile": "default",
+        "default": {
+          "advanced_mode": false,
+          "agent_description": "Cody Rider — a coding agent. Builds what the user asks, decisively.",
+          "instructions": [
+            "Project root: ${ROCKETRIDE_OUTPUT_DIR}.",
+            "Tools: tool_shell, tool_filesystem, tool_git.",
+            "Reply concise unless the user asks for detail.",
+            "If the project root doesn't exist yet, create it with tool_filesystem before listing or writing files.",
+            "Long-running processes: spawn detached, redirect to server.log, capture PID, probe to verify. Windows `start /b cmd /c`, Unix `nohup ... &`. Stop by PID only — never by image name (`taskkill /IM`, `pkill <name>`, `Get-Process X | Stop-Process`); those kill the engine running this chat."
+          ]
+        },
+        "name": "Deep Agent"
       },
       "ui": {
         "position": {
@@ -117,10 +121,7 @@
           "modelSource": "manual",
           "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
         },
-        "name": "Anthropic",
-        "parameters": {
-          "google": {}
-        }
+        "name": "Anthropic"
       },
       "ui": {
         "position": {
@@ -133,7 +134,7 @@
       "control": [
         {
           "classType": "llm",
-          "from": "agent_crewai_1"
+          "from": "agent_deepagent_1"
         }
       ]
     },
@@ -156,7 +157,7 @@
       "input": [
         {
           "lane": "answers",
-          "from": "agent_crewai_1"
+          "from": "agent_deepagent_1"
         }
       ]
     },
@@ -185,7 +186,7 @@
       "control": [
         {
           "classType": "tool",
-          "from": "agent_crewai_1"
+          "from": "agent_deepagent_1"
         }
       ]
     },
@@ -219,7 +220,7 @@
       "control": [
         {
           "classType": "tool",
-          "from": "agent_crewai_1"
+          "from": "agent_deepagent_1"
         }
       ]
     },
@@ -249,7 +250,7 @@
       "control": [
         {
           "classType": "tool",
-          "from": "agent_crewai_1"
+          "from": "agent_deepagent_1"
         }
       ]
     }
@@ -258,9 +259,6 @@
   "version": 1,
   "isLocked": false,
   "snapToGrid": true,
-  "snapGridSize": [
-    10,
-    10
-  ],
-  "docRevision": 44
+  "snapGridSize": [10, 10],
+  "docRevision": 45
 }

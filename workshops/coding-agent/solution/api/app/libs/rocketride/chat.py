@@ -13,33 +13,24 @@ logger = logging.getLogger("coding-agent")
 
 PIPELINES_DIR = Path(__file__).resolve().parents[2] / "pipelines"
 PIPELINE_PATH = PIPELINES_DIR / "coding-agent.pipe"
-CHAT_PIPELINE_PATH = PIPELINES_DIR / "chat-only.pipe"
 
 RUNTIME_EVENT_TYPES = ["task", "summary", "sse"]
 
 StatusCallback = Callable[[str], Awaitable[None]]
 
 
-async def _start_pipeline(pipeline_path: Path, label: str) -> str:
+async def start_coding_agent() -> str:
     client = await get_client()
     result = cast(
         dict[str, Any],
-        await client.use(filepath=str(pipeline_path), pipelineTraceLevel="none"),
+        await client.use(filepath=str(PIPELINE_PATH), pipelineTraceLevel="none"),
     )
     token = cast(str, result["token"])
     try:
         await client.set_events(token, RUNTIME_EVENT_TYPES)
     except Exception:
-        logger.exception("%s set_events failed; continuing without runtime observability", label)
+        logger.exception("set_events failed; continuing without runtime observability")
     return token
-
-
-async def start_coding_agent() -> str:
-    return await _start_pipeline(PIPELINE_PATH, "coding-agent")
-
-
-async def start_chat_only() -> str:
-    return await _start_pipeline(CHAT_PIPELINE_PATH, "chat-only")
 
 
 async def send_text(
@@ -86,13 +77,12 @@ async def _send(
 
 
 def _extract_status(event_type: str, body: Any) -> str:
-    """Pull a human-readable status line out of a CrewAI 'thinking' SSE.
+    """Pull a human-readable status line out of a 'thinking' SSE.
 
-    The engine's `crewai_listener._dispatch` sends every CrewAI bus event
-    as `sendSSE('thinking', message=label, **event_fields)`. Labels read
-    naturally ("Crew started", "Agent thinking...", "Calling tool_shell...").
-    Anything else (including provider-specific SSE shapes we don't model)
-    is ignored so the UI never shows raw payloads.
+    Deep Agent emits `sendSSE('thinking', message=label, ...)` from its
+    LangChain callback handler ("LLM call started", "Calling tool_shell...",
+    "Tool complete"). Anything else is ignored so the UI never shows raw
+    payloads.
     """
     if event_type != "thinking" or not isinstance(body, dict):
         return ""
