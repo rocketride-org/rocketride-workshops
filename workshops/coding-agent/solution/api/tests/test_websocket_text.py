@@ -12,7 +12,7 @@ def client(fastapi_app, tracer_log_dir, monkeypatch: pytest.MonkeyPatch):
     # Disable status throttle so emitted status frames are deterministic.
     from app import main as main_mod
 
-    monkeypatch.setattr(main_mod, "_STATUS_THROTTLE_SECONDS", 0.0)
+    monkeypatch.setattr(main_mod, "STATUS_FRAME_THROTTLE_SECONDS", 0.0)
     with TestClient(app) as tc:
         yield tc, fake
 

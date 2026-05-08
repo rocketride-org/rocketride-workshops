@@ -70,7 +70,7 @@ class TestRuntimeEventDispatch:
         return calls
 
     async def test_formatter_invoked_for_node_started(self, info_spy) -> None:
-        await main_mod._on_runtime_event(
+        await main_mod.handle_runtime_event(
             {
                 "event": "apaevt_node_started",
                 "seq": 1,
@@ -92,7 +92,7 @@ class TestRuntimeEventDispatch:
             recorded.append(args)
 
         monkeypatch.setattr(main_mod, "record_runtime_event", fake_record)
-        await main_mod._on_runtime_event(
+        await main_mod.handle_runtime_event(
             {"event": "apaevt_status_update", "seq": 2, "body": {"cpu": 1}}
         )
         # Dropped from both: no tracer record, no console log.
@@ -100,13 +100,15 @@ class TestRuntimeEventDispatch:
         assert info_spy == []
 
     async def test_unknown_event_uses_fallback_formatter(self, info_spy) -> None:
-        await main_mod._on_runtime_event({"event": "apaevt_custom", "seq": 99, "body": {"k": "v"}})
+        await main_mod.handle_runtime_event(
+            {"event": "apaevt_custom", "seq": 99, "body": {"k": "v"}}
+        )
         rendered = "\n".join(args[0] % args[1:] for args, _ in info_spy)
         assert "seq=99" in rendered
         assert "apaevt_custom" in rendered
 
     async def test_node_error_formatter(self, info_spy) -> None:
-        await main_mod._on_runtime_event(
+        await main_mod.handle_runtime_event(
             {
                 "event": "apaevt_node_error",
                 "seq": 5,
@@ -126,10 +128,12 @@ class TestRuntimeEventDispatch:
             recorded.append(args)
 
         monkeypatch.setattr(main_mod, "record_runtime_event", fake_record)
-        await main_mod._on_runtime_event({"event": "apaevt_flow", "seq": 7, "body": {"data": "x"}})
-        # apaevt_flow is in _CONSOLE_NOISE-now-empty? After recent change,
-        # _CONSOLE_NOISE = {"apaevt_status_update"} only — flow surfaces.
-        # Tracer always gets it (not in _TRACER_DROP).
+        await main_mod.handle_runtime_event(
+            {"event": "apaevt_flow", "seq": 7, "body": {"data": "x"}}
+        )
+        # EVENTS_HIDDEN_FROM_CONSOLE only contains the heartbeat event, so
+        # flow surfaces in the console. Tracer always gets it (not in
+        # EVENTS_NEVER_LOGGED either).
         assert len(recorded) == 1
         assert info_spy  # console got it too
 
@@ -156,7 +160,7 @@ class TestInitPipelineRetry:
         # Reset state so this test owns the init.
         main_mod.app.state.coding_tokens = None
         main_mod.app.state.coding_ready = asyncio.Event()
-        await main_mod._init_pipeline(main_mod.app)
+        await main_mod.start_pipelines_with_retry(main_mod.app)
         assert attempts["n"] == 2
         assert main_mod.app.state.coding_tokens == {"chat": "tk_chat_x", "webhook": "tk_webhook_x"}
         assert main_mod.app.state.coding_ready.is_set()
@@ -175,7 +179,7 @@ class TestRecoverPipeline:
             raise AssertionError("start_coding_agent should not be called")
 
         monkeypatch.setattr(main_mod, "start_coding_agent", must_not_run)
-        result = await main_mod._recover_pipeline()
+        result = await main_mod.restart_pipelines_after_drop()
         assert result == existing
 
     async def test_restarts_when_no_existing_tokens(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -195,7 +199,7 @@ class TestRecoverPipeline:
         monkeypatch.setattr(main_mod, "connect_with_retry", conn_ok)
         monkeypatch.setattr(main_mod, "start_coding_agent", start_ok)
 
-        result = await main_mod._recover_pipeline()
+        result = await main_mod.restart_pipelines_after_drop()
         assert result == {"chat": "tk_new", "webhook": "tk_new_wh"}
         assert main_mod.app.state.coding_tokens == result
 
@@ -216,5 +220,5 @@ class TestRecoverPipeline:
         monkeypatch.setattr(main_mod, "connect_with_retry", conn_ok)
         monkeypatch.setattr(main_mod, "start_coding_agent", start_fail)
 
-        result = await main_mod._recover_pipeline()
+        result = await main_mod.restart_pipelines_after_drop()
         assert result is None

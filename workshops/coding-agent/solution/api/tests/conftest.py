@@ -130,7 +130,7 @@ def fake_client(monkeypatch: pytest.MonkeyPatch) -> FakeClient:
 
 @pytest.fixture
 def tracer_log_dir(tmp_path, monkeypatch: pytest.MonkeyPatch):
-    """Redirect `_dump_tracer` writes to a tmp_path so tests don't pollute logs/."""
+    """Redirect `write_turn_trace` writes to a tmp_path so tests don't pollute logs/."""
     from app.libs.rocketride import chat as chat_mod
 
     monkeypatch.setattr(chat_mod, "LOG_DIR", tmp_path)

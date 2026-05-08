@@ -1,12 +1,14 @@
-"""Lazy singleton wrapper around `RocketRideClient`.
+"""Singleton wrapper around the RocketRide SDK client.
 
-The SDK reads `ROCKETRIDE_URI` and `ROCKETRIDE_APIKEY` from `.env`
-automatically, so callers don't pass anything.
+Two responsibilities:
 
-`build_request` is patched to mirror `token` into `arguments` — the
-shipped SDK (1.0.6) places the task token at the request top level,
-but the local server build reads it from `arguments.token`. Mirroring
-keeps both old and new servers happy.
+1. Lazy-connect on first use, then cache the client so every helper in
+   the project shares one connection.
+2. Forward every engine runtime event to a single registered handler
+   (the API layer's tracer + console logger in `main.py`).
+
+`ROCKETRIDE_URI` and `ROCKETRIDE_APIKEY` are picked up from `.env`
+automatically; callers don't pass them.
 """
 
 from __future__ import annotations
@@ -24,20 +26,21 @@ logger = logging.getLogger("coding-agent")
 
 DEFAULT_CONNECT_TIMEOUT = 60.0
 
-_client: RocketRideClient | None = None
+_cached_client: RocketRideClient | None = None
 
 EventHandler = Callable[[dict[str, Any]], Awaitable[None]]
-_on_event_handler: EventHandler | None = None
+_event_handler: EventHandler | None = None
 
 
 def set_event_handler(handler: EventHandler | None) -> None:
-    """Register an async callback that receives every runtime event."""
-    global _on_event_handler
-    _on_event_handler = handler
+    """Register the async callback that receives every engine runtime event."""
+    global _event_handler
+    _event_handler = handler
 
 
-async def _dispatch(message: dict[str, Any]) -> None:
-    handler = _on_event_handler
+async def dispatch_event_to_handler(message: dict[str, Any]) -> None:
+    """Spawn the registered handler in its own task. Errors get logged, never raised."""
+    handler = _event_handler
     if handler is None:
         return
 
@@ -50,7 +53,10 @@ async def _dispatch(message: dict[str, Any]) -> None:
     asyncio.create_task(_run())
 
 
-def _patch_build_request() -> None:
+# The shipped SDK (1.0.6) puts the task token at the top of `execute`
+# requests, but the local server build expects it inside `arguments.token`.
+# Mirror it into both spots so old + new servers stay happy.
+def patch_build_request_to_mirror_token() -> None:
     original = RocketRideClient.build_request
 
     def patched(self: RocketRideClient, command: str, **kwargs: Any) -> dict[str, Any]:
@@ -64,15 +70,16 @@ def _patch_build_request() -> None:
     RocketRideClient.build_request = patched  # type: ignore[assignment]
 
 
-_patch_build_request()
+patch_build_request_to_mirror_token()
 
 
 async def get_client() -> RocketRideClient:
-    global _client
-    if _client is None:
-        _client = RocketRideClient(on_event=_dispatch)
-        await _client.connect()
-    return _client
+    """Return the shared client, connecting it the first time it's asked for."""
+    global _cached_client
+    if _cached_client is None:
+        _cached_client = RocketRideClient(on_event=dispatch_event_to_handler)
+        await _cached_client.connect()
+    return _cached_client
 
 
 async def connect_with_retry(
@@ -88,7 +95,7 @@ async def connect_with_retry(
     CI sets this low so the api yields quickly when no runtime is
     expected.
     """
-    global _client
+    global _cached_client
     if timeout is None:
         env_timeout = os.environ.get("ROCKETRIDE_CONNECT_TIMEOUT")
         timeout = float(env_timeout) if env_timeout else DEFAULT_CONNECT_TIMEOUT
@@ -103,10 +110,10 @@ async def connect_with_retry(
             if not warned:
                 logger.info("waiting for runtime to accept connections...")
                 warned = True
-            if _client is not None:
+            if _cached_client is not None:
                 with contextlib.suppress(Exception):
-                    await _client.disconnect()
-                _client = None
+                    await _cached_client.disconnect()
+                _cached_client = None
             if asyncio.get_event_loop().time() >= deadline:
                 raise
             await asyncio.sleep(interval)
@@ -114,19 +121,23 @@ async def connect_with_retry(
 
 
 async def disconnect() -> None:
-    global _client
-    if _client is not None:
-        await _client.disconnect()
-        _client = None
+    """Close the cached client (if any) and clear the slot."""
+    global _cached_client
+    if _cached_client is not None:
+        await _cached_client.disconnect()
+        _cached_client = None
 
 
 async def reset_client() -> None:
-    """Drop the cached client without raising — used for recovery after the
-    engine WS dies. Best-effort: any disconnect failure is swallowed so the
-    caller can immediately call `get_client()` to rebuild."""
-    global _client
-    if _client is None:
+    """Drop the cached client without raising — used during recovery.
+
+    The engine WS may have already died, in which case `disconnect` itself
+    can raise. We swallow the failure so callers can immediately call
+    `get_client()` to rebuild from scratch.
+    """
+    global _cached_client
+    if _cached_client is None:
         return
     with contextlib.suppress(Exception):
-        await _client.disconnect()
-    _client = None
+        await _cached_client.disconnect()
+    _cached_client = None

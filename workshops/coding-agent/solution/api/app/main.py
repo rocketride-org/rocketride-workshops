@@ -1,3 +1,19 @@
+"""Switchboard between the chat UI and the rocketride engine.
+
+The FastAPI app at the heart of the workshop solution. It boots two
+pipeline instances at startup (one per source door — see `chat.py`),
+accepts a single WebSocket from the UI at `/api/ws/chat`, and routes
+each frame to the right pipeline send:
+
+- typed text → chat source via `send_text` → `client.chat()`
+- audio/image blob → webhook source via `send_blob` → `client.send()`
+- text + blob together → webhook source via `send_blob_with_text`
+  → `client.send_files()`
+
+Engine status, replies, and errors flow back over the same WebSocket
+as JSON frames the UI hooks render.
+"""
+
 import asyncio
 import contextlib
 import json
@@ -75,10 +91,9 @@ _RUNTIME_FORMATTER = logging.Formatter(
 
 
 def _open_console_stream() -> Any:
-    """Open the controlling console directly so output bypasses any
-    parent-process stdout pipe (pnpm `--parallel` adds a per-workspace
-    prefix). Falls back to stderr when no tty is attached.
-    """
+    """Open the controlling console directly so engine logs bypass the
+    parent-process stdout pipe (`pnpm --parallel` adds a per-workspace
+    prefix). Falls back to stderr when no tty is attached."""
     try:
         path = "CON" if sys.platform == "win32" else "/dev/tty"
         return open(path, "w", buffering=1, encoding="utf-8")
@@ -106,79 +121,81 @@ runtime_logger = _make_runtime_logger()
 OUTPUT_DIR = Path(__file__).resolve().parents[2] / ".output"
 
 
-# apaevt_status_update is a per-second per-node heartbeat (cpu/mem/gpu rates)
-# — useless raw, would balloon the tracer file. Drop everywhere.
-_TRACER_DROP = frozenset({"apaevt_status_update"})
-# Console gets every other event verbatim — flow + output are noisy but
-# essential during the workshop presentation (intentionally-broken pipeline
-# is debugged live by reading the trace stream). Heartbeats still dropped.
-_CONSOLE_NOISE = frozenset({"apaevt_status_update"})
+# Tracer = a flight data recorder for one chat turn — every node's input,
+# output, and status, in JSON. Studio renders it as the execution graph.
+# Per-second cpu/mem heartbeats are pure noise and balloon the file, so we
+# never let them hit either the tracer or the live console. Everything
+# else flows verbatim to both — keeping the workshop trace dense enough
+# to debug an intentionally-broken pipeline live.
+EVENTS_NEVER_LOGGED = frozenset({"apaevt_status_update"})
+EVENTS_HIDDEN_FROM_CONSOLE = frozenset({"apaevt_status_update"})
 
-_BODY_TRUNCATE = 200
+LOG_PAYLOAD_MAX_CHARS = 200
 
 
-def _trunc(value: Any, n: int = _BODY_TRUNCATE) -> str:
+def truncate(value: Any, n: int = LOG_PAYLOAD_MAX_CHARS) -> str:
+    """Stringify and ellipsize for log readability."""
     s = "" if value is None else str(value)
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
-def _fmt_node(seq: Any, event: str, body: Any) -> str:
+def format_node_event(seq: Any, event: str, body: Any) -> str:
     name = body.get("name") if isinstance(body, dict) else None
     status = body.get("status") if isinstance(body, dict) else None
     return f"seq={seq} {event} name={name} status={status}"
 
 
-def _fmt_node_error(seq: Any, event: str, body: Any) -> str:
+def format_node_error_event(seq: Any, event: str, body: Any) -> str:
     name = body.get("name") if isinstance(body, dict) else None
     err: Any = None
     if isinstance(body, dict):
         err = body.get("error") or body.get("message")
-    return f"seq={seq} {event} name={name} error={_trunc(err, 160)}"
+    return f"seq={seq} {event} name={name} error={truncate(err, 160)}"
 
 
-def _fmt_sse(seq: Any, event: str, body: Any) -> str:
+def format_sse_event(seq: Any, event: str, body: Any) -> str:
     if isinstance(body, dict):
         sub = body.get("event_type") or body.get("type")
         msg = body.get("message") or body.get("text")
-        return f"seq={seq} {event} {sub} {_trunc(msg, 160)}"
-    return f"seq={seq} {event} {_trunc(body, 160)}"
+        return f"seq={seq} {event} {sub} {truncate(msg, 160)}"
+    return f"seq={seq} {event} {truncate(body, 160)}"
 
 
-_RUNTIME_EVENT_FORMATTERS: dict[str, Callable[[Any, str, Any], str]] = {
-    "apaevt_node_started": _fmt_node,
-    "apaevt_node_finished": _fmt_node,
-    "apaevt_node_error": _fmt_node_error,
-    "apaevt_sse": _fmt_sse,
+RUNTIME_EVENT_FORMATTERS: dict[str, Callable[[Any, str, Any], str]] = {
+    "apaevt_node_started": format_node_event,
+    "apaevt_node_finished": format_node_event,
+    "apaevt_node_error": format_node_error_event,
+    "apaevt_sse": format_sse_event,
 }
 
 
-async def _on_runtime_event(message: dict[str, Any]) -> None:
+async def handle_runtime_event(message: dict[str, Any]) -> None:
+    """SDK hands us every engine runtime event here. Tee into the per-turn
+    tracer buffer first, then write a human-readable line to the console
+    (unless the event is on the suppression list)."""
     event_type = message.get("event") or "?"
     seq = message.get("seq")
     body = message.get("body")
-    # Tee into the per-turn tracer buffer FIRST (no-op outside a chat turn) so
-    # the log file gets every flow/output payload verbatim — the exact data
-    # Studio renders, regardless of whether console suppresses it.
-    if event_type not in _TRACER_DROP:
+    if event_type not in EVENTS_NEVER_LOGGED:
         record_runtime_event(event_type, seq, body)
-    if event_type in _CONSOLE_NOISE:
+    if event_type in EVENTS_HIDDEN_FROM_CONSOLE:
         return
-    formatter = _RUNTIME_EVENT_FORMATTERS.get(event_type)
+    formatter = RUNTIME_EVENT_FORMATTERS.get(event_type)
     if formatter:
         runtime_logger.info("%s", formatter(seq, event_type, body))
     else:
-        runtime_logger.info("seq=%s %s %s", seq, event_type, _trunc(repr(body)))
+        runtime_logger.info("seq=%s %s %s", seq, event_type, truncate(repr(body)))
 
 
 # ----------------------------------------------------------------------------
-# Pipeline lifecycle: single coding-agent pipeline initialized in the
+# Pipeline lifecycle: start the engine connection + pipelines in the
 # background so uvicorn binds the listener immediately.
 # ----------------------------------------------------------------------------
 
 
-async def _init_pipeline(app: FastAPI) -> None:
-    """Start the coding-agent pipelines (chat + webhook sources) with backoff
-    retry until they succeed or the task is cancelled."""
+async def start_pipelines_with_retry(app: FastAPI) -> None:
+    """Connect + load pipelines with backoff. Retries forever until success
+    or the lifespan tears down."""
     delay = 5.0
     attempt = 0
     while True:
@@ -209,10 +226,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     os.environ["ROCKETRIDE_OUTPUT_DIR"] = str(OUTPUT_DIR).replace("\\", "/")
     logger.info("ROCKETRIDE_OUTPUT_DIR=%s", os.environ["ROCKETRIDE_OUTPUT_DIR"])
-    set_event_handler(_on_runtime_event)
+    set_event_handler(handle_runtime_event)
     app.state.coding_tokens = None
     app.state.coding_ready = asyncio.Event()
-    init_task: asyncio.Task[None] = asyncio.create_task(_init_pipeline(app))
+    init_task: asyncio.Task[None] = asyncio.create_task(start_pipelines_with_retry(app))
     try:
         yield
     finally:
@@ -243,19 +260,19 @@ async def health() -> HealthResponse:
 
 
 # ----------------------------------------------------------------------------
-# Recovery: reconnect + restart pipelines when the engine WS dies.
+# Recovery: rebuild the engine connection + pipelines if the WS dies.
 # ----------------------------------------------------------------------------
 
-_recover_lock = asyncio.Lock()
+pipeline_recovery_lock = asyncio.Lock()
 
 
-def _is_disconnect_error(exc: BaseException) -> bool:
-    """True when the exception comes from a dead engine WS or transport."""
+def is_engine_disconnect(exc: BaseException) -> bool:
+    """Did this exception come from a dead engine WS or transport?"""
     if isinstance(exc, ConnectionError | OSError | TimeoutError):
         return True
     # The DAP layer raises plain RuntimeError("Server is not connected") /
-    # ConnectionError("Could not send request"). Match those by name to be
-    # defensive without catching unrelated runtime errors.
+    # ConnectionError("Could not send request") — match those by message
+    # so we don't catch unrelated runtime errors.
     if isinstance(exc, RuntimeError):
         msg = str(exc).lower()
         return (
@@ -266,11 +283,12 @@ def _is_disconnect_error(exc: BaseException) -> bool:
     return False
 
 
-async def _recover_pipeline() -> CodingTokens | None:
-    """Engine WS dropped. Drop the cached client, reconnect, restart both
-    coding pipelines, and publish the new tokens. Returns the new tokens
-    dict, or None if recovery failed."""
-    async with _recover_lock:
+# Like restarting a printer that froze mid-print — drop the dead client,
+# reconnect, and re-issue both pipelines so the next turn routes to the
+# new tokens. The lock keeps two concurrent recoveries from racing.
+async def restart_pipelines_after_drop() -> CodingTokens | None:
+    """Return the new tokens dict, or None if recovery failed."""
+    async with pipeline_recovery_lock:
         existing = getattr(app.state, "coding_tokens", None)
         if existing and existing != getattr(app.state, "_coding_recovering_from", None):
             return cast(CodingTokens, existing)
@@ -290,18 +308,18 @@ async def _recover_pipeline() -> CodingTokens | None:
 
 
 # ----------------------------------------------------------------------------
-# WebSocket handler: terminal-frame guarantee, single coding pipeline.
+# WebSocket handler.
 # ----------------------------------------------------------------------------
 
-_STATUS_THROTTLE_SECONDS = 0.25  # ~4 Hz max
-_MAX_BLOB_BYTES = 25 * 1024 * 1024  # 25 MB cap on uploaded audio/image
-_BLOB_CHANNELS = frozenset({"audio", "image"})
+STATUS_FRAME_THROTTLE_SECONDS = 0.25  # ~4 Hz max
+MAX_BLOB_BYTES = 25 * 1024 * 1024  # 25 MB cap on uploaded audio/image
+SUPPORTED_BLOB_CHANNELS = frozenset({"audio", "image"})
 
 
-async def _await_pipeline_ready(websocket: WebSocket) -> CodingTokens | None:
-    """Wait for the coding pipelines' asyncio.Event, sending one warm-up
-    status frame so the UI doesn't sit silently. Blocks indefinitely until
-    init lands or the lifespan tears down (event is None)."""
+async def wait_until_pipelines_ready(websocket: WebSocket) -> CodingTokens | None:
+    """Block until pipeline init completes. Sends one warm-up status so
+    the UI doesn't sit silently. Returns None only if the lifespan tore
+    down before init landed."""
     event: asyncio.Event | None = getattr(websocket.app.state, "coding_ready", None)
     tokens: CodingTokens | None = getattr(websocket.app.state, "coding_tokens", None)
     if tokens:
@@ -321,36 +339,60 @@ async def _await_pipeline_ready(websocket: WebSocket) -> CodingTokens | None:
 
 @app.websocket("/api/ws/chat")
 async def chat_ws(websocket: WebSocket) -> None:
+    """One WebSocket per browser tab. Single user, one turn at a time.
+
+    Inbound frames (UI → server):
+
+    - `{"type": "text", "text": <str>}` — typed message; runs through the
+      chat source.
+    - `{"type": "blob-start", "channel": "audio"|"image", "mimetype": ...,
+       "name"?: ..., "text"?: <caption>}` — opens a binary upload.
+    - Binary frames — appended to the open blob's buffer.
+    - `{"type": "blob-end"}` — closes the upload; runs through the webhook
+      source. If `text` was set on `blob-start`, the typed caption travels
+      with the blob as a combined turn.
+
+    Outbound frames (server → UI):
+
+    - `{"type": "status", "text": ...}` — periodic during a turn.
+    - `{"type": "reply", "text": ...}` — terminal: agent's answer.
+    - `{"type": "error", "message": ...}` — terminal: surface engine error.
+    - `{"type": "cancelled", "reason": ...}` — terminal: turn aborted.
+
+    Each turn always emits exactly one terminal frame.
+    """
     await websocket.accept()
     send_lock = asyncio.Lock()
     last_status_at = 0.0
 
-    async def _send_safe(payload: dict[str, Any]) -> None:
+    async def send_to_ui(payload: dict[str, Any]) -> None:
         async with send_lock:
             try:  # noqa: SIM105 — `contextlib.suppress` is sync-only, can't pair with `async with`
                 await websocket.send_json(payload)
             except (RuntimeError, WebSocketDisconnect):
                 pass  # client gone; drop silently
 
-    async def _emit_status(text: str) -> None:
+    async def send_status_frame(text: str) -> None:
         nonlocal last_status_at
         now = asyncio.get_event_loop().time()
-        if now - last_status_at < _STATUS_THROTTLE_SECONDS:
+        if now - last_status_at < STATUS_FRAME_THROTTLE_SECONDS:
             return
         last_status_at = now
-        await _send_safe({"type": "status", "text": text})
+        await send_to_ui({"type": "status", "text": text})
 
-    async def _resolve_tokens() -> CodingTokens | None:
+    async def send_error_frame(message: str) -> None:
+        await send_to_ui({"type": "error", "message": message})
+
+    async def wait_for_pipeline_tokens() -> CodingTokens | None:
         tokens: CodingTokens | None = getattr(websocket.app.state, "coding_tokens", None)
         if tokens:
             return tokens
-        return await _await_pipeline_ready(websocket)
+        return await wait_until_pipelines_ready(websocket)
 
-    async def _send_with_recovery(kind: str, do_send: Callable[[str], Awaitable[str]]) -> str:
-        """Run a token-bound coroutine against the coding pipeline,
-        recovering once if the engine WS drops mid-request. `kind` is
-        "chat" or "webhook" — picks the right token from the dict."""
-        tokens = await _resolve_tokens()
+    async def send_with_engine_recovery(kind: str, do_send: Callable[[str], Awaitable[str]]) -> str:
+        """Run a token-bound coroutine; if the engine WS drops, restart
+        the pipelines once and retry. `kind` is "chat" or "webhook"."""
+        tokens = await wait_for_pipeline_tokens()
         token = tokens.get(kind) if tokens else None
         if not token:
             raise RuntimeError(f"coding pipeline ({kind}) not available")
@@ -358,52 +400,51 @@ async def chat_ws(websocket: WebSocket) -> None:
         try:
             return await do_send(token)
         except Exception as exc:
-            if not _is_disconnect_error(exc):
+            if not is_engine_disconnect(exc):
                 raise
-            await _emit_status("connection lost — restarting pipeline…")
-            new_tokens = await _recover_pipeline()
+            await send_status_frame("connection lost — restarting pipeline…")
+            new_tokens = await restart_pipelines_after_drop()
             new_token = new_tokens.get(kind) if new_tokens else None
             if not new_token:
                 raise
             return await do_send(new_token)
 
-    async def _run_turn(kind: str, do_send: Callable[[str], Awaitable[str]]) -> None:
-        """Run one user turn through the coding pipeline. Always emits
-        exactly one terminal frame (reply | error | cancelled), even if
-        the inner send raises, the engine times out, or the WS drops.
-        `kind` is "chat" (text turns) or "webhook" (audio/image turns)."""
+    async def run_pipeline_turn(kind: str, do_send: Callable[[str], Awaitable[str]]) -> None:
+        """One user turn. Always emits exactly one terminal frame
+        (reply | error | cancelled), even if the inner send raises or the
+        WS drops mid-turn."""
         terminal_sent = False
 
-        async def _emit_terminal(payload: dict[str, Any]) -> None:
+        async def send_terminal_frame(payload: dict[str, Any]) -> None:
             nonlocal terminal_sent
             if terminal_sent:
                 return
             terminal_sent = True
-            await _send_safe(payload)
+            await send_to_ui(payload)
 
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-            reply = await _send_with_recovery(kind, do_send)
-            await _emit_terminal({"type": "reply", "text": reply})
+            reply = await send_with_engine_recovery(kind, do_send)
+            await send_terminal_frame({"type": "reply", "text": reply})
         except asyncio.CancelledError:
-            await _emit_terminal(
+            await send_terminal_frame(
                 {"type": "cancelled", "reason": "pipeline restarted — re-send your message"}
             )
             raise
         except Exception as exc:
             logger.exception("coding turn failed")
-            await _emit_terminal({"type": "error", "message": str(exc)})
+            await send_terminal_frame({"type": "error", "message": str(exc)})
         finally:
             if not terminal_sent:
-                await _emit_terminal({"type": "error", "message": "turn ended without reply"})
+                await send_terminal_frame({"type": "error", "message": "turn ended without reply"})
 
-    async def _run_text_turn(text: str) -> None:
+    async def run_text_turn(text: str) -> None:
         async def do(token: str) -> str:
-            return await send_text(token, text, on_status=_emit_status)
+            return await send_text(token, text, on_status=send_status_frame)
 
-        await _run_turn("chat", do)
+        await run_pipeline_turn("chat", do)
 
-    async def _run_blob_turn(
+    async def run_blob_turn(
         channel: str,
         mimetype: str,
         data: bytes,
@@ -416,19 +457,20 @@ async def chat_ws(websocket: WebSocket) -> None:
             label = f"{channel} ({len(data)} bytes)"
             if caption:
                 label += f" + caption ({len(caption)} chars)"
-            await _emit_status(f"uploaded {label} — running pipeline…")
+            await send_status_frame(f"uploaded {label} — running pipeline…")
             if caption:
                 return await send_blob_with_text(
-                    token, caption, data, mimetype, on_status=_emit_status, name=name
+                    token, caption, data, mimetype, on_status=send_status_frame, name=name
                 )
-            return await send_blob(token, data, mimetype, on_status=_emit_status, name=name)
+            return await send_blob(token, data, mimetype, on_status=send_status_frame, name=name)
 
-        await _run_turn("webhook", do)
+        await run_pipeline_turn("webhook", do)
 
+    # Blob = a complete binary file (audio recording, picked image). The
+    # client streams it to us in WebSocket binary frames between a
+    # `blob-start` and `blob-end` envelope; we buffer the bytes here and
+    # forward the assembled whole to the pipeline.
     pending_blob: dict[str, Any] | None = None
-
-    async def _emit_error(message: str) -> None:
-        await _send_safe({"type": "error", "message": message})
 
     try:
         while True:
@@ -439,10 +481,10 @@ async def chat_ws(websocket: WebSocket) -> None:
             if data_bytes is not None:
                 if pending_blob is None:
                     continue  # stray binary frame; drop
-                if len(pending_blob["buf"]) + len(data_bytes) > _MAX_BLOB_BYTES:
-                    cap_mb = _MAX_BLOB_BYTES // (1024 * 1024)
+                if len(pending_blob["buf"]) + len(data_bytes) > MAX_BLOB_BYTES:
+                    cap_mb = MAX_BLOB_BYTES // (1024 * 1024)
                     pending_blob = None
-                    await _emit_error(f"upload exceeded {cap_mb} MB cap; cancelled")
+                    await send_error_frame(f"upload exceeded {cap_mb} MB cap; cancelled")
                     continue
                 pending_blob["buf"].extend(data_bytes)
                 continue
@@ -458,17 +500,17 @@ async def chat_ws(websocket: WebSocket) -> None:
                 text = event.get("text") or ""
                 if not text:
                     continue
-                await _run_text_turn(text)
+                await run_text_turn(text)
             elif event_type == "blob-start":
                 channel = event.get("channel")
                 mimetype = event.get("mimetype")
                 name = event.get("name")
                 text = event.get("text")
-                if channel not in _BLOB_CHANNELS:
-                    await _emit_error(f"unsupported blob channel: {channel!r}")
+                if channel not in SUPPORTED_BLOB_CHANNELS:
+                    await send_error_frame(f"unsupported blob channel: {channel!r}")
                     continue
                 if not isinstance(mimetype, str) or not mimetype:
-                    await _emit_error("blob-start missing mimetype")
+                    await send_error_frame("blob-start missing mimetype")
                     continue
                 pending_blob = {
                     "channel": channel,
@@ -483,9 +525,9 @@ async def chat_ws(websocket: WebSocket) -> None:
                 snap = pending_blob
                 pending_blob = None
                 if not snap["buf"]:
-                    await _emit_error(f"empty {snap['channel']} blob; nothing to send")
+                    await send_error_frame(f"empty {snap['channel']} blob; nothing to send")
                     continue
-                await _run_blob_turn(
+                await run_blob_turn(
                     snap["channel"],
                     snap["mimetype"],
                     bytes(snap["buf"]),

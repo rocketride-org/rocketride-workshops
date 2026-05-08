@@ -13,11 +13,11 @@ from app.libs.rocketride import client as client_mod
 @pytest.fixture(autouse=True)
 def reset_module_state():
     """Each test starts with no cached client and no event handler."""
-    client_mod._client = None
-    client_mod._on_event_handler = None
+    client_mod._cached_client = None
+    client_mod._event_handler = None
     yield
-    client_mod._client = None
-    client_mod._on_event_handler = None
+    client_mod._cached_client = None
+    client_mod._event_handler = None
 
 
 class TestPatchBuildRequest:
@@ -58,14 +58,14 @@ class TestSetEventHandlerAndDispatch:
             received.append(msg)
 
         client_mod.set_event_handler(handler)
-        await client_mod._dispatch({"event": "x", "body": {}})
+        await client_mod.dispatch_event_to_handler({"event": "x", "body": {}})
         # _dispatch creates a task; let it run.
         await asyncio.sleep(0)
         assert received == [{"event": "x", "body": {}}]
 
     async def test_dispatch_with_no_handler_is_noop(self) -> None:
         # No handler registered.
-        await client_mod._dispatch({"event": "x"})
+        await client_mod.dispatch_event_to_handler({"event": "x"})
         # Reaching here without exception is the assertion.
 
     async def test_dispatch_handler_exception_logged_not_raised(
@@ -76,7 +76,7 @@ class TestSetEventHandlerAndDispatch:
 
         client_mod.set_event_handler(handler)
         with caplog.at_level(logging.ERROR, logger="coding-agent"):
-            await client_mod._dispatch({"event": "y"})
+            await client_mod.dispatch_event_to_handler({"event": "y"})
             await asyncio.sleep(0)
             await asyncio.sleep(0)
         # Exception should be logged via logger.exception in _run.
@@ -100,12 +100,12 @@ class TestConnectWithRetry:
         async def flaky_get_client():
             attempts["n"] += 1
             if attempts["n"] < 3:
-                # Set _client to a stub so the cleanup branch runs (line 106-109).
+                # Cache a stub so the connect_with_retry cleanup branch runs.
                 class StubClient:
                     async def disconnect(self):
                         return None
 
-                client_mod._client = StubClient()  # type: ignore[assignment]
+                client_mod._cached_client = StubClient()  # type: ignore[assignment]
                 raise ConnectionError("not yet")
             return sentinel
 
@@ -130,7 +130,7 @@ class TestConnectWithRetry:
             async def disconnect(self):
                 return None
 
-        client_mod._client = StubClient()  # type: ignore[assignment]
+        client_mod._cached_client = StubClient()  # type: ignore[assignment]
 
         monkeypatch.setattr(client_mod, "get_client", always_fail)
         monkeypatch.setattr(client_mod.asyncio, "sleep", no_sleep)
@@ -146,13 +146,13 @@ class TestDisconnectAndReset:
             async def disconnect(self):
                 calls["n"] += 1
 
-        client_mod._client = StubClient()  # type: ignore[assignment]
+        client_mod._cached_client = StubClient()  # type: ignore[assignment]
         await client_mod.disconnect()
         assert calls["n"] == 1
-        assert client_mod._client is None
+        assert client_mod._cached_client is None
 
     async def test_disconnect_when_no_cached_client_is_noop(self) -> None:
-        client_mod._client = None
+        client_mod._cached_client = None
         await client_mod.disconnect()  # should not raise
 
     async def test_reset_client_swallows_disconnect_failures(self) -> None:
@@ -160,12 +160,12 @@ class TestDisconnectAndReset:
             async def disconnect(self):
                 raise RuntimeError("disconnect failed")
 
-        client_mod._client = BadClient()  # type: ignore[assignment]
+        client_mod._cached_client = BadClient()  # type: ignore[assignment]
         await client_mod.reset_client()  # must not raise
-        assert client_mod._client is None
+        assert client_mod._cached_client is None
 
     async def test_reset_client_when_no_cached_client_is_noop(self) -> None:
-        client_mod._client = None
+        client_mod._cached_client = None
         await client_mod.reset_client()
 
 

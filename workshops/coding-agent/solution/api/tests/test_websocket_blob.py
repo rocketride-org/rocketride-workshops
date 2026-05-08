@@ -11,9 +11,9 @@ def client(fastapi_app, tracer_log_dir, monkeypatch: pytest.MonkeyPatch):
     app, fake = fastapi_app
     from app import main as main_mod
 
-    monkeypatch.setattr(main_mod, "_STATUS_THROTTLE_SECONDS", 0.0)
+    monkeypatch.setattr(main_mod, "STATUS_FRAME_THROTTLE_SECONDS", 0.0)
     # Lower the size cap so over-cap tests are cheap.
-    monkeypatch.setattr(main_mod, "_MAX_BLOB_BYTES", 32)
+    monkeypatch.setattr(main_mod, "MAX_BLOB_BYTES", 32)
     with TestClient(app) as tc:
         yield tc, fake
 
