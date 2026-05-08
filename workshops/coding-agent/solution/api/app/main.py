@@ -109,10 +109,10 @@ OUTPUT_DIR = Path(__file__).resolve().parents[2] / ".output"
 # apaevt_status_update is a per-second per-node heartbeat (cpu/mem/gpu rates)
 # — useless raw, would balloon the tracer file. Drop everywhere.
 _TRACER_DROP = frozenset({"apaevt_status_update"})
-# apaevt_flow + output fire per-lane-write / per-line — fine for the tracer
-# file (that's where the exact per-node payloads live), too granular for the
-# live dev console.
-_CONSOLE_NOISE = frozenset({"apaevt_status_update", "apaevt_flow", "output"})
+# Console gets every other event verbatim — flow + output are noisy but
+# essential during the workshop presentation (intentionally-broken pipeline
+# is debugged live by reading the trace stream). Heartbeats still dropped.
+_CONSOLE_NOISE = frozenset({"apaevt_status_update"})
 
 _BODY_TRUNCATE = 200
 
