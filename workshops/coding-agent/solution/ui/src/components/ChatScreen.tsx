@@ -1,3 +1,9 @@
+// Top-level chat orchestrator. Owns the message history, the WebSocket,
+// and the hero → chat phase transition. Each user submit (text or
+// attachment) opens a "turn": appends a pending bubble, registers a
+// one-shot WS listener, and resolves the bubble when status / reply /
+// cancelled / error frames arrive.
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatHistory } from "../hooks/useChatHistory";
 import { useChatSocket } from "../hooks/useChatSocket";
@@ -10,7 +16,8 @@ import { ResetBanner } from "./ResetBanner";
 const WARMING_HINT = "warming up coding agent — first reply takes longer…";
 const HERO_FADE_MS = 220;
 
-type Phase = "hero" | "transitioning" | "chat";
+// hero (splash) → transitioning (cross-fade) → chat (message stream).
+type ChatPhase = "hero" | "transitioning" | "chat";
 
 function newId(): string {
   return crypto.randomUUID();
@@ -31,8 +38,8 @@ function pendingAgentMessage(hint?: string): Message {
 export function ChatScreen() {
   const { messages, append, update, wasReset, dismissReset } = useChatHistory();
   const socket = useChatSocket();
-  const hasSentRef = useRef(false);
-  const [phase, setPhase] = useState<Phase>(() => (messages.length > 0 ? "chat" : "hero"));
+  const firstMessageSentRef = useRef(false);
+  const [phase, setPhase] = useState<ChatPhase>(() => (messages.length > 0 ? "chat" : "hero"));
 
   useEffect(() => {
     if (phase !== "transitioning") return;
@@ -40,12 +47,15 @@ export function ChatScreen() {
     return () => window.clearTimeout(id);
   }, [phase]);
 
-  const beginTurn = useCallback(
+  // Returns `{pendingId, off}`. The caller dispatches the actual WS frames
+  // *after* this fires; the listener is already in place so status frames
+  // that arrive during transmission aren't missed.
+  const startPendingTurn = useCallback(
     (userMsg: Message): { pendingId: string; off: () => void } => {
       setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
       append(userMsg);
-      const isFirst = !hasSentRef.current;
-      hasSentRef.current = true;
+      const isFirst = !firstMessageSentRef.current;
+      firstMessageSentRef.current = true;
       const pending = pendingAgentMessage(isFirst ? WARMING_HINT : undefined);
       append(pending);
 
@@ -84,7 +94,7 @@ export function ChatScreen() {
     [append, socket, update],
   );
 
-  const failTurn = useCallback(
+  const failPendingTurn = useCallback(
     (pendingId: string, off: () => void, message: string) => {
       off();
       update(pendingId, {
@@ -99,14 +109,14 @@ export function ChatScreen() {
 
   const handleUserText = useCallback(
     async (text: string) => {
-      const { pendingId, off } = beginTurn(userMessage(text));
+      const { pendingId, off } = startPendingTurn(userMessage(text));
       try {
         await socket.send({ type: "text", text });
       } catch (err) {
-        failTurn(pendingId, off, err instanceof Error ? err.message : "send failed");
+        failPendingTurn(pendingId, off, err instanceof Error ? err.message : "send failed");
       }
     },
-    [beginTurn, failTurn, socket],
+    [failPendingTurn, socket, startPendingTurn],
   );
 
   const handleUserAttachment = useCallback(
@@ -125,7 +135,7 @@ export function ChatScreen() {
               kind: "image",
               attachmentUrl: attachment.previewUrl,
             };
-      const { pendingId, off } = beginTurn(userMsg);
+      const { pendingId, off } = startPendingTurn(userMsg);
       try {
         await socket.send({
           type: "blob-start",
@@ -137,10 +147,10 @@ export function ChatScreen() {
         await socket.sendBinary(attachment.blob);
         await socket.send({ type: "blob-end" });
       } catch (err) {
-        failTurn(pendingId, off, err instanceof Error ? err.message : "upload failed");
+        failPendingTurn(pendingId, off, err instanceof Error ? err.message : "upload failed");
       }
     },
-    [beginTurn, failTurn, socket],
+    [failPendingTurn, socket, startPendingTurn],
   );
 
   const handleError = useCallback(

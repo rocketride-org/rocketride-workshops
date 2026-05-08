@@ -1,3 +1,8 @@
+// Persistent chat history backed by localStorage. Capped at 50 messages or
+// 64 KB; if either cap is exceeded the history wipes itself and flips
+// `wasReset` so the UI can show a banner. Pending bubbles never make it to
+// disk — they're transient placeholders, not real history.
+
 import { useCallback, useState } from "react";
 import type { Message } from "../lib/types";
 
@@ -5,7 +10,7 @@ const STORAGE_KEY = "coding-agent.history.v1";
 const MAX_MESSAGES = 50;
 const MAX_BYTES = 64 * 1024;
 
-function readStored(): Message[] {
+function readHistoryFromStorage(): Message[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -16,7 +21,7 @@ function readStored(): Message[] {
   }
 }
 
-function writeStored(messages: Message[]): void {
+function writeHistoryToStorage(messages: Message[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   } catch {
@@ -24,24 +29,28 @@ function writeStored(messages: Message[]): void {
   }
 }
 
-function exceedsCap(messages: Message[]): boolean {
+function exceedsStorageLimit(messages: Message[]): boolean {
   if (messages.length > MAX_MESSAGES) return true;
   return JSON.stringify(messages).length > MAX_BYTES;
 }
 
+function persistableMessages(messages: Message[]): Message[] {
+  return messages.filter((m) => !m.pending);
+}
+
 export function useChatHistory() {
-  const [messages, setMessages] = useState<Message[]>(() => readStored());
+  const [messages, setMessages] = useState<Message[]>(() => readHistoryFromStorage());
   const [wasReset, setWasReset] = useState(false);
 
   const append = useCallback((message: Message) => {
     setMessages((prev) => {
       const next = [...prev, message];
-      if (exceedsCap(next)) {
-        writeStored([]);
+      if (exceedsStorageLimit(next)) {
+        writeHistoryToStorage([]);
         setWasReset(true);
         return [];
       }
-      writeStored(next.filter((m) => !m.pending));
+      writeHistoryToStorage(persistableMessages(next));
       return next;
     });
   }, []);
@@ -49,13 +58,13 @@ export function useChatHistory() {
   const update = useCallback((id: string, patch: Partial<Message>) => {
     setMessages((prev) => {
       const next = prev.map((m) => (m.id === id ? { ...m, ...patch } : m));
-      writeStored(next.filter((m) => !m.pending));
+      writeHistoryToStorage(persistableMessages(next));
       return next;
     });
   }, []);
 
   const clear = useCallback(() => {
-    writeStored([]);
+    writeHistoryToStorage([]);
     setMessages([]);
   }, []);
 

@@ -1,3 +1,7 @@
+// One submit button drives three turn shapes: text-only, attachment-only,
+// or text + attachment together. Pending attachments stage locally — an
+// audio recording or a picked image — until the user hits send.
+
 import { useCallback, useRef, useState } from "react";
 import { useVoiceStream } from "../hooks/useVoiceStream";
 import type { PendingAttachment } from "../lib/types";
@@ -12,13 +16,13 @@ type Props = {
 };
 
 export function Composer({ onUserText, onUserAttachment, onError }: Props) {
-  const [draft, setDraft] = useState("");
-  const [pending, setPending] = useState<PendingAttachment | null>(null);
+  const [inputDraft, setInputDraft] = useState("");
+  const [pendingAttachment, setPendingAttachment] = useState<PendingAttachment | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCaptured = useCallback((blob: Blob, mimetype: string) => {
     const previewUrl = URL.createObjectURL(blob);
-    setPending((prev) => {
+    setPendingAttachment((prev) => {
       if (prev) URL.revokeObjectURL(prev.previewUrl);
       return {
         kind: "audio",
@@ -35,9 +39,9 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
     onError,
   });
 
-  function clearPending() {
-    if (pending) URL.revokeObjectURL(pending.previewUrl);
-    setPending(null);
+  function clearPendingAttachment() {
+    if (pendingAttachment) URL.revokeObjectURL(pendingAttachment.previewUrl);
+    setPendingAttachment(null);
   }
 
   async function toggleMic() {
@@ -57,7 +61,7 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
     event.target.value = "";
     if (!file) return;
     const previewUrl = URL.createObjectURL(file);
-    setPending((prev) => {
+    setPendingAttachment((prev) => {
       if (prev) URL.revokeObjectURL(prev.previewUrl);
       return {
         kind: "image",
@@ -70,21 +74,22 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
   }
 
   async function submit() {
-    const trimmed = draft.trim();
-    if (pending) {
-      const attachment = pending;
-      setPending(null);
-      setDraft("");
-      await onUserAttachment(attachment, trimmed || undefined);
-      // ownership of previewUrl transfers to the bubble; do NOT revoke here
+    const trimmedText = inputDraft.trim();
+    if (pendingAttachment) {
+      const attachment = pendingAttachment;
+      setPendingAttachment(null);
+      setInputDraft("");
+      // The caller takes over previewUrl ownership (it shows up in the
+      // sent bubble) — we deliberately don't revoke it here.
+      await onUserAttachment(attachment, trimmedText || undefined);
       return;
     }
-    if (!trimmed) return;
-    setDraft("");
-    await onUserText(trimmed);
+    if (!trimmedText) return;
+    setInputDraft("");
+    await onUserText(trimmedText);
   }
 
-  const canSend = !isRecording && (draft.trim().length > 0 || pending !== null);
+  const canSend = !isRecording && (inputDraft.trim().length > 0 || pendingAttachment !== null);
 
   return (
     <form
@@ -120,12 +125,12 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
         <MicIcon size={26} />
       </button>
       <div className="composer-main">
-        {pending && (
-          <div className="composer-attachment" aria-label={`attached ${pending.kind}`}>
-            {pending.kind === "image" ? (
+        {pendingAttachment && (
+          <div className="composer-attachment" aria-label={`attached ${pendingAttachment.kind}`}>
+            {pendingAttachment.kind === "image" ? (
               <img
                 className="composer-attachment-thumb"
-                src={pending.previewUrl}
+                src={pendingAttachment.previewUrl}
                 alt="attachment"
               />
             ) : (
@@ -138,7 +143,7 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
               type="button"
               className="composer-attachment-clear"
               aria-label="remove attachment"
-              onClick={clearPending}
+              onClick={clearPendingAttachment}
             >
               ×
             </button>
@@ -146,12 +151,12 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
         )}
         <input
           className="composer-input"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          value={inputDraft}
+          onChange={(e) => setInputDraft(e.target.value)}
           placeholder={
             isRecording
               ? "listening — click mic to stop"
-              : pending
+              : pendingAttachment
                 ? "add a caption (optional)…"
                 : "message Cody Rider…"
           }
