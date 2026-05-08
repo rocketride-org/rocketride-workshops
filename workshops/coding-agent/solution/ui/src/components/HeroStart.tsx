@@ -1,18 +1,34 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useVoiceStream } from "../hooks/useVoiceStream";
+import type { PendingAttachment } from "../lib/types";
 import { MicIcon } from "./MicIcon";
 
 type Props = {
   onUserText: (text: string) => Promise<void> | void;
-  onUserVoice: () => void;
-  onAgentReply: (text: string) => void;
+  onUserAttachment: (attachment: PendingAttachment, text?: string) => Promise<void> | void;
   onError?: (message: string) => void;
 };
 
-export function HeroStart({ onUserText, onUserVoice, onAgentReply, onError }: Props) {
+export function HeroStart({ onUserText, onUserAttachment, onError }: Props) {
   const [draft, setDraft] = useState("");
+
+  const handleCaptured = useCallback(
+    (blob: Blob, mimetype: string) => {
+      const previewUrl = URL.createObjectURL(blob);
+      const attachment: PendingAttachment = {
+        kind: "audio",
+        blob,
+        mimetype,
+        name: `recording-${Date.now()}.webm`,
+        previewUrl,
+      };
+      void onUserAttachment(attachment);
+    },
+    [onUserAttachment],
+  );
+
   const { isRecording, start, stop } = useVoiceStream({
-    onReply: onAgentReply,
+    onCaptured: handleCaptured,
     onError,
   });
 
@@ -25,7 +41,6 @@ export function HeroStart({ onUserText, onUserVoice, onAgentReply, onError }: Pr
 
   async function toggleMic() {
     if (isRecording) {
-      onUserVoice();
       await stop();
     } else {
       await start();

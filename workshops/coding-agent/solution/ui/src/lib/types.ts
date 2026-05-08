@@ -1,6 +1,6 @@
 export type ChatRole = "user" | "agent";
 
-export type MessageKind = "text" | "voice";
+export type MessageKind = "text" | "voice" | "image";
 
 export type Message = {
   id: string;
@@ -10,12 +10,29 @@ export type Message = {
   kind?: MessageKind;
   pending?: boolean;
   hint?: string;
+  attachmentUrl?: string;
 };
 
-export type WsClientStart = { type: "start" };
-export type WsClientEnd = { type: "end" };
+export type BlobChannel = "audio" | "image";
+
 export type WsClientText = { type: "text"; text: string };
-export type WsClientEvent = WsClientStart | WsClientEnd | WsClientText;
+export type WsClientBlobStart = {
+  type: "blob-start";
+  channel: BlobChannel;
+  mimetype: string;
+  name?: string;
+  text?: string;
+};
+export type WsClientBlobEnd = { type: "blob-end" };
+export type WsClientEvent = WsClientText | WsClientBlobStart | WsClientBlobEnd;
+
+export type PendingAttachment = {
+  kind: BlobChannel;
+  blob: Blob;
+  mimetype: string;
+  name?: string;
+  previewUrl: string;
+};
 
 export type WsServerStatus = { type: "status"; text: string };
 export type WsServerReply = { type: "reply"; text: string };

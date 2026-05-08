@@ -66,6 +66,7 @@ export function MessageBubble({ message }: { message: Message }) {
   }
 
   const isVoice = message.kind === "voice";
+  const isImage = message.kind === "image";
   const isUser = message.role === "user";
   const attributionLabel = isVoice ? null : isUser ? "You" : "Cody Rider";
   const attributionClass = isUser
@@ -73,7 +74,7 @@ export function MessageBubble({ message }: { message: Message }) {
     : "bubble-attribution";
   const time = formatTime(message.createdAt);
 
-  if (!isUser && !isVoice) {
+  if (!isUser && !isVoice && !isImage) {
     return (
       <>
         <div className="agent-response">
@@ -89,13 +90,18 @@ export function MessageBubble({ message }: { message: Message }) {
   }
 
   const roleClass = isUser ? "bubble-user" : "bubble-agent";
-  const className = isVoice ? `bubble ${roleClass} bubble-voice` : `bubble ${roleClass}`;
+  const kindClass = isVoice ? " bubble-voice" : isImage ? " bubble-image" : "";
+  const className = `bubble ${roleClass}${kindClass}`;
 
   return (
     <>
       <div className={className}>
         {isVoice && <MicIcon size={16} />}
-        <span>{message.text}</span>
+        {isImage && message.attachmentUrl ? (
+          <img className="bubble-image-thumb" src={message.attachmentUrl} alt={message.text} />
+        ) : (
+          <span>{message.text}</span>
+        )}
       </div>
       {attributionLabel && (
         <Attribution label={attributionLabel} time={time} className={attributionClass} />

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatHistory } from "../hooks/useChatHistory";
 import { useChatSocket } from "../hooks/useChatSocket";
-import type { Message } from "../lib/types";
+import type { Message, PendingAttachment } from "../lib/types";
 import { Composer } from "./Composer";
 import { HeroStart } from "./HeroStart";
 import { MessageList } from "./MessageList";
@@ -40,10 +40,10 @@ export function ChatScreen() {
     return () => window.clearTimeout(id);
   }, [phase]);
 
-  const handleUserText = useCallback(
-    async (text: string) => {
+  const beginTurn = useCallback(
+    (userMsg: Message): { pendingId: string; off: () => void } => {
       setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
-      append(userMessage(text));
+      append(userMsg);
       const isFirst = !hasSentRef.current;
       hasSentRef.current = true;
       const pending = pendingAgentMessage(isFirst ? WARMING_HINT : undefined);
@@ -79,31 +79,68 @@ export function ChatScreen() {
         }
       });
 
-      try {
-        await socket.send({ type: "text", text });
-      } catch (err) {
-        off();
-        update(pending.id, {
-          text: err instanceof Error ? `error: ${err.message}` : "error",
-          pending: false,
-          hint: undefined,
-          createdAt: Date.now(),
-        });
-      }
+      return { pendingId: pending.id, off };
     },
     [append, socket, update],
   );
 
-  const handleUserVoice = useCallback(() => {
-    setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
-    append({ ...userMessage("voice message"), kind: "voice" });
-  }, [append]);
-
-  const handleAgentReply = useCallback(
-    (text: string) => {
-      append(agentMessage(text));
+  const failTurn = useCallback(
+    (pendingId: string, off: () => void, message: string) => {
+      off();
+      update(pendingId, {
+        text: `error: ${message}`,
+        pending: false,
+        hint: undefined,
+        createdAt: Date.now(),
+      });
     },
-    [append],
+    [update],
+  );
+
+  const handleUserText = useCallback(
+    async (text: string) => {
+      const { pendingId, off } = beginTurn(userMessage(text));
+      try {
+        await socket.send({ type: "text", text });
+      } catch (err) {
+        failTurn(pendingId, off, err instanceof Error ? err.message : "send failed");
+      }
+    },
+    [beginTurn, failTurn, socket],
+  );
+
+  const handleUserAttachment = useCallback(
+    async (attachment: PendingAttachment, text?: string) => {
+      const caption = text?.trim() || "";
+      const userMsg: Message = caption
+        ? {
+            ...userMessage(caption),
+            kind: attachment.kind === "audio" ? "voice" : "image",
+            attachmentUrl: attachment.previewUrl,
+          }
+        : attachment.kind === "audio"
+          ? { ...userMessage("voice message"), kind: "voice" }
+          : {
+              ...userMessage(attachment.name ?? "image"),
+              kind: "image",
+              attachmentUrl: attachment.previewUrl,
+            };
+      const { pendingId, off } = beginTurn(userMsg);
+      try {
+        await socket.send({
+          type: "blob-start",
+          channel: attachment.kind,
+          mimetype: attachment.mimetype,
+          name: attachment.name,
+          ...(caption ? { text: caption } : {}),
+        });
+        await socket.sendBinary(attachment.blob);
+        await socket.send({ type: "blob-end" });
+      } catch (err) {
+        failTurn(pendingId, off, err instanceof Error ? err.message : "upload failed");
+      }
+    },
+    [beginTurn, failTurn, socket],
   );
 
   const handleError = useCallback(
@@ -126,8 +163,7 @@ export function ChatScreen() {
       {phase !== "chat" ? (
         <HeroStart
           onUserText={handleUserText}
-          onUserVoice={handleUserVoice}
-          onAgentReply={handleAgentReply}
+          onUserAttachment={handleUserAttachment}
           onError={handleError}
         />
       ) : (
@@ -149,8 +185,7 @@ export function ChatScreen() {
           <MessageList messages={messages} />
           <Composer
             onUserText={handleUserText}
-            onUserVoice={handleUserVoice}
-            onAgentReply={handleAgentReply}
+            onUserAttachment={handleUserAttachment}
             onError={handleError}
           />
         </>

@@ -13,8 +13,8 @@
       },
       "ui": {
         "position": {
-          "x": 420,
-          "y": 190
+          "x": 50,
+          "y": 330
         },
         "nodeType": "default",
         "formDataValid": true
@@ -35,7 +35,7 @@
       },
       "ui": {
         "position": {
-          "x": 700,
+          "x": 830,
           "y": 200
         },
         "nodeType": "default",
@@ -45,6 +45,10 @@
         {
           "lane": "questions",
           "from": "chat_1"
+        },
+        {
+          "lane": "questions",
+          "from": "question_1"
         }
       ]
     },
@@ -58,7 +62,7 @@
       },
       "ui": {
         "position": {
-          "x": 900,
+          "x": 1080,
           "y": 200
         },
         "nodeType": "default",
@@ -85,7 +89,7 @@
       },
       "ui": {
         "position": {
-          "x": 700,
+          "x": 830,
           "y": 320
         },
         "nodeType": "default",
@@ -646,7 +650,7 @@
       },
       "ui": {
         "position": {
-          "x": 1230,
+          "x": 1100,
           "y": 500
         },
         "nodeType": "default",
@@ -673,7 +677,7 @@
       },
       "ui": {
         "position": {
-          "x": 1230,
+          "x": 1100,
           "y": 620
         },
         "nodeType": "default",
@@ -702,7 +706,7 @@
       },
       "ui": {
         "position": {
-          "x": 1230,
+          "x": 1100,
           "y": 720
         },
         "nodeType": "default",
@@ -736,7 +740,7 @@
       },
       "ui": {
         "position": {
-          "x": 1230,
+          "x": 1100,
           "y": 820
         },
         "nodeType": "default",
@@ -766,7 +770,7 @@
       },
       "ui": {
         "position": {
-          "x": 1230,
+          "x": 1100,
           "y": 920
         },
         "nodeType": "default",
@@ -794,7 +798,7 @@
       },
       "ui": {
         "position": {
-          "x": 1430,
+          "x": 1300,
           "y": 500
         },
         "nodeType": "default",
@@ -821,7 +825,7 @@
       },
       "ui": {
         "position": {
-          "x": 1430,
+          "x": 1300,
           "y": 620
         },
         "nodeType": "default",
@@ -850,7 +854,7 @@
       },
       "ui": {
         "position": {
-          "x": 1430,
+          "x": 1300,
           "y": 720
         },
         "nodeType": "default",
@@ -884,7 +888,7 @@
       },
       "ui": {
         "position": {
-          "x": 1430,
+          "x": 1300,
           "y": 820
         },
         "nodeType": "default",
@@ -894,6 +898,113 @@
         {
           "classType": "tool",
           "from": "agent_deepagent_subagent_qa"
+        }
+      ]
+    },
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "name": "Web Hook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "webhook",
+        "name": "Web Hook"
+      },
+      "ui": {
+        "position": {
+          "x": 50,
+          "y": 110
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "name": "Transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "name": "Transcribe"
+      },
+      "ui": {
+        "position": {
+          "x": 340,
+          "y": 70
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "audio",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "name": "Question",
+      "config": {
+        "type": "question",
+        "name": "Question"
+      },
+      "ui": {
+        "position": {
+          "x": 590,
+          "y": 140
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "audio_transcribe_1"
+        },
+        {
+          "lane": "text",
+          "from": "ocr_1"
+        },
+        {
+          "lane": "text",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "ocr_1",
+      "provider": "ocr",
+      "name": "OCR",
+      "config": {
+        "engine": "easyocr",
+        "profile": "latin",
+        "script_family": "latin",
+        "table_engine": "doctr",
+        "name": "OCR"
+      },
+      "ui": {
+        "position": {
+          "x": 340,
+          "y": 190
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "image",
+          "from": "webhook_1"
         }
       ]
     }
@@ -906,5 +1017,5 @@
     10,
     10
   ],
-  "docRevision": 122
+  "docRevision": 187
 }

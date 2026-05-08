@@ -1,36 +1,36 @@
 import { useCallback, useRef, useState } from "react";
-import { useChatSocket } from "./useChatSocket";
 
 type Options = {
-  onReply: (text: string) => void;
+  onCaptured: (blob: Blob, mimetype: string) => void;
   onError?: (message: string) => void;
 };
 
-export function useVoiceStream({ onReply, onError }: Options) {
-  const socket = useChatSocket();
+const AUDIO_MIMETYPE = "audio/webm;codecs=opus";
+
+export function useVoiceStream({ onCaptured, onError }: Options) {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
 
   const releaseMic = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     recorderRef.current = null;
+    chunksRef.current = [];
   }, []);
 
   const start = useCallback(async () => {
     if (recorderRef.current) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+      const recorder = new MediaRecorder(stream, { mimeType: AUDIO_MIMETYPE });
       streamRef.current = stream;
       recorderRef.current = recorder;
+      chunksRef.current = [];
       recorder.addEventListener("dataavailable", (e) => {
-        if (e.data && e.data.size > 0) {
-          socket.sendBinary(e.data).catch((err: Error) => onError?.(err.message));
-        }
+        if (e.data && e.data.size > 0) chunksRef.current.push(e.data);
       });
-      await socket.send({ type: "start" });
       recorder.start(250);
       setIsRecording(true);
     } catch (err) {
@@ -38,7 +38,7 @@ export function useVoiceStream({ onReply, onError }: Options) {
       releaseMic();
       setIsRecording(false);
     }
-  }, [onError, releaseMic, socket]);
+  }, [onError, releaseMic]);
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
@@ -48,18 +48,15 @@ export function useVoiceStream({ onReply, onError }: Options) {
       recorder.addEventListener("stop", () => resolve(), { once: true });
       recorder.stop();
     });
+    const chunks = chunksRef.current.slice();
     releaseMic();
-    const off = socket.onMessage((event) => {
-      if (event.type === "reply") {
-        off();
-        onReply(event.text);
-      } else if (event.type === "error") {
-        off();
-        onError?.(event.message);
-      }
-    });
-    await socket.send({ type: "end" });
-  }, [onError, onReply, releaseMic, socket]);
+    if (chunks.length === 0) {
+      onError?.("no audio captured");
+      return;
+    }
+    const blob = new Blob(chunks, { type: AUDIO_MIMETYPE });
+    onCaptured(blob, AUDIO_MIMETYPE);
+  }, [onCaptured, onError, releaseMic]);
 
   return { isRecording, start, stop };
 }

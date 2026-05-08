@@ -75,6 +75,7 @@ body {
 }
 
 .screen-chat .composer .mic,
+.screen-chat .composer .attach,
 .screen-chat .composer .send {
   animation: composer-button-fade-in 240ms ease-out 280ms both;
 }
@@ -397,6 +398,19 @@ body {
   gap: 0.45rem;
 }
 
+.bubble-image {
+  padding: 0.25rem;
+  background: transparent;
+}
+
+.bubble-image-thumb {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
 .bubble-md {
   display: block;
   width: 100%;
@@ -586,11 +600,61 @@ body {
   color: var(--text-muted);
 }
 
+.composer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.composer-attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  background: rgba(65, 182, 230, 0.12);
+  padding: 0.25rem 0.45rem 0.25rem 0.25rem;
+  border-radius: 10px;
+  max-width: 100%;
+}
+
+.composer-attachment-thumb {
+  display: block;
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.composer-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--imperial-indigo);
+}
+
+.composer-attachment-clear {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+}
+
+.composer-attachment-clear:hover {
+  color: var(--text-strong, var(--deep-graphite));
+}
+
 .composer-input:focus {
   border-color: var(--horizon-blue);
 }
 
 .mic,
+.attach,
 .send {
   width: 56px;
   height: 56px;
@@ -606,6 +670,21 @@ body {
   border-radius: 50%;
   background: linear-gradient(135deg, var(--imperial-indigo), var(--horizon-blue));
   color: var(--text-on-dark);
+}
+
+.attach {
+  border-radius: 50%;
+  background: rgba(65, 182, 230, 0.12);
+  color: var(--imperial-indigo);
+}
+
+.attach:hover:not(:disabled) {
+  background: rgba(65, 182, 230, 0.22);
+}
+
+.attach:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .send {
