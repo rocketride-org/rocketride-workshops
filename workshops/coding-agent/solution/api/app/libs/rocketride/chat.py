@@ -323,7 +323,7 @@ def _dump_tracer(
     prompt: str,
     sse_events: list[dict[str, Any]],
     runtime_events: list[dict[str, Any]],
-    result: dict[str, Any] | None,
+    result: dict[str, Any] | list[Any] | None,
     error: BaseException | None,
 ) -> None:
     """Append one run's raw tracer payload to ``logs/{YYYY-MM-DD}_tracer.log``.
