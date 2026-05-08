@@ -29,3 +29,5 @@ pre-push:
   commands:
     typecheck:
       run: pnpm -r --if-present run typecheck
+    test:
+      run: pnpm --filter "@workshops/coding-agent-solution-api" --filter "@workshops/coding-agent-solution-ui" run test

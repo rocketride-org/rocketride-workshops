@@ -87,6 +87,22 @@ jobs:
       - name: Type check (Python)
         run: pnpm -r --filter "*api" run typecheck
 
+      - name: Test (Python — solution/api, ≥80% coverage)
+        run: pnpm --filter "@workshops/coding-agent-solution-api" run test
+
+      - name: Test (TypeScript — solution/ui, ≥80% coverage)
+        run: pnpm --filter "@workshops/coding-agent-solution-ui" run test
+
+      - name: Upload coverage artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}
+          path: |
+            workshops/coding-agent/solution/api/htmlcov
+            workshops/coding-agent/solution/ui/coverage
+          if-no-files-found: ignore
+
       - name: E2E (boot dev, GET /api/health, stop cleanly)
         run: pnpm verify:e2e
         env:
