@@ -293,13 +293,6 @@ async def _recover_pipeline() -> CodingTokens | None:
 # WebSocket handler: terminal-frame guarantee, single coding pipeline.
 # ----------------------------------------------------------------------------
 
-_PIPELINE_WAIT_SECONDS = 180.0
-_TURN_TIMEOUT = float(
-    os.environ.get(
-        "CODING_TURN_TIMEOUT",
-        os.environ.get("PIPELINE_TURN_TIMEOUT", "1800"),
-    )
-)
 _STATUS_THROTTLE_SECONDS = 0.25  # ~4 Hz max
 _MAX_BLOB_BYTES = 25 * 1024 * 1024  # 25 MB cap on uploaded audio/image
 _BLOB_CHANNELS = frozenset({"audio", "image"})
@@ -307,7 +300,8 @@ _BLOB_CHANNELS = frozenset({"audio", "image"})
 
 async def _await_pipeline_ready(websocket: WebSocket) -> CodingTokens | None:
     """Wait for the coding pipelines' asyncio.Event, sending one warm-up
-    status frame so the UI doesn't sit silently."""
+    status frame so the UI doesn't sit silently. Blocks indefinitely until
+    init lands or the lifespan tears down (event is None)."""
     event: asyncio.Event | None = getattr(websocket.app.state, "coding_ready", None)
     tokens: CodingTokens | None = getattr(websocket.app.state, "coding_tokens", None)
     if tokens:
@@ -321,10 +315,7 @@ async def _await_pipeline_ready(websocket: WebSocket) -> CodingTokens | None:
                 "text": "warming up coding pipeline — first reply takes longer…",
             }
         )
-    try:
-        await asyncio.wait_for(event.wait(), timeout=_PIPELINE_WAIT_SECONDS)
-    except TimeoutError:
-        return None
+    await event.wait()
     return cast("CodingTokens | None", getattr(websocket.app.state, "coding_tokens", None))
 
 
@@ -392,19 +383,8 @@ async def chat_ws(websocket: WebSocket) -> None:
 
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-            reply = await asyncio.wait_for(
-                _send_with_recovery(kind, do_send),
-                timeout=_TURN_TIMEOUT,
-            )
+            reply = await _send_with_recovery(kind, do_send)
             await _emit_terminal({"type": "reply", "text": reply})
-        except TimeoutError:
-            logger.warning("coding turn exceeded %.0fs timeout; cancelling", _TURN_TIMEOUT)
-            await _emit_terminal(
-                {
-                    "type": "error",
-                    "message": f"coding pipeline took longer than {int(_TURN_TIMEOUT)}s — cancelled",
-                }
-            )
         except asyncio.CancelledError:
             await _emit_terminal(
                 {"type": "cancelled", "reason": "pipeline restarted — re-send your message"}
