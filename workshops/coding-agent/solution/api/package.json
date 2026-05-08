@@ -7,6 +7,7 @@
     "install:py": "uv sync",
     "lint": "uv run --no-sync ruff check .",
     "format:check": "uv run --no-sync ruff format --check .",
+    "test": "uv run --no-sync pytest",
     "typecheck": "uv run --no-sync mypy"
   }
 }
