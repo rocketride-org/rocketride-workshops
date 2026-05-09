@@ -11,7 +11,7 @@ export async function start(args = []) {
   const { dir: projectDir } = await findProjectRoot();
   const depsDir = process.env.ROCKETRIDE_RUNTIME_DIR
     ? resolve(process.env.ROCKETRIDE_RUNTIME_DIR)
-    : resolve(projectDir, ".dependencies", "rocketride");
+    : resolve(projectDir, "runtime", ".rocketride");
 
   const binary = await resolveEngineBinary(depsDir);
   const engineArgs = args.length > 0 ? args : [DEFAULT_ENTRY_SCRIPT];

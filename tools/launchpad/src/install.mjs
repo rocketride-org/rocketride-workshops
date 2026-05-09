@@ -10,7 +10,7 @@ import { findProjectRoot, getReleaseAssets, pickAsset, resolveVersion } from "./
 
 export async function install({ force = false } = {}) {
   const { dir: projectDir, spec } = await findProjectRoot();
-  const depsDir = resolve(projectDir, ".dependencies", "rocketride");
+  const depsDir = resolve(projectDir, "runtime", ".rocketride");
   const versionFile = resolve(depsDir, ".version");
 
   console.log(`launchpad: project ${projectDir}`);

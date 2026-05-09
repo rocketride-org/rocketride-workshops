@@ -7,7 +7,7 @@ Rocketride runtime via the Python SDK and returns the result of the
 Hints:
 - The runtime is started for you by `runtime/` (`launchpad start`).
 - The Rocketride Python SDK is shipped inside the runtime tarball at
-  `<project>/.dependencies/rocketride/rocketride/` (you can also pip-install
+  `<project>/runtime/.rocketride/rocketride/` (you can also pip-install
   the corresponding release artifact — see workshop notes).
 - Compare against `solution/api/app/pipelines/sdk/hello_client.py` if you
   get stuck.

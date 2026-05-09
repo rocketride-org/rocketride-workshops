@@ -15,4 +15,4 @@ Open http://localhost:5173 — the page should display the message returned from
 - `ui/` — Vite + React + TS front-end.
 - `api/` — FastAPI app. Routes live in `app/main.py`. Pipeline definitions and SDK code live under `app/pipelines/`.
 - `runtime/` — tiny package whose `dev` script runs `launchpad start`.
-- `.dependencies/` — populated by `launchpad install` (gitignored).
+- `runtime/.rocketride/` — populated by `launchpad install` (gitignored).

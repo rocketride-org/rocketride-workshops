@@ -7,7 +7,7 @@ const projects = ["workshops/coding-agent/solution", "workshops/coding-agent/exe
 let failed = 0;
 
 for (const project of projects) {
-  const versionFile = resolve(project, ".dependencies/rocketride/.version");
+  const versionFile = resolve(project, "runtime/.rocketride/.version");
   try {
     const version = (await readFile(versionFile, "utf8")).trim();
     if (!version) throw new Error("empty .version file");

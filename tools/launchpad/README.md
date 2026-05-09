@@ -7,9 +7,9 @@ It is **not** the Rocketride runtime itself — it just fetches the right releas
 ## Commands
 
 ```sh
-launchpad install   # download + extract runtime into ./.dependencies/rocketride (idempotent)
+launchpad install   # download + extract runtime into ./runtime/.rocketride (idempotent)
 launchpad update    # force re-download
-launchpad start     # spawn the engine binary from ./.dependencies/rocketride
+launchpad start     # spawn the engine binary from ./runtime/.rocketride
 ```
 
 All commands operate on the project that invoked them — they look at `package.json` in `process.env.INIT_CWD` (set by pnpm/npm) or the current working directory.
@@ -43,7 +43,7 @@ Other platforms throw — file an issue or send a PR.
 
 ## Idempotency
 
-After a successful install, `launchpad` writes the resolved version to `./.dependencies/rocketride/.version`. Subsequent `launchpad install` runs that match that version are no-ops.
+After a successful install, `launchpad` writes the resolved version to `./runtime/.rocketride/.version`. Subsequent `launchpad install` runs that match that version are no-ops.
 
 ## Auth (optional)
 

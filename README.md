@@ -91,6 +91,6 @@ Each workshop project's `package.json` declares the runtime version:
 }
 ```
 
-`launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it to `./.dependencies/rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`.
+`launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it into the workshop's `runtime/.rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`.
 
 See [`tools/launchpad/README.md`](./tools/launchpad/README.md) for details.

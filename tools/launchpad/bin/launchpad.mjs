@@ -15,9 +15,9 @@ const run = commands[subcommand];
 if (!run) {
   console.error(
     `Usage: launchpad <install|update|start>\n\n` +
-      `  install   Download and extract the Rocketride runtime into ./.dependencies/rocketride.\n` +
+      `  install   Download and extract the Rocketride runtime into ./runtime/.rocketride.\n` +
       `  update    Same as install, but forces a re-download even if the version matches.\n` +
-      `  start     Launch the runtime engine binary from ./.dependencies/rocketride.\n`,
+      `  start     Launch the runtime engine binary from ./runtime/.rocketride.\n`,
   );
   process.exit(subcommand ? 1 : 0);
 }

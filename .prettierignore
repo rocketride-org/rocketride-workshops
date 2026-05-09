@@ -1,9 +1,12 @@
 node_modules/
 dist/
 build/
-.dependencies/
 .venv/
 __pycache__/
 pnpm-lock.yaml
 uv.lock
 *.tsbuildinfo
+
+# Vendored runtime artifacts (never format)
+.dependencies/
+**/runtime/.rocketride/
