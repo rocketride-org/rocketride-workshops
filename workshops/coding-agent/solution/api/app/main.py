@@ -225,7 +225,18 @@ async def start_pipelines_with_retry(app: FastAPI) -> None:
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     os.environ["ROCKETRIDE_OUTPUT_DIR"] = str(OUTPUT_DIR).replace("\\", "/")
-    logger.info("ROCKETRIDE_OUTPUT_DIR=%s", os.environ["ROCKETRIDE_OUTPUT_DIR"])
+    # Exposed to subagent prompts via `${ROCKETRIDE_HOST_OS}`. Engineers and
+    # DevOps consult this to pick the right binaries (git/node vs cmd
+    # builtins) and avoid shell-builtin commands that fail without shell mode.
+    os.environ["ROCKETRIDE_HOST_OS"] = {
+        "win32": "windows",
+        "darwin": "macos",
+    }.get(sys.platform, "linux")
+    logger.info(
+        "ROCKETRIDE_OUTPUT_DIR=%s ROCKETRIDE_HOST_OS=%s",
+        os.environ["ROCKETRIDE_OUTPUT_DIR"],
+        os.environ["ROCKETRIDE_HOST_OS"],
+    )
     set_event_handler(handle_runtime_event)
     app.state.coding_tokens = None
     app.state.coding_ready = asyncio.Event()
