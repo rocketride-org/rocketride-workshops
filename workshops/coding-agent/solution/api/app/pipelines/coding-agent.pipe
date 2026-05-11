@@ -291,6 +291,7 @@
       "name": "Git Eng1",
       "config": {
         "authType": "none",
+        "readOnlyMode": false,
         "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
         "safeMode": false,
         "sshKey": "",
@@ -439,6 +440,7 @@
       "name": "Git Eng2",
       "config": {
         "authType": "none",
+        "readOnlyMode": false,
         "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
         "safeMode": false,
         "sshKey": "",
@@ -587,6 +589,7 @@
       "name": "Git Eng3",
       "config": {
         "authType": "none",
+        "readOnlyMode": false,
         "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
         "safeMode": false,
         "sshKey": "",
@@ -735,6 +738,7 @@
       "name": "Git DevOps",
       "config": {
         "authType": "none",
+        "readOnlyMode": false,
         "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
         "safeMode": false,
         "sshKey": "",
