@@ -1,4 +1,4 @@
-"""Recovery path: engine-WS drops mid-turn → reconnect + retry once."""
+"""Recovery path: engine-WS drops mid-turn -> reconnect + retry once."""
 
 from __future__ import annotations
 
@@ -20,22 +20,23 @@ def test_disconnect_error_triggers_recovery_and_retry(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     tc, fake, main_mod = client
-    # First chat call fails with a disconnect-classified error; second succeeds.
+    # First send fails with a disconnect-classified error; second succeeds.
     call_count = {"n": 0}
-    original = fake.chat
+    original = fake.send
 
-    async def flaky_chat(*, token, question, on_sse=None):
+    async def flaky_send(token=None, data=None, objinfo=None, mimetype=None, on_sse=None):
         call_count["n"] += 1
         if call_count["n"] == 1:
             raise RuntimeError("Server is not connected")
-        return await original(token=token, question=question, on_sse=on_sse)
+        return await original(
+            token=token, data=data, objinfo=objinfo, mimetype=mimetype, on_sse=on_sse
+        )
 
-    fake.chat = flaky_chat  # type: ignore[assignment]
-    fake.chat_response = {"answers": ["recovered reply"]}
+    fake.send = flaky_send  # type: ignore[assignment]
+    fake.send_response = {"answers": ["recovered reply"]}
 
-    # Track recovery: bump the start_coding_agent stub to return new tokens.
-    async def restart() -> dict[str, str]:
-        return {"chat": "tk_chat_v2", "webhook": "tk_webhook_v2"}
+    async def restart() -> str:
+        return "tk_webhook_v2"
 
     monkeypatch.setattr(main_mod, "start_coding_agent", restart)
 
@@ -52,9 +53,9 @@ def test_disconnect_error_triggers_recovery_and_retry(
 
 def test_recovery_failure_emits_error_frame(client, monkeypatch: pytest.MonkeyPatch) -> None:
     tc, fake, main_mod = client
-    fake.chat_side_effect = RuntimeError("Pipeline is not currently running")
+    fake.send_side_effect = RuntimeError("Pipeline is not currently running")
 
-    async def restart_fails() -> dict[str, str]:
+    async def restart_fails() -> str:
         raise RuntimeError("recovery exploded")
 
     monkeypatch.setattr(main_mod, "start_coding_agent", restart_fails)
@@ -72,13 +73,13 @@ def test_recovery_failure_emits_error_frame(client, monkeypatch: pytest.MonkeyPa
 
 def test_non_disconnect_error_skips_recovery(client, monkeypatch: pytest.MonkeyPatch) -> None:
     tc, fake, main_mod = client
-    fake.chat_side_effect = ValueError("bad payload")
+    fake.send_side_effect = ValueError("bad payload")
 
     restart_invocations = {"n": 0}
 
-    async def restart() -> dict[str, str]:
+    async def restart() -> str:
         restart_invocations["n"] += 1
-        return {"chat": "tk_chat_v2", "webhook": "tk_webhook_v2"}
+        return "tk_webhook_v2"
 
     monkeypatch.setattr(main_mod, "start_coding_agent", restart)
 

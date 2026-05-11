@@ -147,8 +147,8 @@ def fastapi_app(monkeypatch: pytest.MonkeyPatch, fake_client: FakeClient):
     async def _connect_ok() -> None:
         return None
 
-    async def _start_ok() -> dict[str, str]:
-        return {"chat": "tk_chat", "webhook": "tk_webhook"}
+    async def _start_ok() -> str:
+        return "tk_webhook"
 
     async def _disconnect_ok() -> None:
         return None

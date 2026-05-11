@@ -2,19 +2,18 @@
 
 A few RocketRide terms used throughout this file:
 
-- **Source** — a door into the pipeline. The pipe declares two: `chat_1`
-  for typed messages, `webhook_1` for uploaded blobs.
+- **Source** — a door into the pipeline. The pipe declares one:
+  `webhook_1`, which accepts typed text, audio, and images.
 - **Token** — a boarding pass returned by `client.use(...)`. Every send
   call hands the token back so the engine knows which pipeline run you
   mean. Tokens go stale once the pipeline is idle longer than its TTL.
-- **Lane** — a named conveyor belt between nodes. `chat_1` emits on the
-  `questions` lane; `webhook_1` emits on `audio`, `image`, and `text`.
-  Same cargo, different belt = different next stop downstream.
+- **Lane** — a named conveyor belt between nodes. `webhook_1` emits on
+  `audio`, `image`, and `text`. `question_1` normalizes those three
+  into the `questions` lane that feeds the agent.
 
-Why we start two pipelines: the pipe declares two source nodes, but the
-SDK requires picking one per `client.use()` call. We start two instances
-— one bound to each source — and route at the API layer based on
-whether the user typed text or sent a blob.
+One pipeline instance handles every modality. Text turns are sent as
+`text/plain` bytes through `client.send()`; audio + image turns send
+their bytes with the matching mimetype.
 """
 
 from __future__ import annotations
@@ -30,8 +29,6 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
-
-from rocketride.schema import Question
 
 from app.libs.rocketride.client import get_client
 
@@ -59,49 +56,37 @@ StatusCallback = Callable[[str], Awaitable[None]]
 current_turn_event_buffer: list[dict[str, Any]] | None = None
 
 
-CodingTokens = dict[str, str]
-
-# IDs of the source nodes inside `coding-agent.pipe`. Must match the JSON.
-CHAT_SOURCE_ID = "chat_1"
+# ID of the source node inside `coding-agent.pipe`. Must match the JSON.
 WEBHOOK_SOURCE_ID = "webhook_1"
 
 
-# We start the pipe twice — once per source node — so text and blob turns
-# route to different `client.use()` instances. Both instances share the
-# same downstream graph (deepagent → response_answers).
-async def start_coding_agent() -> CodingTokens:
-    """Start both pipelines (chat + webhook source) and return their tokens.
+async def start_coding_agent() -> str:
+    """Start the coding-agent pipeline and return its token.
 
-    Returns a mapping `{"chat": <token>, "webhook": <token>}`. The chat
-    token is for `client.chat()` calls; the webhook token is for
-    `client.send()` / `client.send_files()` calls.
+    The pipe declares a single webhook source that fans into transcribe
+    (audio), OCR (image), and a passthrough text lane. All three meet at
+    `question_1` so the agent sees a uniform `questions` stream.
     """
     client = await get_client()
-    tokens: CodingTokens = {}
+    logger.info("loading pipeline: %s (source=%s)", PIPELINE_PATH.name, WEBHOOK_SOURCE_ID)
     # ttl=0 disables the engine's idle-pipeline GC. Long deepagent fan-outs
     # otherwise push past the default idle window and the next call hits
     # "Your pipeline is not currently running."
-    for kind, source_id in (("chat", CHAT_SOURCE_ID), ("webhook", WEBHOOK_SOURCE_ID)):
-        logger.info("loading pipeline: %s (source=%s)", PIPELINE_PATH.name, source_id)
-        result = cast(
-            dict[str, Any],
-            await client.use(
-                filepath=str(PIPELINE_PATH),
-                source=source_id,
-                pipelineTraceLevel=TRACE_LEVEL,
-                ttl=0,
-            ),
-        )
-        token = cast(str, result["token"])
-        tokens[kind] = token
-        try:
-            await client.set_events(token, RUNTIME_EVENT_TYPES)
-        except Exception:
-            logger.exception(
-                "set_events failed for source=%s; continuing without runtime observability",
-                source_id,
-            )
-    return tokens
+    result = cast(
+        dict[str, Any],
+        await client.use(
+            filepath=str(PIPELINE_PATH),
+            source=WEBHOOK_SOURCE_ID,
+            pipelineTraceLevel=TRACE_LEVEL,
+            ttl=0,
+        ),
+    )
+    token = cast(str, result["token"])
+    try:
+        await client.set_events(token, RUNTIME_EVENT_TYPES)
+    except Exception:
+        logger.exception("set_events failed; continuing without runtime observability")
+    return token
 
 
 def make_sse_capture(
@@ -135,24 +120,28 @@ async def send_text(
     text: str,
     on_status: StatusCallback | None = None,
 ) -> str:
-    """Send a text turn through the chat source. Returns the agent's answer.
+    """Send a text turn through the webhook source. Returns the agent's answer.
 
-    `client.chat()` wraps a Question into a `chat://` pipe under the hood,
-    landing the text directly on the `questions` lane — no transcribe or
-    OCR step needed since the user already typed words.
+    Typed text rides webhook -> `text` lane -> `question_1` -> agent.
+    Same final shape as a transcribed audio or OCR'd image turn, so the
+    agent sees a single source of truth regardless of modality.
     """
     client = await get_client()
     sse_events: list[dict[str, Any]] = []
     record_sse_event = make_sse_capture(sse_events, on_status)
 
-    question = Question()  # type: ignore[call-arg]  # pydantic Field defaults; mypy can't infer
-    question.addQuestion(text)
     started = datetime.now()
     with capture_events_for_turn() as runtime_events:
         try:
             result = cast(
                 dict[str, Any],
-                await client.chat(token=token, question=question, on_sse=record_sse_event),
+                await client.send(
+                    token=token,
+                    data=text.encode("utf-8"),
+                    mimetype="text/plain",
+                    objinfo={"mimetype": "text/plain"},
+                    on_sse=record_sse_event,
+                ),
             )
             write_turn_trace(started, text, sse_events, runtime_events, result, error=None)
         except Exception as exc:

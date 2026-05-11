@@ -30,7 +30,6 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from app.libs.rocketride import (
-    CodingTokens,
     connect_with_retry,
     disconnect,
     record_runtime_event,
@@ -194,18 +193,18 @@ async def handle_runtime_event(message: dict[str, Any]) -> None:
 
 
 async def start_pipelines_with_retry(app: FastAPI) -> None:
-    """Connect + load pipelines with backoff. Retries forever until success
-    or the lifespan tears down."""
+    """Connect + load the coding-agent pipeline with backoff. Retries
+    forever until success or the lifespan tears down."""
     delay = 5.0
     attempt = 0
     while True:
         attempt += 1
         try:
             await connect_with_retry()
-            tokens = await start_coding_agent()
-            app.state.coding_tokens = tokens
+            token = await start_coding_agent()
+            app.state.coding_token = token
             cast(asyncio.Event, app.state.coding_ready).set()
-            logger.info("coding pipelines started, tokens=%s", tokens)
+            logger.info("coding pipeline started, token=%s", token)
             return
         except asyncio.CancelledError:
             raise
@@ -238,7 +237,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         os.environ["ROCKETRIDE_HOST_OS"],
     )
     set_event_handler(handle_runtime_event)
-    app.state.coding_tokens = None
+    app.state.coding_token = None
     app.state.coding_ready = asyncio.Event()
     init_task: asyncio.Task[None] = asyncio.create_task(start_pipelines_with_retry(app))
     try:
@@ -265,7 +264,7 @@ class HealthResponse(BaseModel):
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    coding = getattr(app.state, "coding_tokens", None)
+    coding = getattr(app.state, "coding_token", None)
     state = "ready" if coding else "unavailable"
     return HealthResponse(status="ok", pipeline=state)
 
@@ -297,25 +296,25 @@ def is_engine_disconnect(exc: BaseException) -> bool:
 # Like restarting a printer that froze mid-print — drop the dead client,
 # reconnect, and re-issue both pipelines so the next turn routes to the
 # new tokens. The lock keeps two concurrent recoveries from racing.
-async def restart_pipelines_after_drop() -> CodingTokens | None:
-    """Return the new tokens dict, or None if recovery failed."""
+async def restart_pipelines_after_drop() -> str | None:
+    """Return the new token, or None if recovery failed."""
     async with pipeline_recovery_lock:
-        existing = getattr(app.state, "coding_tokens", None)
+        existing = getattr(app.state, "coding_token", None)
         if existing and existing != getattr(app.state, "_coding_recovering_from", None):
-            return cast(CodingTokens, existing)
+            return cast(str, existing)
         app.state._coding_recovering_from = existing
         logger.warning("coding engine connection lost — attempting recovery")
         try:
             await reset_client()
             await connect_with_retry()
-            new_tokens = await start_coding_agent()
+            new_token = await start_coding_agent()
         except Exception:
             logger.exception("coding pipeline recovery failed")
             return None
-        app.state.coding_tokens = new_tokens
+        app.state.coding_token = new_token
         app.state._coding_recovering_from = None
-        logger.info("coding pipelines recovered, new tokens=%s", new_tokens)
-        return new_tokens
+        logger.info("coding pipeline recovered, new token=%s", new_token)
+        return new_token
 
 
 # ----------------------------------------------------------------------------
@@ -327,14 +326,14 @@ MAX_BLOB_BYTES = 25 * 1024 * 1024  # 25 MB cap on uploaded audio/image
 SUPPORTED_BLOB_CHANNELS = frozenset({"audio", "image"})
 
 
-async def wait_until_pipelines_ready(websocket: WebSocket) -> CodingTokens | None:
+async def wait_until_pipelines_ready(websocket: WebSocket) -> str | None:
     """Block until pipeline init completes. Sends one warm-up status so
     the UI doesn't sit silently. Returns None only if the lifespan tore
     down before init landed."""
     event: asyncio.Event | None = getattr(websocket.app.state, "coding_ready", None)
-    tokens: CodingTokens | None = getattr(websocket.app.state, "coding_tokens", None)
-    if tokens:
-        return tokens
+    token: str | None = getattr(websocket.app.state, "coding_token", None)
+    if token:
+        return token
     if event is None:
         return None
     with contextlib.suppress(RuntimeError, WebSocketDisconnect):
@@ -345,7 +344,7 @@ async def wait_until_pipelines_ready(websocket: WebSocket) -> CodingTokens | Non
             }
         )
     await event.wait()
-    return cast("CodingTokens | None", getattr(websocket.app.state, "coding_tokens", None))
+    return cast("str | None", getattr(websocket.app.state, "coding_token", None))
 
 
 @app.websocket("/api/ws/chat")
@@ -394,19 +393,18 @@ async def chat_ws(websocket: WebSocket) -> None:
     async def send_error_frame(message: str) -> None:
         await send_to_ui({"type": "error", "message": message})
 
-    async def wait_for_pipeline_tokens() -> CodingTokens | None:
-        tokens: CodingTokens | None = getattr(websocket.app.state, "coding_tokens", None)
-        if tokens:
-            return tokens
+    async def wait_for_pipeline_token() -> str | None:
+        token: str | None = getattr(websocket.app.state, "coding_token", None)
+        if token:
+            return token
         return await wait_until_pipelines_ready(websocket)
 
-    async def send_with_engine_recovery(kind: str, do_send: Callable[[str], Awaitable[str]]) -> str:
+    async def send_with_engine_recovery(do_send: Callable[[str], Awaitable[str]]) -> str:
         """Run a token-bound coroutine; if the engine WS drops, restart
-        the pipelines once and retry. `kind` is "chat" or "webhook"."""
-        tokens = await wait_for_pipeline_tokens()
-        token = tokens.get(kind) if tokens else None
+        the pipeline once and retry."""
+        token = await wait_for_pipeline_token()
         if not token:
-            raise RuntimeError(f"coding pipeline ({kind}) not available")
+            raise RuntimeError("coding pipeline not available")
 
         try:
             return await do_send(token)
@@ -414,13 +412,12 @@ async def chat_ws(websocket: WebSocket) -> None:
             if not is_engine_disconnect(exc):
                 raise
             await send_status_frame("connection lost — restarting pipeline…")
-            new_tokens = await restart_pipelines_after_drop()
-            new_token = new_tokens.get(kind) if new_tokens else None
+            new_token = await restart_pipelines_after_drop()
             if not new_token:
                 raise
             return await do_send(new_token)
 
-    async def run_pipeline_turn(kind: str, do_send: Callable[[str], Awaitable[str]]) -> None:
+    async def run_pipeline_turn(do_send: Callable[[str], Awaitable[str]]) -> None:
         """One user turn. Always emits exactly one terminal frame
         (reply | error | cancelled), even if the inner send raises or the
         WS drops mid-turn."""
@@ -435,7 +432,7 @@ async def chat_ws(websocket: WebSocket) -> None:
 
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-            reply = await send_with_engine_recovery(kind, do_send)
+            reply = await send_with_engine_recovery(do_send)
             await send_terminal_frame({"type": "reply", "text": reply})
         except asyncio.CancelledError:
             await send_terminal_frame(
@@ -453,7 +450,7 @@ async def chat_ws(websocket: WebSocket) -> None:
         async def do(token: str) -> str:
             return await send_text(token, text, on_status=send_status_frame)
 
-        await run_pipeline_turn("chat", do)
+        await run_pipeline_turn(do)
 
     async def run_blob_turn(
         channel: str,
@@ -475,7 +472,7 @@ async def chat_ws(websocket: WebSocket) -> None:
                 )
             return await send_blob(token, data, mimetype, on_status=send_status_frame, name=name)
 
-        await run_pipeline_turn("webhook", do)
+        await run_pipeline_turn(do)
 
     # Blob = a complete binary file (audio recording, picked image). The
     # client streams it to us in WebSocket binary frames between a

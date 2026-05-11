@@ -12,9 +12,9 @@ from app import main as main_mod
 
 class TestHealthEndpoint:
     def test_unavailable_until_pipelines_initialized(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        async def slow_start() -> dict[str, str]:
+        async def slow_start() -> str:
             await asyncio.sleep(10)
-            return {}
+            return ""
 
         async def conn_ok() -> None:
             return None
@@ -34,8 +34,8 @@ class TestHealthEndpoint:
         async def conn_ok() -> None:
             return None
 
-        async def start_ok() -> dict[str, str]:
-            return {"chat": "tk_chat", "webhook": "tk_webhook"}
+        async def start_ok() -> str:
+            return "tk_webhook"
 
         async def disc_ok() -> None:
             return None
@@ -147,8 +147,8 @@ class TestInitPipelineRetry:
             if attempts["n"] < 2:
                 raise RuntimeError("engine not up yet")
 
-        async def start_ok() -> dict[str, str]:
-            return {"chat": "tk_chat_x", "webhook": "tk_webhook_x"}
+        async def start_ok() -> str:
+            return "tk_webhook_x"
 
         async def no_sleep(_):
             return None
@@ -158,32 +158,31 @@ class TestInitPipelineRetry:
         monkeypatch.setattr(main_mod.asyncio, "sleep", no_sleep)
 
         # Reset state so this test owns the init.
-        main_mod.app.state.coding_tokens = None
+        main_mod.app.state.coding_token = None
         main_mod.app.state.coding_ready = asyncio.Event()
         await main_mod.start_pipelines_with_retry(main_mod.app)
         assert attempts["n"] == 2
-        assert main_mod.app.state.coding_tokens == {"chat": "tk_chat_x", "webhook": "tk_webhook_x"}
+        assert main_mod.app.state.coding_token == "tk_webhook_x"
         assert main_mod.app.state.coding_ready.is_set()
 
 
 class TestRecoverPipeline:
-    async def test_returns_cached_tokens_when_already_recovered(
+    async def test_returns_cached_token_when_already_recovered(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        existing = {"chat": "tk_a", "webhook": "tk_b"}
-        main_mod.app.state.coding_tokens = existing
+        existing = "tk_existing"
+        main_mod.app.state.coding_token = existing
         main_mod.app.state._coding_recovering_from = None  # type: ignore[attr-defined]
 
-        # If recovery is short-circuited, start_coding_agent must NOT run.
-        async def must_not_run() -> dict[str, str]:
+        async def must_not_run() -> str:
             raise AssertionError("start_coding_agent should not be called")
 
         monkeypatch.setattr(main_mod, "start_coding_agent", must_not_run)
         result = await main_mod.restart_pipelines_after_drop()
         assert result == existing
 
-    async def test_restarts_when_no_existing_tokens(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        main_mod.app.state.coding_tokens = None
+    async def test_restarts_when_no_existing_token(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        main_mod.app.state.coding_token = None
         main_mod.app.state._coding_recovering_from = None  # type: ignore[attr-defined]
 
         async def reset_ok() -> None:
@@ -192,19 +191,19 @@ class TestRecoverPipeline:
         async def conn_ok() -> None:
             return None
 
-        async def start_ok() -> dict[str, str]:
-            return {"chat": "tk_new", "webhook": "tk_new_wh"}
+        async def start_ok() -> str:
+            return "tk_new"
 
         monkeypatch.setattr(main_mod, "reset_client", reset_ok)
         monkeypatch.setattr(main_mod, "connect_with_retry", conn_ok)
         monkeypatch.setattr(main_mod, "start_coding_agent", start_ok)
 
         result = await main_mod.restart_pipelines_after_drop()
-        assert result == {"chat": "tk_new", "webhook": "tk_new_wh"}
-        assert main_mod.app.state.coding_tokens == result
+        assert result == "tk_new"
+        assert main_mod.app.state.coding_token == "tk_new"
 
     async def test_returns_none_when_restart_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        main_mod.app.state.coding_tokens = None
+        main_mod.app.state.coding_token = None
         main_mod.app.state._coding_recovering_from = None  # type: ignore[attr-defined]
 
         async def reset_ok() -> None:
@@ -213,7 +212,7 @@ class TestRecoverPipeline:
         async def conn_ok() -> None:
             return None
 
-        async def start_fail() -> dict[str, str]:
+        async def start_fail() -> str:
             raise RuntimeError("recovery exploded")
 
         monkeypatch.setattr(main_mod, "reset_client", reset_ok)

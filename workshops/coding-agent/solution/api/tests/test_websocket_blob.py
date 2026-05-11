@@ -140,14 +140,18 @@ class TestErrors:
 
     def test_stray_binary_without_pending_is_dropped(self, client) -> None:
         tc, fake = client
-        fake.chat_response = {"answers": ["after-stray"]}
+        fake.send_response = {"answers": ["after-stray"]}
         with tc.websocket_connect("/api/ws/chat") as ws:
             ws.send_bytes(b"orphan-bytes")  # dropped silently
             # Subsequent text still works.
             ws.send_json({"type": "text", "text": "hi"})
             msg = ws.receive_json()
         assert msg["type"] == "reply"
-        assert not fake.send_calls
+        # Only the text turn's send call should exist — no blob send was triggered
+        # by the stray binary frame. Both text and blob now share client.send,
+        # so check by mimetype rather than presence.
+        blob_calls = [c for c in fake.send_calls if c["mimetype"] != "text/plain"]
+        assert blob_calls == []
 
     def test_blob_end_without_pending_dropped_silently(self, client) -> None:
         tc, fake = client

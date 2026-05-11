@@ -17,21 +17,23 @@ from app.libs.rocketride.chat import send_blob, send_blob_with_text, send_text
 
 
 class TestSendText:
-    async def test_invokes_client_chat_with_token_and_question(
+    async def test_invokes_client_send_with_text_plain_mimetype(
         self, fake_client, tracer_log_dir
     ) -> None:
-        result = await send_text("tk_chat", "hello world")
-        assert result == "chat-ok"
-        assert len(fake_client.chat_calls) == 1
-        call = fake_client.chat_calls[0]
-        assert call["token"] == "tk_chat"
-        # Question is a pydantic schema obj — verify the text round-tripped.
-        assert "hello world" in str(call["question"].model_dump_json())
+        result = await send_text("tk_webhook", "hello world")
+        assert result == "blob-ok"
+        # send_text now routes through the webhook source via client.send().
+        assert len(fake_client.send_calls) == 1
+        call = fake_client.send_calls[0]
+        assert call["token"] == "tk_webhook"
+        assert call["data"] == b"hello world"
+        assert call["mimetype"] == "text/plain"
+        assert call["objinfo"] == {"mimetype": "text/plain"}
 
     async def test_on_status_fires_only_for_thinking_events(
         self, fake_client, tracer_log_dir
     ) -> None:
-        fake_client.chat_sse_events = [
+        fake_client.send_sse_events = [
             ("thinking", {"message": "calling tool"}),
             ("apaevt_flow", {"message": "ignored payload"}),
             ("thinking", {"message": "tool done"}),
@@ -41,19 +43,19 @@ class TestSendText:
         async def cb(text: str) -> None:
             statuses.append(text)
 
-        await send_text("tk_chat", "go", on_status=cb)
+        await send_text("tk_webhook", "go", on_status=cb)
         assert statuses == ["calling tool", "tool done"]
 
     async def test_returns_empty_string_when_no_answers(self, fake_client, tracer_log_dir) -> None:
-        fake_client.chat_response = {"answers": []}
-        assert await send_text("tk_chat", "go") == ""
+        fake_client.send_response = {"answers": []}
+        assert await send_text("tk_webhook", "go") == ""
 
-    async def test_exception_during_chat_dumps_tracer_and_propagates(
+    async def test_exception_during_send_dumps_tracer_and_propagates(
         self, fake_client, tracer_log_dir
     ) -> None:
-        fake_client.chat_side_effect = RuntimeError("engine boom")
+        fake_client.send_side_effect = RuntimeError("engine boom")
         with pytest.raises(RuntimeError, match="engine boom"):
-            await send_text("tk_chat", "go")
+            await send_text("tk_webhook", "go")
         # Tracer file written even on error path.
         files = list(Path(tracer_log_dir).glob("*_tracer.log"))
         assert files, "tracer log expected on error path"
@@ -61,14 +63,14 @@ class TestSendText:
     async def test_on_status_callback_exception_swallowed(
         self, fake_client, tracer_log_dir
     ) -> None:
-        fake_client.chat_sse_events = [("thinking", {"message": "x"})]
+        fake_client.send_sse_events = [("thinking", {"message": "x"})]
 
         async def bad(_: str) -> None:
             raise RuntimeError("user cb failed")
 
         # Should not propagate even though the callback raises.
-        result = await send_text("tk_chat", "go", on_status=bad)
-        assert result == "chat-ok"
+        result = await send_text("tk_webhook", "go", on_status=bad)
+        assert result == "blob-ok"
 
 
 class TestSendBlob:
