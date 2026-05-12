@@ -4,7 +4,7 @@
   "private": true,
   "description": "Reference implementation for the coding-agent workshop.",
   "rocketride": {
-    "runtime": "3.1.2-prerelease"
+    "runtime": "3.1.2-experimental"
   },
   "scripts": {
     "postinstall": "launchpad install && uv sync --directory api --all-groups",

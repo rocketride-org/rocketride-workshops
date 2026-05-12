@@ -1,11 +1,25 @@
-import { useCallback } from "react";
+// Top-level chat orchestrator. Owns the message history, the WebSocket,
+// and the hero → chat phase transition. Each user submit (text or
+// attachment) opens a "turn": appends a pending bubble, registers a
+// one-shot WS listener, and resolves the bubble when status / reply /
+// cancelled / error frames arrive.
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatHistory } from "../hooks/useChatHistory";
-import { sendChatText } from "../lib/api";
-import type { Message } from "../lib/types";
+import { useChatSocket } from "../hooks/useChatSocket";
+import type { Message, PendingAttachment } from "../lib/types";
 import { Composer } from "./Composer";
 import { HeroStart } from "./HeroStart";
+import type { PreviewRequest } from "./MessageBubble";
 import { MessageList } from "./MessageList";
+import { PreviewModal } from "./PreviewModal";
 import { ResetBanner } from "./ResetBanner";
+
+const WARMING_HINT = "warming up coding agent — first reply takes longer…";
+const HERO_FADE_MS = 220;
+
+// hero (splash) → transitioning (cross-fade) → chat (message stream).
+type ChatPhase = "hero" | "transitioning" | "chat";
 
 function newId(): string {
   return crypto.randomUUID();
@@ -19,33 +33,124 @@ function agentMessage(text: string): Message {
   return { id: newId(), role: "agent", text, createdAt: Date.now() };
 }
 
-// TODO: orchestrate hero ↔ chat flow, persist messages, dispatch to /api/chat
-// for typed messages and to the WS stream for voice. See solution for reference.
+function pendingAgentMessage(hint?: string): Message {
+  return { id: newId(), role: "agent", text: "", createdAt: Date.now(), pending: true, hint };
+}
+
 export function ChatScreen() {
-  const { messages, append, wasReset, dismissReset } = useChatHistory();
+  const { messages, append, update, wasReset, dismissReset } = useChatHistory();
+  const socket = useChatSocket();
+  const firstMessageSentRef = useRef(false);
+  const [phase, setPhase] = useState<ChatPhase>(() => (messages.length > 0 ? "chat" : "hero"));
+  const [preview, setPreview] = useState<PreviewRequest | null>(null);
+
+  useEffect(() => {
+    if (phase !== "transitioning") return;
+    const id = window.setTimeout(() => setPhase("chat"), HERO_FADE_MS);
+    return () => window.clearTimeout(id);
+  }, [phase]);
+
+  // Returns `{pendingId, off}`. The caller dispatches the actual WS frames
+  // *after* this fires; the listener is already in place so status frames
+  // that arrive during transmission aren't missed.
+  const startPendingTurn = useCallback(
+    (userMsg: Message): { pendingId: string; off: () => void } => {
+      setPhase((prev) => (prev === "hero" ? "transitioning" : prev));
+      append(userMsg);
+      const isFirst = !firstMessageSentRef.current;
+      firstMessageSentRef.current = true;
+      const pending = pendingAgentMessage(isFirst ? WARMING_HINT : undefined);
+      append(pending);
+
+      const off = socket.onMessage((event) => {
+        if (event.type === "status") {
+          update(pending.id, { hint: event.text });
+        } else if (event.type === "reply") {
+          off();
+          update(pending.id, {
+            text: event.text,
+            pending: false,
+            hint: undefined,
+            createdAt: Date.now(),
+          });
+        } else if (event.type === "cancelled") {
+          off();
+          update(pending.id, {
+            text: event.reason ?? "pipeline restarted — re-send your message",
+            pending: false,
+            hint: undefined,
+            createdAt: Date.now(),
+          });
+        } else if (event.type === "error") {
+          off();
+          update(pending.id, {
+            text: `error: ${event.message}`,
+            pending: false,
+            hint: undefined,
+            createdAt: Date.now(),
+          });
+        }
+      });
+
+      return { pendingId: pending.id, off };
+    },
+    [append, socket, update],
+  );
+
+  const failPendingTurn = useCallback(
+    (pendingId: string, off: () => void, message: string) => {
+      off();
+      update(pendingId, {
+        text: `error: ${message}`,
+        pending: false,
+        hint: undefined,
+        createdAt: Date.now(),
+      });
+    },
+    [update],
+  );
 
   const handleUserText = useCallback(
     async (text: string) => {
-      append(userMessage(text));
+      const { pendingId, off } = startPendingTurn(userMessage(text));
       try {
-        const reply = await sendChatText(text);
-        append(agentMessage(reply));
+        await socket.send({ type: "text", text });
       } catch (err) {
-        append(agentMessage(err instanceof Error ? `error: ${err.message}` : "error"));
+        failPendingTurn(pendingId, off, err instanceof Error ? err.message : "send failed");
       }
     },
-    [append],
+    [failPendingTurn, socket, startPendingTurn],
   );
 
-  const handleUserVoice = useCallback(() => {
-    append({ ...userMessage("voice message"), kind: "voice" });
-  }, [append]);
+  const handleUserAttachment = useCallback(
+    async (attachment: PendingAttachment) => {
+      // Attachments and typed text are mutually exclusive per message (UI
+      // enforces this in Composer). Bubble carries the blob URL + filename
+      // so the attachment card can render; text is empty so no caption
+      // bubble appears below.
+      const userMsg: Message = {
+        ...userMessage(""),
+        kind: attachment.kind === "audio" ? "voice" : "image",
+        attachmentUrl: attachment.previewUrl,
+        attachmentName: attachment.name,
+        attachmentMimetype: attachment.mimetype,
+      };
+      const { pendingId, off } = startPendingTurn(userMsg);
 
-  const handleAgentReply = useCallback(
-    (text: string) => {
-      append(agentMessage(text));
+      try {
+        await socket.send({
+          type: "blob-start",
+          channel: attachment.kind,
+          mimetype: attachment.mimetype,
+          name: attachment.name,
+        });
+        await socket.sendBinary(attachment.blob);
+        await socket.send({ type: "blob-end" });
+      } catch (err) {
+        failPendingTurn(pendingId, off, err instanceof Error ? err.message : "upload failed");
+      }
     },
-    [append],
+    [failPendingTurn, socket, startPendingTurn],
   );
 
   const handleError = useCallback(
@@ -55,33 +160,52 @@ export function ChatScreen() {
     [append],
   );
 
-  const isEmpty = messages.length === 0;
+  const screenClass =
+    phase === "hero"
+      ? "screen screen-hero"
+      : phase === "transitioning"
+        ? "screen screen-hero screen-transitioning"
+        : "screen screen-chat";
 
   return (
-    <div className={isEmpty ? "screen screen-hero" : "screen screen-chat"}>
+    <div className={screenClass}>
       {wasReset && <ResetBanner onDismiss={dismissReset} />}
-      {isEmpty ? (
+      {phase !== "chat" ? (
         <HeroStart
           onUserText={handleUserText}
-          onUserVoice={handleUserVoice}
-          onAgentReply={handleAgentReply}
+          onUserAttachment={handleUserAttachment}
           onError={handleError}
         />
       ) : (
         <>
           <header className="chat-header">
-            <img src="/rocketride-icon.svg" alt="RocketRide" />
-            <span>Cody Rider — exercise</span>
+            <a
+              className="chat-header-link"
+              href="https://rocketride.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="chat-header-powered">
+                <span className="chat-header-poweredby">Powered by</span>
+                <span className="chat-header-brand">RocketRide</span>
+              </span>
+              <img src="/rocketride-icon.svg" alt="RocketRide" />
+            </a>
           </header>
-          <MessageList messages={messages} />
+          <MessageList messages={messages} onOpenPreview={setPreview} />
           <Composer
             onUserText={handleUserText}
-            onUserVoice={handleUserVoice}
-            onAgentReply={handleAgentReply}
+            onUserAttachment={handleUserAttachment}
             onError={handleError}
           />
         </>
       )}
+      <PreviewModal
+        open={preview !== null}
+        onClose={() => setPreview(null)}
+        title={preview?.title}
+        image={preview?.src}
+      />
     </div>
   );
 }

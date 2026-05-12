@@ -1,0 +1,258 @@
+{
+  "components": [
+    {
+      "id": "agent_coder",
+      "provider": "agent_deepagent",
+      "name": "Cody Rider",
+      "config": {
+        "profile": "default",
+        "default": {
+          "advanced_mode": true,
+          "agent_description": "Cody Rider — single-agent coder. Receives user requests and delivers working code in one tool loop. Plans, implements, smoke-tests, and commits. No team to delegate to.",
+          "system_prompt": "You are Cody Rider, a coding agent. You receive user requests and deliver working code in a single tool loop. You plan, implement, smoke-test, and commit all in one chain of thought. There is no team to delegate to and no `task` tool. You do the work directly.\n\n=== Tools ===\n\n- `tool_git_coder` -- repoPath is `${ROCKETRIDE_OUTPUT_DIR}`. Use `.write_file` to CREATE/OVERWRITE files (paths RELATIVE to repo root, e.g. `src/index.js`, `.gitignore`). Use `.read_file` to read. Use `.init`, `.add`, `.commit`, `.checkout`, `.branch`, `.status`, `.log`, `.diff` for git ops.\n- `tool_shell_coder` -- workingDir is project root. For running real binaries (`node`, `npm`, `pnpm`, `python`, `uv`) and any git command not exposed as a `tool_git_coder` method.\n- The agent built-in `write_file` / `read_file` / `stat_file` / `ls` are AGENT MEMORY ONLY -- they do NOT touch disk. Do not use them for real files.\n- There is no `task` tool. You do not delegate; you do the work directly.\n- No `tool_filesystem_*` calls (broken on Windows path validation).\n\n=== Shell rules ===\n\nHost OS: ${ROCKETRIDE_HOST_OS}. Shell mode is OFF. Use `tool_git_coder.write_file` for ALL file output. Use PATH binaries via `tool_shell_coder.execute` for everything else.\n\nForbidden constructs (require shell mode -> will fail):\n- `use_shell: true` arg -- never pass it.\n- Shell builtins: `dir`, `type`, `cat`, `ls`, `echo`, `find`.\n- `cd <dir> && ...` chaining -- set the tool's `working_dir` argument instead.\n- `&&`, `||`, `;` between commands -- run separate `execute` calls.\n- Output redirection (`>`, `>>`, `<`, `|` pipes) -- use `tool_git_coder.write_file` for file output and read stdout from `execute`'s return.\n- For creating or appending to a file, ALWAYS use `tool_git_coder.write_file`, never `echo > file`.\n\n=== Path rules ===\n\nFile writes go through `tool_git_coder.write_file`. Paths are RELATIVE to repo root `${ROCKETRIDE_OUTPUT_DIR}` (e.g. `.gitignore`, `src/index.js`, `db/schema.sql`). Never pass an absolute path; validation will reject it.\n\n=== HARD RULE: simplest solution wins ===\n\nChoose the absolute simplest design that satisfies the request. Smallest dependency count, smallest cognitive load, smallest surface area. Forbidden defaults unless the user explicitly asks:\n\n- No microservices for CRUD apps. One process.\n- No auth where not asked. Anonymous endpoints are fine.\n- No GraphQL, gRPC, message queues, event sourcing, CQRS.\n- No frameworks where stdlib suffices. Node `http` for small APIs over Express. Plain CSS, no Tailwind or Bootstrap.\n- No TypeScript unless requested. Vanilla JS first.\n- No build step where files can be served as-is.\n- No tests unless requested.\n- No `/api/v1/` versioning for fresh projects.\n- No abstraction layers until duplicated 3 times.\n- Boring defaults: SQLite over Postgres, fetch over axios, plain HTML form over React form.\n\n=== Workflow ===\n\nFor each substantive request:\n\n1. **Bootstrap** (first turn of a project only): run `tool_git_coder.init` unconditionally. It is idempotent and prints `Reinitialized existing Git repository` if already initialized. Do NOT stat `.git` first. If `.gitignore` is missing, write sensible defaults for the chosen stack via `tool_git_coder.write_file`, then `tool_git_coder.add` and `tool_git_coder.commit` with message `chore: init` (use `--allow-empty` semantics if nothing staged).\n\n2. **Plan**: think through stack, files, dependencies before writing code. Apply the simplest-solution rule above. If the request fits in <=2 source files (hello world, single script, one HTML page), skip straight to implement.\n\n3. **Implement**: write each file with `tool_git_coder.write_file`. Stage and commit logical chunks: `tool_git_coder.add` files=[<list>] then `tool_git_coder.commit` message=`<role>: <what>`. Never `git add -A` or `git add .`. Commit on `main`; no feature branches needed for a single agent.\n\n4. **Smoke test**: install dependencies if needed via `tool_shell_coder.execute` (`npm install`, `pip install -r requirements.txt`, etc.), then run the entrypoint (`node -e \"require('./')\"`, `python -c \"import <main>\"`, or a defined start script). If smoke fails, fix the issue and re-test. Iterate until green or surface a clear blocker to the user.\n\n5. **Reply**: summarize files written, how to run, final commit hash, any deferred items.\n\n=== Long-running processes ===\n\nFor servers: spawn detached via `tool_shell_coder.execute`, redirect output to `<name>.log`, capture the PID, probe a health endpoint to verify. Stop by PID only. Never kill by image name.\n\n=== Trivial paths ===\n\nReply-only (no tool calls): greetings, thanks, status questions about existing code.\n\nFor substantive requests: always commit at the end. Uncommitted work is invisible to the user.\n\n=== Reply ===\n\nConcise unless detail is requested. Always include: files written, how to run, final commit hash, any deferred items."
+        },
+        "name": "Cody Rider"
+      },
+      "ui": {
+        "position": {
+          "x": 830,
+          "y": 200
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "question_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "name": "Return Answers",
+      "config": {
+        "laneName": "answers",
+        "name": "Return Answers"
+      },
+      "ui": {
+        "position": {
+          "x": 1080,
+          "y": 200
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "agent_coder"
+        }
+      ]
+    },
+    {
+      "id": "llm_anthropic_coder",
+      "provider": "llm_anthropic",
+      "name": "Anthropic Coder",
+      "config": {
+        "profile": "claude-sonnet-4-6",
+        "claude-sonnet-4-6": {
+          "modelSource": "manual",
+          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
+        },
+        "name": "Anthropic Coder"
+      },
+      "ui": {
+        "position": {
+          "x": 740,
+          "y": 350
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "llm",
+          "from": "agent_coder"
+        }
+      ]
+    },
+    {
+      "id": "tool_shell_coder",
+      "provider": "tool_shell",
+      "name": "Shell Coder",
+      "config": {
+        "allowExternalEnv": false,
+        "commandAllowlist": [],
+        "envVars": [],
+        "maxOutputBytes": 1048576,
+        "timeout": 60,
+        "type": "tool_shell",
+        "workingDir": "${ROCKETRIDE_OUTPUT_DIR}",
+        "name": "Shell Coder"
+      },
+      "ui": {
+        "position": {
+          "x": 830,
+          "y": 480
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_coder"
+        }
+      ]
+    },
+    {
+      "id": "tool_git_coder",
+      "provider": "tool_git",
+      "name": "Git Coder",
+      "config": {
+        "authType": "none",
+        "readOnlyMode": false,
+        "repoPath": "${ROCKETRIDE_OUTPUT_DIR}",
+        "safeMode": false,
+        "sshKey": "",
+        "sshPassphrase": "",
+        "token": "",
+        "type": "tool_git",
+        "username": "",
+        "name": "Git Coder"
+      },
+      "ui": {
+        "position": {
+          "x": 940,
+          "y": 410
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_coder"
+        }
+      ]
+    },
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "name": "Web Hook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "webhook",
+        "name": "Web Hook"
+      },
+      "ui": {
+        "position": {
+          "x": 50,
+          "y": 130
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "name": "Transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "name": "Transcribe"
+      },
+      "ui": {
+        "position": {
+          "x": 310,
+          "y": -60
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "audio",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "ocr_1",
+      "provider": "ocr",
+      "name": "OCR",
+      "config": {
+        "engine": "easyocr",
+        "profile": "latin",
+        "script_family": "latin",
+        "table_engine": "doctr",
+        "name": "OCR"
+      },
+      "ui": {
+        "position": {
+          "x": 310,
+          "y": 90
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "image",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "name": "Question",
+      "config": {
+        "type": "question",
+        "name": "Question"
+      },
+      "ui": {
+        "position": {
+          "x": 580,
+          "y": 200
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "audio_transcribe_1"
+        },
+        {
+          "lane": "text",
+          "from": "ocr_1"
+        },
+        {
+          "lane": "text",
+          "from": "webhook_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "8019e648-e763-44e7-8705-7fc1e2196c2c",
+  "version": 1,
+  "isLocked": false,
+  "snapToGrid": true,
+  "snapGridSize": [
+    10,
+    10
+  ],
+  "docRevision": 21
+}

@@ -1,0 +1,97 @@
+"""WebSocket text-turn integration tests."""
+
+from __future__ import annotations
+
+import pytest
+from fastapi.testclient import TestClient
+
+
+@pytest.fixture
+def client(fastapi_app, tracer_log_dir, monkeypatch: pytest.MonkeyPatch):
+    app, fake = fastapi_app
+    # Disable status throttle so emitted status frames are deterministic.
+    from app import main as main_mod
+
+    monkeypatch.setattr(main_mod, "STATUS_FRAME_THROTTLE_SECONDS", 0.0)
+    with TestClient(app) as tc:
+        yield tc, fake
+
+
+def test_text_turn_yields_reply_frame(client) -> None:
+    tc, fake = client
+    fake.send_response = {"answers": ["here is the answer"]}
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": "what's up"})
+        msg = ws.receive_json()
+        assert msg == {"type": "reply", "text": "here is the answer"}
+    # Text now rides the webhook source as text/plain.
+    assert fake.send_calls
+    assert fake.send_calls[0]["token"] == "tk_webhook"
+    assert fake.send_calls[0]["mimetype"] == "text/plain"
+    assert fake.send_calls[0]["data"] == b"what's up"
+
+
+def test_empty_text_dropped_silently(client) -> None:
+    tc, fake = client
+    fake.send_response = {"answers": ["after-second"]}
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": ""})  # empty -> ignored
+        ws.send_json({"type": "text", "text": "real one"})
+        msg = ws.receive_json()
+        assert msg["type"] == "reply"
+        assert msg["text"] == "after-second"
+    # Only one send call: the second message.
+    assert len(fake.send_calls) == 1
+
+
+def test_status_frame_emitted_for_thinking_sse(client) -> None:
+    tc, fake = client
+    fake.send_sse_events = [("thinking", {"message": "calling tool"})]
+    fake.send_response = {"answers": ["done"]}
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": "hi"})
+        first = ws.receive_json()
+        second = ws.receive_json()
+    assert first == {"type": "status", "text": "calling tool"}
+    assert second == {"type": "reply", "text": "done"}
+
+
+def test_credit_balance_error_rewritten_as_reply(client) -> None:
+    """When Deep Agent surfaces the Anthropic 'credit balance too low' stack
+    trace as an answer, the WS sends a friendly reply frame (not the trace)."""
+    tc, fake = client
+    fake.send_response = {
+        "answers": [
+            "Deep agent invoke failed: Exception: Exception: Error code: 400 - "
+            "{'type': 'error', 'error': {'type': 'invalid_request_error', "
+            "'message': 'Your credit balance is too low to access the Anthropic API. "
+            "Please go to Plans & Billing to upgrade or purchase credits.'}}"
+        ]
+    }
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": "build something"})
+        msg = ws.receive_json()
+    assert msg["type"] == "reply"
+    assert "out of credits" in msg["text"]
+    assert "console.anthropic.com" in msg["text"]
+    assert "Deep agent invoke failed" not in msg["text"]
+
+
+def test_engine_error_surfaces_as_error_frame(client) -> None:
+    tc, fake = client
+    fake.send_side_effect = RuntimeError("engine bad")
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": "x"})
+        msg = ws.receive_json()
+    assert msg["type"] == "error"
+    assert "engine bad" in msg["message"]
+
+
+def test_malformed_json_frame_ignored(client) -> None:
+    tc, fake = client
+    fake.send_response = {"answers": ["ok"]}
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_text("{not json")  # malformed
+        ws.send_json({"type": "text", "text": "real"})
+        msg = ws.receive_json()
+    assert msg["type"] == "reply"

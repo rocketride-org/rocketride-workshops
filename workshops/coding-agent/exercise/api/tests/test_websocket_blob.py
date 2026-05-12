@@ -1,0 +1,182 @@
+"""WebSocket blob state-machine integration tests."""
+
+from __future__ import annotations
+
+import pytest
+from fastapi.testclient import TestClient
+
+
+@pytest.fixture
+def client(fastapi_app, tracer_log_dir, monkeypatch: pytest.MonkeyPatch):
+    app, fake = fastapi_app
+    from app import main as main_mod
+
+    monkeypatch.setattr(main_mod, "STATUS_FRAME_THROTTLE_SECONDS", 0.0)
+    # Lower the size cap so over-cap tests are cheap.
+    monkeypatch.setattr(main_mod, "MAX_BLOB_BYTES", 32)
+    with TestClient(app) as tc:
+        yield tc, fake
+
+
+def _drain_until_terminal(ws):
+    """Status frames precede the terminal frame; collect until reply/error/cancelled."""
+    frames = []
+    while True:
+        msg = ws.receive_json()
+        frames.append(msg)
+        if msg["type"] in {"reply", "error", "cancelled"}:
+            return frames
+
+
+class TestAudioBlob:
+    def test_audio_only_routes_to_send_not_send_files(self, client) -> None:
+        tc, fake = client
+        fake.send_response = {"answers": ["transcribed reply"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-start", "channel": "audio", "mimetype": "audio/webm"})
+            ws.send_bytes(b"\x00\x01\x02")
+            ws.send_json({"type": "blob-end"})
+            terminal = _drain_until_terminal(ws)[-1]
+        assert terminal == {"type": "reply", "text": "transcribed reply"}
+        # Routed via send_blob → client.send (not client.send_files).
+        assert len(fake.send_calls) == 1
+        assert fake.send_calls[0]["mimetype"] == "audio/webm"
+        assert fake.send_calls[0]["data"] == b"\x00\x01\x02"
+        assert fake.send_calls[0]["token"] == "tk_webhook"
+        assert not fake.send_files_calls
+
+    def test_image_only_routes_to_send(self, client) -> None:
+        tc, fake = client
+        fake.send_response = {"answers": ["ocr reply"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json(
+                {
+                    "type": "blob-start",
+                    "channel": "image",
+                    "mimetype": "image/png",
+                    "name": "foo.png",
+                }
+            )
+            ws.send_bytes(b"PNGDATA")
+            ws.send_json({"type": "blob-end"})
+            terminal = _drain_until_terminal(ws)[-1]
+        assert terminal["type"] == "reply"
+        call = fake.send_calls[0]
+        assert call["mimetype"] == "image/png"
+        assert call["objinfo"] == {"mimetype": "image/png", "name": "foo.png"}
+
+
+class TestCombinedBlobRejection:
+    """Blob + caption is not a supported turn shape — the server rejects
+    `blob-start` frames that include a `text` field. This guarantees each
+    user message is text-only OR attachment-only."""
+
+    def test_blob_start_with_text_field_emits_error_and_aborts(self, client) -> None:
+        tc, fake = client
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json(
+                {
+                    "type": "blob-start",
+                    "channel": "image",
+                    "mimetype": "image/jpeg",
+                    "name": "shot.jpg",
+                    "text": "describe what you see",
+                }
+            )
+            msg = ws.receive_json()
+        assert msg["type"] == "error"
+        assert "caption" in msg["message"].lower()
+        # No engine call happened — combined path is blocked at the WS handler.
+        assert not fake.send_calls
+        assert not fake.send_files_calls
+
+    def test_blob_start_with_empty_text_field_is_allowed(self, client) -> None:
+        """Empty `text` field is treated as "no caption" and accepted."""
+        tc, fake = client
+        fake.send_response = {"answers": ["thanks"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json(
+                {
+                    "type": "blob-start",
+                    "channel": "image",
+                    "mimetype": "image/png",
+                    "text": "",
+                }
+            )
+            ws.send_bytes(b"PNG")
+            ws.send_json({"type": "blob-end"})
+            terminal = _drain_until_terminal(ws)[-1]
+        assert terminal == {"type": "reply", "text": "thanks"}
+        # send is invoked with the raw blob via send_blob (no preprocessing).
+        assert len(fake.send_calls) == 1
+        assert fake.send_calls[0]["mimetype"] == "image/png"
+
+
+class TestErrors:
+    def test_invalid_channel_emits_error(self, client) -> None:
+        tc, _ = client
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-start", "channel": "video", "mimetype": "video/mp4"})
+            msg = ws.receive_json()
+        assert msg["type"] == "error"
+        assert "channel" in msg["message"].lower()
+
+    def test_missing_mimetype_emits_error(self, client) -> None:
+        tc, _ = client
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-start", "channel": "audio"})
+            msg = ws.receive_json()
+        assert msg["type"] == "error"
+        assert "mimetype" in msg["message"].lower()
+
+    def test_oversized_blob_emits_error_and_resets(self, client) -> None:
+        tc, fake = client
+        # Cap is 32 bytes (set in fixture).
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-start", "channel": "audio", "mimetype": "audio/webm"})
+            ws.send_bytes(b"x" * 64)  # over cap
+            err = ws.receive_json()
+            assert err["type"] == "error"
+            assert "cap" in err["message"].lower()
+            # Recovery: a fresh blob-start should work after the cap-reset.
+            fake.send_response = {"answers": ["recovered"]}
+            ws.send_json({"type": "blob-start", "channel": "audio", "mimetype": "audio/webm"})
+            ws.send_bytes(b"ok")
+            ws.send_json({"type": "blob-end"})
+            terminal = _drain_until_terminal(ws)[-1]
+        assert terminal["type"] == "reply"
+        assert terminal["text"] == "recovered"
+
+    def test_empty_blob_buffer_emits_error(self, client) -> None:
+        tc, _ = client
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-start", "channel": "audio", "mimetype": "audio/webm"})
+            # No binary frame.
+            ws.send_json({"type": "blob-end"})
+            msg = ws.receive_json()
+        assert msg["type"] == "error"
+        assert "empty" in msg["message"].lower()
+
+    def test_stray_binary_without_pending_is_dropped(self, client) -> None:
+        tc, fake = client
+        fake.send_response = {"answers": ["after-stray"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_bytes(b"orphan-bytes")  # dropped silently
+            # Subsequent text still works.
+            ws.send_json({"type": "text", "text": "hi"})
+            msg = ws.receive_json()
+        assert msg["type"] == "reply"
+        # Only the text turn's send call should exist — no blob send was triggered
+        # by the stray binary frame. Both text and blob now share client.send,
+        # so check by mimetype rather than presence.
+        blob_calls = [c for c in fake.send_calls if c["mimetype"] != "text/plain"]
+        assert blob_calls == []
+
+    def test_blob_end_without_pending_dropped_silently(self, client) -> None:
+        tc, fake = client
+        fake.chat_response = {"answers": ["text-after"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json({"type": "blob-end"})  # no pending — drop
+            ws.send_json({"type": "text", "text": "hi"})
+            msg = ws.receive_json()
+        assert msg["type"] == "reply"
