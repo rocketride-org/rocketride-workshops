@@ -56,6 +56,27 @@ def test_status_frame_emitted_for_thinking_sse(client) -> None:
     assert second == {"type": "reply", "text": "done"}
 
 
+def test_credit_balance_error_rewritten_as_reply(client) -> None:
+    """When Deep Agent surfaces the Anthropic 'credit balance too low' stack
+    trace as an answer, the WS sends a friendly reply frame (not the trace)."""
+    tc, fake = client
+    fake.send_response = {
+        "answers": [
+            "Deep agent invoke failed: Exception: Exception: Error code: 400 - "
+            "{'type': 'error', 'error': {'type': 'invalid_request_error', "
+            "'message': 'Your credit balance is too low to access the Anthropic API. "
+            "Please go to Plans & Billing to upgrade or purchase credits.'}}"
+        ]
+    }
+    with tc.websocket_connect("/api/ws/chat") as ws:
+        ws.send_json({"type": "text", "text": "build something"})
+        msg = ws.receive_json()
+    assert msg["type"] == "reply"
+    assert "out of credits" in msg["text"]
+    assert "console.anthropic.com" in msg["text"]
+    assert "Deep agent invoke failed" not in msg["text"]
+
+
 def test_engine_error_surfaces_as_error_frame(client) -> None:
     tc, fake = client
     fake.send_side_effect = RuntimeError("engine bad")

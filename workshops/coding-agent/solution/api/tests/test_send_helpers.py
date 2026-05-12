@@ -1,10 +1,14 @@
-"""Tests for `send_text`, `send_blob`, `send_blob_with_text` helpers.
+"""Tests for `send_text` and `send_blob` helpers.
 
-All three exercise:
-- correct SDK call dispatch (chat / send / send_files)
+Both exercise:
+- correct `client.send` dispatch (text/plain for text, binary mimetype for blobs)
 - on_status callback fired only for `thinking` SSE
 - tracer dump path
 - exception propagation with tracer dump on error path
+
+`send_blob_with_text` used to live here; it was removed when user messages
+were locked to text-only OR attachment-only (no combined). The note at the
+bottom of the file records the removal.
 """
 
 from __future__ import annotations
@@ -13,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from app.libs.rocketride.chat import send_blob, send_blob_with_text, send_text
+from app.libs.rocketride.chat import send_blob, send_text
 
 
 class TestSendText:
@@ -98,65 +102,6 @@ class TestSendBlob:
         assert list(Path(tracer_log_dir).glob("*_tracer.log"))
 
 
-class TestSendBlobWithText:
-    async def test_writes_two_temp_files_then_calls_send_files(
-        self, fake_client, tracer_log_dir
-    ) -> None:
-        result = await send_blob_with_text(
-            "tk_webhook", "describe this", b"\xde\xad\xbe\xef", "audio/webm"
-        )
-        assert result == "files-ok"
-        assert len(fake_client.send_files_calls) == 1
-        call = fake_client.send_files_calls[0]
-        assert call["token"] == "tk_webhook"
-        # Two file entries: caption + blob.
-        assert len(call["files"]) == 2
-        text_entry, blob_entry = call["files"]
-        assert text_entry[2] == "text/plain"
-        assert blob_entry[2] == "audio/webm"
-
-    async def test_temp_files_cleaned_up_on_success(self, fake_client, tracer_log_dir) -> None:
-        captured_paths: list[str] = []
-
-        async def grab(files: list, token: str) -> list[dict]:
-            for entry in files:
-                captured_paths.append(entry[0])
-            return [{"answers": ["ok"]}]
-
-        fake_client.send_files = grab  # type: ignore[assignment]
-        await send_blob_with_text("tk_webhook", "cap", b"x", "image/jpeg")
-        for p in captured_paths:
-            assert not Path(p).exists(), f"temp file {p} should be unlinked"
-
-    async def test_temp_files_cleaned_up_on_send_failure(self, fake_client, tracer_log_dir) -> None:
-        captured_paths: list[str] = []
-
-        async def grab(files: list, token: str) -> list[dict]:
-            for entry in files:
-                captured_paths.append(entry[0])
-            raise RuntimeError("send_files exploded")
-
-        fake_client.send_files = grab  # type: ignore[assignment]
-        with pytest.raises(RuntimeError, match="exploded"):
-            await send_blob_with_text("tk_webhook", "cap", b"x", "image/jpeg")
-        for p in captured_paths:
-            assert not Path(p).exists()
-
-    async def test_extracts_first_non_empty_answer_from_results_list(
-        self, fake_client, tracer_log_dir
-    ) -> None:
-        fake_client.send_files_response = [
-            {},  # caption result, no answer
-            {"answers": ["agent reply"]},  # blob result with answer
-        ]
-        assert await send_blob_with_text("tk_webhook", "cap", b"x", "audio/webm") == "agent reply"
-
-    async def test_returns_empty_when_no_results_have_answers(
-        self, fake_client, tracer_log_dir
-    ) -> None:
-        fake_client.send_files_response = [{}, {"answers": []}]
-        assert await send_blob_with_text("tk_webhook", "c", b"x", "audio/webm") == ""
-
-    async def test_skips_non_dict_entries_in_results(self, fake_client, tracer_log_dir) -> None:
-        fake_client.send_files_response = ["str-not-dict", {"answers": ["found"]}]  # type: ignore[list-item]
-        assert await send_blob_with_text("tk_webhook", "c", b"x", "audio/webm") == "found"
+# NOTE: `send_blob_with_text` has been removed — user messages are now
+# strictly text-only OR attachment-only. The composer + WS handler enforce
+# the mutex; previously combined-send tests have been deleted.

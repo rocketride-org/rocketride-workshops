@@ -401,14 +401,203 @@ body {
 .bubble-image {
   padding: 0.25rem;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Attachment "card" — image thumb / audio player / file chip — rendered as
+   its own block ABOVE the optional caption bubble. User-side cards align
+   right to match user-bubble alignment. */
+.attachment-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  max-width: 360px;
+}
+
+.attachment-card[data-role="user"] {
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.attachment-card[data-role="agent"] {
+  align-self: flex-start;
+}
+
+.attachment-card-image {
+  background: transparent;
+  padding: 0;
+}
+
+.attachment-card-audio {
+  padding: 0.55rem 0.7rem;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+}
+
+.attachment-card-audio audio {
+  width: 100%;
+  display: block;
+}
+
+.attachment-card-audio-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bubble-image-button {
+  display: block;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.bubble-image-button:focus-visible {
+  outline: 2px solid var(--accent, #6366f1);
+  outline-offset: 2px;
 }
 
 .bubble-image-thumb {
   display: block;
-  max-width: 100%;
+  width: 100%;
+  max-width: 320px;
   max-height: 320px;
+  min-height: 120px;
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bubble-caption {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  padding: 0.1rem 0.25rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubble-file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.bubble-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+}
+
+.bubble-file-chip:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.bubble-file-chip:focus-visible {
+  outline: 2px solid var(--accent, #6366f1);
+  outline-offset: 2px;
+}
+
+.bubble-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 18rem;
+}
+
+.preview-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.preview-modal-content {
+  position: relative;
+  max-width: min(96vw, 1100px);
+  max-height: 92vh;
+  background: #1c1c1f;
+  color: #f5f5f7;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-modal-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.6rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #f5f5f7;
+  font-size: 1.6rem;
+  line-height: 1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.preview-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.preview-modal-title {
+  padding: 0.9rem 3rem 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: rgba(245, 245, 247, 0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-modal-image {
+  display: block;
+  max-width: 100%;
+  max-height: 84vh;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.preview-modal-text {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: #111114;
+  color: #e6e6e9;
 }
 
 .bubble-md {

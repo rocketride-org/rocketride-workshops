@@ -18,12 +18,9 @@ their bytes with the matching mimetype.
 
 from __future__ import annotations
 
-import contextlib
 import json
 import logging
 import os
-import tempfile
-import uuid
 from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from datetime import datetime
@@ -194,77 +191,13 @@ async def send_blob(
     return first_answer_text(result)
 
 
-async def send_blob_with_text(
-    token: str,
-    text: str,
-    data: bytes,
-    mimetype: str,
-    on_status: StatusCallback | None = None,
-    name: str | None = None,
-) -> str:
-    """Send a blob plus a typed caption through the webhook as one task.
-
-    `client.send_files()` uploads multiple files in parallel against a
-    single token: the caption file lands on the `text` lane, the blob on
-    `audio`/`image`. Both text streams meet at `question_1`, so the
-    agent sees the user's caption alongside the transcribed/OCR'd
-    content.
-
-    `send_files` is filepath-based, so we write throwaway temp files for
-    both payloads. They're unlinked on the way out, win or lose.
-    """
-    client = await get_client()
-    # `client.send_files` doesn't accept an on_sse callback, so per-node
-    # status updates flow through main.py's global runtime-event handler
-    # instead. We still keep `sse_events` for tracer-file symmetry — it
-    # ends up empty for this code path but the tracer schema stays uniform.
-    sse_events: list[dict[str, Any]] = []
-
-    tracer_label = (
-        f"<blob+text blob_size={len(data)} mimetype={mimetype}"
-        f"{f' name={name}' if name else ''} text_len={len(text)}>"
-    )
-    started = datetime.now()
-    tmp_dir = Path(tempfile.gettempdir())
-    suffix = mimetype.split("/")[-1].split(";")[0] or "bin"
-    blob_path = tmp_dir / f"rr-blob-{uuid.uuid4().hex}.{suffix}"
-    text_path = tmp_dir / f"rr-text-{uuid.uuid4().hex}.txt"
-    blob_path.write_bytes(data)
-    text_path.write_text(text, encoding="utf-8")
-    try:
-        files: list[Any] = [
-            (str(text_path), {"name": "caption.txt", "mimetype": "text/plain"}, "text/plain"),
-            (
-                str(blob_path),
-                {"name": name or blob_path.name, "mimetype": mimetype},
-                mimetype,
-            ),
-        ]
-        with capture_events_for_turn() as runtime_events:
-            try:
-                results = cast(
-                    list[dict[str, Any]],
-                    await client.send_files(files, token),
-                )
-                write_turn_trace(
-                    started, tracer_label, sse_events, runtime_events, results, error=None
-                )
-            except Exception as exc:
-                write_turn_trace(started, tracer_label, sse_events, runtime_events, None, error=exc)
-                raise
-    finally:
-        for path in (blob_path, text_path):
-            with contextlib.suppress(Exception):
-                path.unlink()
-
-    # `send_files` returns one entry per uploaded file. The pipeline runs
-    # once, so the agent's reply surfaces under whichever entry the SDK
-    # attached it to — first non-empty wins.
-    for entry in results:
-        answer = first_answer_text(entry) if isinstance(entry, dict) else ""
-        if answer:
-            return answer
-    return ""
+# NOTE: `send_blob_with_text` and `preprocess_attachment` used to live here,
+# along with an Anthropic vision-describe call for raster images. The
+# product decision is that each user message is text-only OR attachment-only
+# (the UI enforces this via composer mutex; the WS handler enforces it by
+# rejecting `blob-start` frames that include a `text` field). Combined-send
+# code was removed; if you need to re-introduce it, see the plan file for
+# the design path (custom multimodal mimetype + `data_conn.py` patch).
 
 
 @contextmanager
@@ -351,11 +284,53 @@ def extract_thinking_message(event_type: str, body: Any) -> str:
 
 
 def first_answer_text(result: dict[str, Any]) -> str:
-    """Extract the first answer string from a pipeline result dict."""
+    """Extract the first answer string from a pipeline result dict.
+
+    Handles both shapes the SDK has historically returned so this helper
+    works across SDK versions and call sites:
+      - `client.send()` direct return: `{"answers": [...]}`.
+      - `client.send_files()` per-file entry:
+        `{"action": ..., "filepath": ..., "result": {"answers": [...]}}` —
+        the agent's reply is nested one level inside `result`.
+    """
+    if not isinstance(result, dict):
+        return ""
     answers = result.get("answers") or []
+    if not answers:
+        nested = result.get("result")
+        if isinstance(nested, dict):
+            answers = nested.get("answers") or []
     if not answers:
         return ""
     first = answers[0]
     if isinstance(first, str):
         return first
     return str(first)
+
+
+# Substring patterns that Deep Agent surfaces as the answer when an upstream
+# provider SDK raises an unhandled exception. Each tuple is (needle, rewrite).
+_KNOWN_ERROR_REWRITES: tuple[tuple[str, str], ...] = (
+    (
+        "Your credit balance is too low to access the Anthropic API",
+        "The Anthropic API account is out of credits. Top up at "
+        "https://console.anthropic.com/settings/billing and re-send the request.",
+    ),
+)
+
+
+def humanize_answer(text: str) -> str:
+    """Rewrite known upstream-SDK error stack traces into a user-facing reply.
+
+    Deep Agent surfaces unhandled provider exceptions as the answer string
+    (prefixed `Deep agent invoke failed: Exception: ...`). For known failure
+    modes (e.g. Anthropic credit exhaustion) we substitute a plain one-line
+    message so the UI shows something readable instead of a stack trace.
+    Unmatched input is returned unchanged.
+    """
+    if not isinstance(text, str):
+        return text
+    for needle, message in _KNOWN_ERROR_REWRITES:
+        if needle in text:
+            return message
+    return text

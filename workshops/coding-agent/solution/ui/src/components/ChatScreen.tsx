@@ -10,7 +10,9 @@ import { useChatSocket } from "../hooks/useChatSocket";
 import type { Message, PendingAttachment } from "../lib/types";
 import { Composer } from "./Composer";
 import { HeroStart } from "./HeroStart";
+import type { PreviewRequest } from "./MessageBubble";
 import { MessageList } from "./MessageList";
+import { PreviewModal } from "./PreviewModal";
 import { ResetBanner } from "./ResetBanner";
 
 const WARMING_HINT = "warming up coding agent — first reply takes longer…";
@@ -40,6 +42,7 @@ export function ChatScreen() {
   const socket = useChatSocket();
   const firstMessageSentRef = useRef(false);
   const [phase, setPhase] = useState<ChatPhase>(() => (messages.length > 0 ? "chat" : "hero"));
+  const [preview, setPreview] = useState<PreviewRequest | null>(null);
 
   useEffect(() => {
     if (phase !== "transitioning") return;
@@ -120,29 +123,26 @@ export function ChatScreen() {
   );
 
   const handleUserAttachment = useCallback(
-    async (attachment: PendingAttachment, text?: string) => {
-      const caption = text?.trim() || "";
-      const userMsg: Message = caption
-        ? {
-            ...userMessage(caption),
-            kind: attachment.kind === "audio" ? "voice" : "image",
-            attachmentUrl: attachment.previewUrl,
-          }
-        : attachment.kind === "audio"
-          ? { ...userMessage("voice message"), kind: "voice" }
-          : {
-              ...userMessage(attachment.name ?? "image"),
-              kind: "image",
-              attachmentUrl: attachment.previewUrl,
-            };
+    async (attachment: PendingAttachment) => {
+      // Attachments and typed text are mutually exclusive per message (UI
+      // enforces this in Composer). Bubble carries the blob URL + filename
+      // so the attachment card can render; text is empty so no caption
+      // bubble appears below.
+      const userMsg: Message = {
+        ...userMessage(""),
+        kind: attachment.kind === "audio" ? "voice" : "image",
+        attachmentUrl: attachment.previewUrl,
+        attachmentName: attachment.name,
+        attachmentMimetype: attachment.mimetype,
+      };
       const { pendingId, off } = startPendingTurn(userMsg);
+
       try {
         await socket.send({
           type: "blob-start",
           channel: attachment.kind,
           mimetype: attachment.mimetype,
           name: attachment.name,
-          ...(caption ? { text: caption } : {}),
         });
         await socket.sendBinary(attachment.blob);
         await socket.send({ type: "blob-end" });
@@ -192,7 +192,7 @@ export function ChatScreen() {
               <img src="/rocketride-icon.svg" alt="RocketRide" />
             </a>
           </header>
-          <MessageList messages={messages} />
+          <MessageList messages={messages} onOpenPreview={setPreview} />
           <Composer
             onUserText={handleUserText}
             onUserAttachment={handleUserAttachment}
@@ -200,6 +200,12 @@ export function ChatScreen() {
           />
         </>
       )}
+      <PreviewModal
+        open={preview !== null}
+        onClose={() => setPreview(null)}
+        title={preview?.title}
+        image={preview?.src}
+      />
     </div>
   );
 }

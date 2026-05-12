@@ -116,7 +116,10 @@ class FakeClient:
 
 @pytest.fixture
 def fake_client(monkeypatch: pytest.MonkeyPatch) -> FakeClient:
-    """Patch `chat.get_client` to always return the same FakeClient."""
+    """Patch `chat.get_client` to always return the same FakeClient. Also
+    clears Anthropic API key env vars defensively — no current code path
+    in `chat.py` calls out to Anthropic directly, but the cleanup keeps
+    tests deterministic if future helpers add such a call."""
     from app.libs.rocketride import chat as chat_mod
 
     fake = FakeClient()
@@ -125,6 +128,8 @@ def fake_client(monkeypatch: pytest.MonkeyPatch) -> FakeClient:
         return fake
 
     monkeypatch.setattr(chat_mod, "get_client", _get)
+    monkeypatch.delenv("ROCKETRIDE_ANTHROPIC_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     return fake
 
 

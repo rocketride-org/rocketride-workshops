@@ -66,31 +66,50 @@ class TestAudioBlob:
         assert call["objinfo"] == {"mimetype": "image/png", "name": "foo.png"}
 
 
-class TestCombinedBlob:
-    def test_blob_with_text_routes_to_send_files(self, client) -> None:
+class TestCombinedBlobRejection:
+    """Blob + caption is not a supported turn shape — the server rejects
+    `blob-start` frames that include a `text` field. This guarantees each
+    user message is text-only OR attachment-only."""
+
+    def test_blob_start_with_text_field_emits_error_and_aborts(self, client) -> None:
         tc, fake = client
-        fake.send_files_response = [{}, {"answers": ["combined reply"]}]
         with tc.websocket_connect("/api/ws/chat") as ws:
             ws.send_json(
                 {
                     "type": "blob-start",
                     "channel": "image",
                     "mimetype": "image/jpeg",
+                    "name": "shot.jpg",
                     "text": "describe what you see",
                 }
             )
-            ws.send_bytes(b"JPEG")
+            msg = ws.receive_json()
+        assert msg["type"] == "error"
+        assert "caption" in msg["message"].lower()
+        # No engine call happened — combined path is blocked at the WS handler.
+        assert not fake.send_calls
+        assert not fake.send_files_calls
+
+    def test_blob_start_with_empty_text_field_is_allowed(self, client) -> None:
+        """Empty `text` field is treated as "no caption" and accepted."""
+        tc, fake = client
+        fake.send_response = {"answers": ["thanks"]}
+        with tc.websocket_connect("/api/ws/chat") as ws:
+            ws.send_json(
+                {
+                    "type": "blob-start",
+                    "channel": "image",
+                    "mimetype": "image/png",
+                    "text": "",
+                }
+            )
+            ws.send_bytes(b"PNG")
             ws.send_json({"type": "blob-end"})
             terminal = _drain_until_terminal(ws)[-1]
-        assert terminal == {"type": "reply", "text": "combined reply"}
-        # send_files called instead of send.
-        assert len(fake.send_files_calls) == 1
-        assert not fake.send_calls
-        files = fake.send_files_calls[0]["files"]
-        # Two files: caption + blob.
-        assert len(files) == 2
-        assert files[0][2] == "text/plain"
-        assert files[1][2] == "image/jpeg"
+        assert terminal == {"type": "reply", "text": "thanks"}
+        # send is invoked with the raw blob via send_blob (no preprocessing).
+        assert len(fake.send_calls) == 1
+        assert fake.send_calls[0]["mimetype"] == "image/png"
 
 
 class TestErrors:

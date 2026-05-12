@@ -1,14 +1,15 @@
 """Switchboard between the chat UI and the rocketride engine.
 
-The FastAPI app at the heart of the workshop solution. It boots two
-pipeline instances at startup (one per source door — see `chat.py`),
-accepts a single WebSocket from the UI at `/api/ws/chat`, and routes
-each frame to the right pipeline send:
+The FastAPI app at the heart of the workshop solution. It boots one
+pipeline instance at startup (the single `webhook_1` source — see
+`chat.py`), accepts a single WebSocket from the UI at `/api/ws/chat`,
+and routes each frame to the right pipeline send:
 
-- typed text → chat source via `send_text` → `client.chat()`
-- audio/image blob → webhook source via `send_blob` → `client.send()`
-- text + blob together → webhook source via `send_blob_with_text`
-  → `client.send_files()`
+- typed text → `send_text` → `client.send(mimetype="text/plain")`
+- audio/image blob → `send_blob` → `client.send(mimetype="<binary>")`
+
+Each user message is text-only OR attachment-only; `blob-start` frames
+carrying a `text` caption are rejected at the WS handler.
 
 Engine status, replies, and errors flow back over the same WebSocket
 as JSON frames the UI hooks render.
@@ -32,10 +33,10 @@ from pydantic import BaseModel
 from app.libs.rocketride import (
     connect_with_retry,
     disconnect,
+    humanize_answer,
     record_runtime_event,
     reset_client,
     send_blob,
-    send_blob_with_text,
     send_text,
     set_event_handler,
     start_coding_agent,
@@ -356,11 +357,11 @@ async def chat_ws(websocket: WebSocket) -> None:
     - `{"type": "text", "text": <str>}` — typed message; runs through the
       chat source.
     - `{"type": "blob-start", "channel": "audio"|"image", "mimetype": ...,
-       "name"?: ..., "text"?: <caption>}` — opens a binary upload.
+       "name"?: ...}` — opens a binary upload. A `text` field on this frame
+       is rejected: each user message is text-only OR attachment-only.
     - Binary frames — appended to the open blob's buffer.
     - `{"type": "blob-end"}` — closes the upload; runs through the webhook
-      source. If `text` was set on `blob-start`, the typed caption travels
-      with the blob as a combined turn.
+      source.
 
     Outbound frames (server → UI):
 
@@ -433,7 +434,7 @@ async def chat_ws(websocket: WebSocket) -> None:
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
             reply = await send_with_engine_recovery(do_send)
-            await send_terminal_frame({"type": "reply", "text": reply})
+            await send_terminal_frame({"type": "reply", "text": humanize_answer(reply)})
         except asyncio.CancelledError:
             await send_terminal_frame(
                 {"type": "cancelled", "reason": "pipeline restarted — re-send your message"}
@@ -457,19 +458,10 @@ async def chat_ws(websocket: WebSocket) -> None:
         mimetype: str,
         data: bytes,
         name: str | None,
-        text: str | None,
     ) -> None:
-        caption = (text or "").strip()
-
         async def do(token: str) -> str:
             label = f"{channel} ({len(data)} bytes)"
-            if caption:
-                label += f" + caption ({len(caption)} chars)"
             await send_status_frame(f"uploaded {label} — running pipeline…")
-            if caption:
-                return await send_blob_with_text(
-                    token, caption, data, mimetype, on_status=send_status_frame, name=name
-                )
             return await send_blob(token, data, mimetype, on_status=send_status_frame, name=name)
 
         await run_pipeline_turn(do)
@@ -513,7 +505,15 @@ async def chat_ws(websocket: WebSocket) -> None:
                 channel = event.get("channel")
                 mimetype = event.get("mimetype")
                 name = event.get("name")
-                text = event.get("text")
+                # Captions on attachments are not supported: each user
+                # message is text-only OR attachment-only. Reject any
+                # `text` field on blob-start so a stale client can't sneak
+                # the combined path back in.
+                if "text" in event and event.get("text"):
+                    await send_error_frame(
+                        "captions on attachments are not supported — send the message and the attachment separately"
+                    )
+                    continue
                 if channel not in SUPPORTED_BLOB_CHANNELS:
                     await send_error_frame(f"unsupported blob channel: {channel!r}")
                     continue
@@ -524,7 +524,6 @@ async def chat_ws(websocket: WebSocket) -> None:
                     "channel": channel,
                     "mimetype": mimetype,
                     "name": name if isinstance(name, str) else None,
-                    "text": text if isinstance(text, str) else None,
                     "buf": bytearray(),
                 }
             elif event_type == "blob-end":
@@ -540,7 +539,6 @@ async def chat_ws(websocket: WebSocket) -> None:
                     snap["mimetype"],
                     bytes(snap["buf"]),
                     snap["name"],
-                    snap["text"],
                 )
     except WebSocketDisconnect:
         return

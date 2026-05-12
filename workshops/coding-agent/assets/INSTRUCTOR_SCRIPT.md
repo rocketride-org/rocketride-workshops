@@ -48,9 +48,9 @@ Speaking points:
 - "This is what we're building today, except I'll show you what it does after you build it."
 - Open the pre-built todo node app, show it running.
 - Type into the chat: "add a 'mark all complete' button at the top of the list".
-- Talk while it runs: "Architect is deciding scope. Engineer 1 is on a branch. DevOps will merge."
+- Talk while it runs: "Architect is deciding scope. Engineer 1 is on a branch. Reviewer checks it. DevOps will merge."
 - Refresh the running app, show the new button. Click it.
-- Punch line: "End-to-end change in one prompt. Six agents collaborated. You're going to wire all six in 90 minutes."
+- Punch line: "End-to-end change in one prompt. Seven agents collaborated — PM, Architect, Engineer 1-3, Reviewer, DevOps, QA. You're going to wire all of them in 90 minutes."
 
 Backup if the live change fails: have a screen recording cued up. Don't apologize, just play it. "Here's what it looks like when the network behaves."
 
@@ -71,12 +71,11 @@ Open the exercise canvas, blank.
 
 Walk-through points:
 
-- "Every RocketRide pipeline starts with a source. We're using two: chat for live conversation, webhook for file uploads."
-- Drop a Webhook node. "This emits three lanes by type: audio, image, text."
+- "Every RocketRide pipeline starts with a source. We're using one: webhook. It handles every modality — typed text, voice notes, image uploads."
+- Drop a Webhook node. "Three output lanes by type: audio, image, text."
 - Drop Transcribe. Wire audio → audio. "When the UI uploads a voice note, it routes here. Whisper-class transcription, plug-and-play. Outputs text."
 - Drop OCR. Wire image → image. "Same idea for screenshots and PDFs. We support DocTR and EasyOCR profiles."
-- Drop Question. "This is the merger. Three text inputs (transcribed audio, OCR'd image, raw text) become one normalized questions lane."
-- Drop Chat. "Second source. Independent of the webhook flow. Emits the same questions lane directly. Downstream agents subscribe to the lane name, so both sources feed the same pipeline."
+- Drop Question. "This is the merger. Three text inputs (transcribed audio, OCR'd image, raw text from typed messages) become one normalized questions lane."
 
 Teaching point to land:
 
@@ -88,13 +87,14 @@ Then start the solo timer.
 
 Walk the room. Common stumbles:
 
-- Trying to connect Webhook directly to Question without going through Transcribe/OCR. Tell them why: Question only accepts text inputs.
+- Trying to connect Webhook's audio/image lanes directly to Question. Tell them why: Question only accepts text inputs — they have to flow through Transcribe / OCR first.
+- Missing the third Question input: Webhook's `text` lane also feeds Question directly (typed messages bypass the parsers).
 - Not seeing the lane labels. Show them the hover state.
 - Validation errors in the runtime panel. Read them out loud, point to the offending node.
 
 ## Section 1 recap (2 min)
 
-Open the solution. Highlight the lane wiring. Note: "Both Chat and Question emit on `questions`. The PM in Section 2 will subscribe to that lane and not care which source produced it. That's the lane abstraction paying off."
+Open the solution. Highlight the lane wiring. Note: "The Question node merges all three text streams — transcribed audio, OCR'd image, and raw text — into a single `questions` payload. The PM in Section 2 will subscribe to that lane and not care which modality the user used. That's the lane abstraction paying off."
 
 ---
 
@@ -120,11 +120,11 @@ Common mistake to call out:
 
 ## Section 2 solo coaching
 
-Watch for: people pasting the prompt into the wrong field, or picking the wrong Anthropic profile (must be `claude-opus-4-6` to match the workshop). Send "hi" through chat after they save; PM should reply conversationally without invoking sub-agents.
+Watch for: people pasting the prompt into the wrong field, or picking the wrong Anthropic profile (must be `claude-sonnet-4-6` to match the workshop). Send "hi" through chat after they save; PM should reply conversationally without invoking sub-agents.
 
 ## Section 2 recap (2 min)
 
-"This is the smallest functional agent: source → orchestrator → response. The PM has no sub-agents, no tools, just an LLM. It can chat, it can refuse to delegate. In Sections 3 to 5 we give it a team."
+"This is the smallest functional agent: source → orchestrator → response. The PM has no sub-agents, no tools, just an LLM. It can chat, it can refuse to delegate. In Sections 3 to 5 we give it a team of six specialists — Architect, three Engineers, Reviewer, DevOps, and QA."
 
 ---
 
@@ -134,25 +134,24 @@ Walk-through points:
 
 - "Sub-agents attach to the PM via control lanes, type `deepagent`. The runtime exposes each one as a callable inside the PM's task tool."
 - Drop Architect (`agent_deepagent_subagent`). Wire control deepagent ← Project Manager.
-- Drop Anthropic Architect. Wire control llm ← Architect. "Each sub-agent gets its own LLM. Same model is fine; in production you'd downsize for cheaper sub-agents."
-- Drop FS Architect (`tool_filesystem`). Wire control tool ← Architect.
-- Open the FS Architect config. Walk through the whitelist regex. "This is one of the most important config patterns in RocketRide. The pathWhitelist is enforced by the C++ runtime, not the LLM. The agent literally cannot write outside this regex."
-- Note `allowMkdir: false`. "The architect writes top-level docs only. No subdirectories. We're enforcing the role at the filesystem layer."
-- Paste the architect prompt.
+- Drop Anthropic Architect. Wire control llm ← Architect. "Each sub-agent gets its own LLM."
+- "No filesystem tool here. The Architect doesn't write files — it emits ARCHITECTURE.md and OWNERSHIP.md content as text blocks in its reply. DevOps will commit them in Section 5. This keeps the design layer lean: one LLM, no tool wiring, no whitelist gymnastics."
+- Paste the architect prompt. Highlight the "Sizing the team" section. "The Architect picks 1, 2, or 3 engineers per request based on actual parallelizable work. A hello-world page is one engineer; a full-stack notes app might be three."
+- Highlight "Project scope". "Each new build gets its own subdirectory under `.output/<slug>/`. Multiple projects coexist in one repo. PM tracks the active slug across turns."
 
 Teaching point:
 
-- "Tool boundaries are enforced by the runtime, not the model. The prompt asks nicely; the whitelist guarantees."
+- "Tool boundaries can be implemented two ways: by configuration (e.g. a filesystem whitelist) or by architecture (e.g. give the agent no write tool at all). The Architect uses the second: it CAN'T write files, so there's no risk of it touching code."
 
 ## Section 3 solo coaching
 
-Common stumble: connecting the FS tool's input lane instead of control. Same mistake as Section 2 with Anthropic. Reinforce: "Tools and LLMs are control connections, not data."
+Common stumble: hooking up a filesystem tool because participants assume every agent needs one. Stop them — the Architect's role is design, not file IO.
 
-After they save, have them send "build me a todo list app". Show the PM delegating, the architect replying, and the new files in `api/.output/`.
+After they save, have them send "build me a todo list app". Show the PM delegating, the architect replying with ARCHITECTURE.md + OWNERSHIP.md content blocks inline.
 
 ## Section 3 recap (2 min)
 
-`cat api/.output/ARCHITECTURE.md` and `cat api/.output/OWNERSHIP.md` in a terminal. "The architect actually wrote real markdown. The PM read the reply, knows three engineers have slices, and now needs them. Onto Section 4."
+Show the agent's reply on screen — the content blocks are right there in the message. "The architect handed PM the design as text. PM now needs DevOps to commit it, and engineers to implement it. Section 4 is engineers; Section 5 is review + DevOps + QA. Onto Section 4."
 
 ---
 
@@ -162,17 +161,17 @@ This section is the technically heaviest. Pace yourself.
 
 Walk-through points:
 
-- "Three engineers. Identical structure. The pattern: sub-agent + LLM + shell + filesystem + git. Five nodes per engineer."
-- Wire Engineer 1 fully on the canvas with all five nodes and four control connections. Talk while doing it.
-- "Each engineer has its own shell, filesystem, and git tool. They share the same git repo on disk, but each one operates on its own branch. Branch isolation prevents file conflicts. Architect's OWNERSHIP.md prevents semantic conflicts."
+- "Up to three engineers. Identical structure. The pattern: sub-agent + LLM + shell + git. Four nodes per engineer — no separate filesystem tool, because the git tool's `write_file` method handles all file IO."
+- Wire Engineer 1 fully on the canvas with all four nodes and three control connections. Talk while doing it.
+- "Each engineer has its own shell and git tool. They share the same git repo on disk, but each one operates on its own branch. Branch isolation prevents file conflicts. Architect's OWNERSHIP.md prevents semantic conflicts."
 - Open Shell Eng1 config. Walk through `workingDir`, `timeout`, `commandAllowlist` (empty = allow all). "In production you'd lock the allowlist down. For the workshop we trust ourselves."
-- Open Git Eng1 config. Note `safeMode: true`. "Prevents history rewrites. The LLM cannot force-push or rebase main."
+- Open Git Eng1 config. Note `readOnlyMode: false` and `safeMode: false`. "Engineers need to write files (via `tool_git_eng1.write_file`) and commit. `readOnlyMode: true` is the default — flipping it lets the engineer write."
 - Paste the Engineer 1 prompt.
 - "Now duplicate. The fastest way: edit the .pipe JSON file directly. Copy the Engineer 1 block, paste it twice, change `eng1` to `eng2` and `eng3` everywhere, change `{N}` in the prompt."
 
 Teaching point:
 
-- "Parallel fan-out is the architectural feature. The PM dispatches three task calls in one assistant turn, the runtime fans them out, and you get max(eng1, eng2, eng3) wall time instead of sum. Same model, same prompt structure, three branches built concurrently."
+- "Parallel fan-out is the architectural feature, sized by the Architect. The Architect's OWNERSHIP.md lists 1, 2, or 3 engineers depending on real parallelizable work; PM dispatches only the engineers that were assigned, in one assistant turn. The runtime fans them out, and you get max(eng_i) wall time instead of sum. Same model, same prompt structure, parallel branches."
 
 ## Section 4 solo coaching
 
@@ -186,9 +185,9 @@ Be loud about the time: "Three minutes left. If you only have two engineers wire
 
 ## Section 4 recap (2 min)
 
-Send a build request. Open the canvas trace view, point at the three engineer nodes lighting up simultaneously. "This is the parallel fan-out. Three branches getting committed in roughly the same wall time as one. The PM is now waiting for all three to finish before delegating to DevOps."
+Send a build request that needs multiple engineers ("build me a notes app with a form and SQLite"). Open the canvas trace view, point at the engineer nodes lighting up simultaneously. "This is the parallel fan-out. Two or three branches getting committed in roughly the same wall time as one. The PM is now waiting for all of them to finish before delegating to the Reviewer and DevOps."
 
-The reply will fail to merge (no DevOps yet). Pause. "Section 5 fixes that."
+The reply will fail to review + merge (no Reviewer or DevOps yet). Pause. "Section 5 wires three more sub-agents to close the loop: Reviewer (read-only verification), DevOps (the merger and infra owner), and QA (tests)."
 
 ---
 
@@ -196,23 +195,31 @@ The reply will fail to merge (no DevOps yet). Pause. "Section 5 fixes that."
 
 Walk-through points:
 
-- "Two more sub-agents. DevOps mirrors an engineer's stack: shell, filesystem, git. QA drops the git tool because QA never commits."
-- Wire DevOps and QA together on the canvas. Less detail than Section 4 because the pattern is identical.
-- Open both prompts. Highlight: "DevOps owns main. QA can read everything but writes only inside `tests/`. The QA prompt enforces that — the filesystem is technically root-scoped, but the prompt restricts writes. We trade strict enforcement for read access. In production you'd add a second filesystem tool with narrower whitelist for writes."
+- "Three more sub-agents — three distinct shapes. DevOps owns `main` and writes everything (shell + git). QA emits tests and runs them, no write tool at all (shell only). Reviewer is read-only verification (git with `safeMode: true`, no shell)."
+- Wire all three on the canvas. The control-lane pattern is the same as the engineers; speed through the structural wiring.
+- Open the DevOps prompt. Highlight the phase list: bootstrap (once per repo), scaffold (once per new project), commit design docs, merge (with pre-merge smoke per branch), commit tests. "DevOps is the only role that touches `main` directly."
+- Open the QA prompt. Highlight the Phase A/Phase B split. "QA can't write files. It emits test (path, content) pairs as text; PM hands them to DevOps to commit; then PM re-tasks QA to RUN them. Two phases per QA invocation."
+- Open the Reviewer prompt. "Read-only. Sits BETWEEN engineer fan-out and DevOps merge. Returns APPROVED or REQUEST_FIXES. If REQUEST_FIXES, PM re-tasks the named engineer ONCE with explicit fix instructions, then re-runs Reviewer once. Failed twice → return unresolved issues to the user."
 
 Teaching point:
 
-- "Role boundaries are a mix of prompt and config. Use config when the LLM cannot be trusted (filesystem writes, shell commands). Use prompt when the agent needs flexibility (read access, role discipline)."
+- "Role boundaries can be implemented three ways: (1) by tool absence (Reviewer has no write tool), (2) by config (Reviewer's git is `safeMode: true` so writes fail at the runtime layer), (3) by prompt (QA is told to emit instead of write). The Architect uses #1; Reviewer uses #1 + #2; DevOps + Engineers use #3 only — they have write tools but the prompt scopes them. Use stronger enforcement when the LLM can't be trusted to follow text."
 
 ## Section 5 solo coaching
 
-Faster than Section 4. Watch for: people forgetting to wire DevOps's deepagent control lane (the most common omission because they're tired).
+Faster than Section 4. Watch for:
 
-After they save, send "build me a hello world page". This is the moment of truth: full pipeline runs end to end. Bootstrap, design, fan-out, merge, reply.
+- Forgetting to wire DevOps's `deepagent` control lane (most common omission).
+- Forgetting to flip `readOnlyMode: false` on `tool_git_devops` — writes will fail loudly with "blocked in read-only mode" if they leave the default.
+- Mistakenly giving Reviewer a shell tool. It doesn't need one.
+
+After they save, send "build me a hello world page". Solo-build path: PM goes straight to DevOps (skip Architect, engineers, Reviewer, QA). Bootstrap + scaffold + files + commit + smoke + reply.
+
+Then send "build me a notes app with a list page, a form, and SQLite". This engages the full workflow: bootstrap → scaffold → architect → engineers → **Reviewer** → DevOps merge → reply.
 
 ## Section 5 recap (2 min)
 
-`ls api/.output/` in a terminal. Real project on disk. `cd api/.output && git log --oneline --all --graph`. Show the merged main with three feature branches converging. "You just shipped a working app through six AI agents. That's the workshop's headline."
+`ls api/.output/` in a terminal. Two project subdirs. `cd api/.output && git log --oneline --all --graph`. Show two clusters of commits — bootstrap + scaffolds + feature-branch merges — plus a `docs(<slug>): architecture` commit between scaffold and merge. "You just shipped two working apps through seven AI agents in parallel. The Reviewer is what makes the merge step trustworthy — it catches out-of-lane edits and architectural drift before they hit `main`. That's the workshop's headline."
 
 ---
 
@@ -256,7 +263,7 @@ Punch line: "The trace told you exactly which node, exactly which call, exactly 
 
 Speaking points:
 
-- "Today you built a six-agent system in 90 minutes. The same pattern (orchestrator + specialist sub-agents + tool boundaries + observability) generalizes to anything you'd hand to an agent: research, customer ops, content, codebase migrations."
+- "Today you built a seven-agent system in 90 minutes. The same pattern (orchestrator + specialist sub-agents + tool boundaries + read-only verification gate + observability) generalizes to anything you'd hand to an agent: research, customer ops, content, codebase migrations."
 - Show `coding-agent-new.pipe` (the single-Cody-Rider baseline). "This is the same job done by one agent with all the tools. Cheaper, slower, less parallelism. We use it as an A/B baseline. Compare them after you get home."
 - Where to go next: docs.rocketride.org, github.com/rocketride-org/rocketride-server, Discord (link).
 - "Anything you build with RocketRide, drop in the awesome-rocketride repo. We feature community work."

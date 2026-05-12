@@ -93,18 +93,34 @@ describe("Composer", () => {
     expect(text).toBeUndefined();
   });
 
-  it("submitting attachment plus typed text sends combined", async () => {
+  it("text input is disabled while an attachment is pending (mutex)", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Composer {...makeProps()} />);
+    const file = new File(["pic"], "p.png", { type: "image/png" });
+    await user.upload(container.querySelector('input[type="file"]') as HTMLInputElement, file);
+    const input = screen.getByPlaceholderText(/clear the attachment/);
+    expect(input).toBeDisabled();
+  });
+
+  it("attach button is disabled while text input is non-empty (mutex)", async () => {
+    const user = userEvent.setup();
+    render(<Composer {...makeProps()} />);
+    await user.type(screen.getByPlaceholderText(/message Cody Rider/), "hello");
+    expect(screen.getByLabelText("attach file")).toBeDisabled();
+    expect(screen.getByLabelText("start recording")).toBeDisabled();
+  });
+
+  it("submitting attachment alone fires onUserAttachment with no extra args", async () => {
     const user = userEvent.setup();
     const props = makeProps();
     const { container } = render(<Composer {...props} />);
     const file = new File(["pic"], "p.png", { type: "image/png" });
     await user.upload(container.querySelector('input[type="file"]') as HTMLInputElement, file);
-    await user.type(screen.getByPlaceholderText(/add a caption/), "describe this please");
     await user.click(screen.getByLabelText("send"));
-    expect(props.onUserAttachment).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "image" }),
-      "describe this please",
-    );
+    expect(props.onUserAttachment).toHaveBeenCalledTimes(1);
+    // Single positional arg (no caption second arg).
+    expect(props.onUserAttachment.mock.calls[0]).toHaveLength(1);
+    expect(props.onUserAttachment.mock.calls[0][0].kind).toBe("image");
   });
 
   it("clear button removes pending attachment and revokes preview URL", async () => {
@@ -140,20 +156,21 @@ describe("Composer", () => {
     expect(voiceState.stop).not.toHaveBeenCalled();
   });
 
-  it("mic stop captures audio into pendingAttachment and triggers caption placeholder", async () => {
+  it("mic stop stages audio in pendingAttachment and locks the text input", async () => {
     const user = userEvent.setup();
     render(<Composer {...makeProps()} />);
     await user.click(screen.getByLabelText("start recording"));
-    // Simulate the hook firing onCaptured (as it would after stop()).
     expect(voiceState.onCaptured).toBeTruthy();
     await act(async () => {
       voiceState.onCaptured!(new Blob(["audio"]), "audio/webm;codecs=opus");
     });
     expect(await screen.findByText(/voice clip ready/)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/add a caption/)).toBeInTheDocument();
+    // Mutex: with the audio pending, the text input is disabled and shows
+    // the "clear the attachment" placeholder.
+    expect(screen.getByPlaceholderText(/clear the attachment/)).toBeDisabled();
   });
 
-  it("submit with audio + caption fires onUserAttachment with caption", async () => {
+  it("submit audio fires onUserAttachment without a caption arg", async () => {
     const user = userEvent.setup();
     const props = makeProps();
     render(<Composer {...props} />);
@@ -161,18 +178,86 @@ describe("Composer", () => {
     await act(async () => {
       voiceState.onCaptured!(new Blob(["a"]), "audio/webm;codecs=opus");
     });
-    await user.type(await screen.findByPlaceholderText(/add a caption/), "what was that");
     await user.click(screen.getByLabelText("send"));
-    expect(props.onUserAttachment).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "audio", mimetype: "audio/webm;codecs=opus" }),
-      "what was that",
-    );
+    expect(props.onUserAttachment).toHaveBeenCalledTimes(1);
+    expect(props.onUserAttachment.mock.calls[0]).toHaveLength(1);
+    expect(props.onUserAttachment.mock.calls[0][0].kind).toBe("audio");
+  });
+
+  it("attaching an SVG with empty MIME still routes through the image path", async () => {
+    // Some OSes hand back an empty file.type for .svg. Extension-based
+    // fallback should still detect it as an image. The API now handles
+    // SVG-as-text inlining server-side, so the client just passes the
+    // blob through with a normalized mimetype.
+    const user = userEvent.setup();
+    const props = makeProps();
+    const { container } = render(<Composer {...props} />);
+    const svg = new File(["<svg/>"], "diagram.svg", { type: "" });
+    await user.upload(container.querySelector('input[type="file"]') as HTMLInputElement, svg);
+    await screen.findByLabelText("attached image");
+    await user.click(screen.getByLabelText("send"));
+    const [attachment] = props.onUserAttachment.mock.calls[0];
+    expect(attachment.kind).toBe("image");
+    expect(attachment.mimetype).toBe("image/svg+xml");
+    expect(attachment.previewUrl).toBeTruthy();
+  });
+
+  it("attaching an SVG routes through the image path", async () => {
+    const user = userEvent.setup();
+    const props = makeProps();
+    const { container } = render(<Composer {...props} />);
+    // SVG: client routes as image so the bubble can render the diagram
+    // visually via <img src=blobURL>. SVG bytes go through the image
+    // blob channel to the server (no client-side text capture).
+    const svg = new File(['<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>'], "diagram.svg", {
+      type: "image/svg+xml",
+    });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.upload(input, svg);
+    await screen.findByLabelText("attached image");
+    await user.click(screen.getByLabelText("send"));
+    expect(props.onUserAttachment).toHaveBeenCalledTimes(1);
+    const [attachment] = props.onUserAttachment.mock.calls[0];
+    expect(attachment.kind).toBe("image");
+    expect(attachment.mimetype).toBe("image/svg+xml");
+    expect(attachment.name).toBe("diagram.svg");
+    expect(attachment.previewUrl).toBeTruthy();
+  });
+
+  it("attaching an audio file routes through the audio path with preview URL", async () => {
+    const user = userEvent.setup();
+    const props = makeProps();
+    const { container } = render(<Composer {...props} />);
+    const mp3 = new File(["mp3bytes"], "song.mp3", { type: "audio/mpeg" });
+    await user.upload(container.querySelector('input[type="file"]') as HTMLInputElement, mp3);
+    // Uploaded audio files show their filename in the pending chip (not the
+    // generic "voice clip ready" label reserved for recorded clips).
+    expect(screen.getByText("song.mp3")).toBeInTheDocument();
+    await user.click(screen.getByLabelText("send"));
+    const [attachment] = props.onUserAttachment.mock.calls[0];
+    expect(attachment.kind).toBe("audio");
+    expect(attachment.mimetype).toBe("audio/mpeg");
+    expect(attachment.name).toBe("song.mp3");
+    expect(attachment.previewUrl).toBeTruthy();
+  });
+
+  it("attaching a PNG still routes through the image path (no regression)", async () => {
+    const user = userEvent.setup();
+    const props = makeProps();
+    const { container } = render(<Composer {...props} />);
+    const png = new File(["binarypixels"], "shot.png", { type: "image/png" });
+    await user.upload(container.querySelector('input[type="file"]') as HTMLInputElement, png);
+    await user.click(screen.getByLabelText("send"));
+    const [attachment] = props.onUserAttachment.mock.calls[0];
+    expect(attachment.kind).toBe("image");
+    expect(attachment.previewUrl).toBeTruthy();
+    expect(attachment.textContent).toBeUndefined();
   });
 
   it("recording state disables attach + text + send", async () => {
     voiceState.isRecording = true;
     render(<Composer {...makeProps()} />);
-    expect(screen.getByLabelText("attach image")).toBeDisabled();
+    expect(screen.getByLabelText("attach file")).toBeDisabled();
     expect(screen.getByPlaceholderText(/listening/)).toBeDisabled();
     expect(screen.getByLabelText("send")).toBeDisabled();
     expect(screen.getByLabelText("stop recording")).toBeEnabled();
