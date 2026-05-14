@@ -9,5 +9,8 @@
     "format:check": "uv run --no-sync ruff format --check .",
     "test": "uv run --no-sync pytest",
     "typecheck": "uv run --no-sync mypy"
+  },
+  "devDependencies": {
+    "@manzt/uv": "^0.8.13"
   }
 }

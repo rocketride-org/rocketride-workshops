@@ -48,7 +48,11 @@ importers:
         specifier: workspace:*
         version: link:../../../tools/launchpad
 
-  workshops/coding-agent/exercise/api: {}
+  workshops/coding-agent/exercise/api:
+    devDependencies:
+      '@manzt/uv':
+        specifier: ^0.8.13
+        version: 0.8.13
 
   workshops/coding-agent/exercise/runtime:
     devDependencies:
@@ -114,7 +118,11 @@ importers:
         specifier: workspace:*
         version: link:../../../tools/launchpad
 
-  workshops/coding-agent/solution/api: {}
+  workshops/coding-agent/solution/api:
+    devDependencies:
+      '@manzt/uv':
+        specifier: ^0.8.13
+        version: 0.8.13
 
   workshops/coding-agent/solution/runtime:
     devDependencies:
