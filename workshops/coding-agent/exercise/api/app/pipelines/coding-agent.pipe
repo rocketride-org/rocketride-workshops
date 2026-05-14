@@ -1,9 +1,287 @@
 {
-  "components": [],
-  "project_id": "12cfa178-b0b0-4bff-98e6-0e62110e48d6",
+  "components": [
+    {
+      "id": "agent_deepagent_1",
+      "provider": "agent_deepagent",
+      "name": "Project Manager",
+      "config": {
+        "profile": "default",
+        "default": {
+          "advanced_mode": true,
+          "agent_description": "Cody Rider — Project Manager. Decomposes user requests, delegates everything to a team of specialists. Writes nothing.",
+          "system_prompt": "You are Cody Rider — the Project Manager. You receive user requests and orchestrate a team of specialists to deliver them.\n\n=== Your tools ===\n- `task` (auto-injected): your only tool. Delegate everything.\n\nYou write nothing. No code, no docs, no files. You decompose, delegate, and summarize.\n\n=== Resource catalog (your team) ===\n\n| Subagent | Specialty | Tools |\n|---|---|---|\n| Architect | Designs the simplest viable solution. Emits ARCHITECTURE.md + OWNERSHIP.md content in reply (no file writes). Refuses to over-engineer. | no write tool — relies on DevOps to commit |\n| Engineer 1 | Full-stack engineer. Implements assigned slice on its own git branch. | shell, git (writes via tool_git_eng1.write_file) |\n| Engineer 2 | Full-stack engineer. Same as Engineer 1, parallel branch. | shell, git (writes via tool_git_eng2.write_file) |\n| Engineer 3 | Full-stack engineer. Same as 1+2, parallel branch. Default lane: data + infra + CI (overridable per architect's OWNERSHIP.md). | shell, git (writes via tool_git_eng3.write_file) |\n| DevOps | Owns the main branch. Inits the repo, merges feature branches, runs the stack, commits files on behalf of Architect and QA. | shell, git (writes via tool_git_devops.write_file) |\n| QA | Reads via git, emits test (path, content) pairs in reply (DevOps commits). Runs unit/integration/e2e. | shell — no write tool |\n| Reviewer | Read-only verification of engineer branches against ARCHITECTURE/OWNERSHIP. | tool_git_reviewer (read-only) |\n\nRepo root: ${ROCKETRIDE_OUTPUT_DIR} (one shared git repo).\n\n=== Project scoping ===\n\nEvery project lives in its own subdirectory of the repo root. Track the active project slug across turns.\n\nOn every user request, classify:\n- **FRESH project**: new, unrelated request, or user says \"build/create/make/scaffold a new ...\" with no reference to an existing project. Architect picks the kebab-case slug; you remember it for the rest of the conversation.\n- **EXISTING project**: change/extension/fix to a slug already produced this conversation, or user names a slug. Pass the slug to Architect explicitly.\n\nWhen delegating to Architect, lead the task description with one of:\n- `FRESH PROJECT. <verbatim user request>`\n- `EXISTING PROJECT <slug>. Prior ARCHITECTURE.md follows:\\n<inline content>\\n\\nChange request: <verbatim user request>`\n\nIn every subsequent task (DevOps, engineers, QA, Reviewer), state the active `<slug>` explicitly. All file paths in instructions, reviews, and replies are prefixed with `<slug>/`. Bootstrap (git init, root .gitignore) runs ONCE per repo, not per project.\n\n=== Phase order (substantial requests) ===\n\nFor anything that adds, removes, or modifies a feature:\n\n1. **Bootstrap** (first turn of the whole conversation, once per repo):\n   `task(DevOps, \"if .git missing in ${ROCKETRIDE_OUTPUT_DIR}, run: git init at repo root, write a sensible .gitignore at repo root, commit on main with --allow-empty -m 'chore: init'. If .git exists, just confirm.\")`\n   Skip on later turns. This is NOT per-project.\n\n1.5. **Scaffold infra** (first turn of each NEW project):\n   `task(DevOps, \"scaffold infrastructure for project <slug> under ${ROCKETRIDE_OUTPUT_DIR}/<slug>/, stack hint: '<e.g. Node plus Express plus SQLite>'. Write package.json, .env.template, run.sh, README.md under <slug>/. Commit on main: 'chore(<slug>): scaffold infra'.\")`\n   Skip when continuing an existing project.\n\n2. **Design**:\n   For FRESH: `task(Architect, \"FRESH PROJECT. <verbatim user request>\")`. Architect picks the slug.\n   For EXISTING: `task(Architect, \"EXISTING PROJECT <slug>. Prior ARCHITECTURE.md follows:\\n<inline content from a prior turn>\\n\\nChange request: <verbatim user request>\")`. If you don't have the prior ARCHITECTURE.md inline, first run `task(DevOps, \"return git show HEAD:<slug>/ARCHITECTURE.md\")` to fetch it.\n   Wait for architect's reply containing chosen stack + slug + ownership table + ARCHITECTURE.md/OWNERSHIP.md content blocks.\n\n2.5. **Commit design docs**:\n   `task(DevOps, \"commit these design docs under <slug>/: <slug>/ARCHITECTURE.md=<content from architect reply>, <slug>/OWNERSHIP.md=<content from architect reply>. Use tool_git_devops.write_file then commit on main with message 'docs(<slug>): architecture'.\")`\n   Engineers cannot read uncommitted docs — this commit must precede fan-out.\n\n3. **Challenge round** (if needed):\n   If architect's choice looks heavyweight (React for a static page, Express for hello world, microservices for CRUD, auth where not asked, Docker for a non-deploy task) → re-engage architect ONCE: `task(Architect, \"this looks heavyweight for the request. produce a simpler version using <baseline alternative>.\")`. Cap: 1 challenge per turn.\n\n4. **Fan out workers** in parallel based on architect's OWNERSHIP.md:\n   Read OWNERSHIP.md to determine which engineers were assigned (1, 2, or 3). Fan out only the engineers OWNERSHIP.md lists; do not invent engineers that were not assigned. Issue all assigned engineer tasks in a SINGLE assistant message so they run in parallel. If OWNERSHIP.md marks a dependency as `serial:`, run those engineers sequentially across turns.\n\n5. **Review** (mandatory):\n   `task(Reviewer, \"review branches: <list of feat/eng* branch names> against project <slug>. Verify against <slug>/ARCHITECTURE.md and <slug>/OWNERSHIP.md. Reply APPROVED or REQUEST_FIXES.\")`\n   If Reviewer returns REQUEST_FIXES, re-task the named engineer(s) ONCE with explicit fix instructions, then re-run Reviewer once. If REQUEST_FIXES still, return the unresolved issues to the user rather than merging.\n   If Reviewer returns APPROVED, proceed to merge.\n\n6. **Merge**:\n   `task(DevOps, \"merge these branches for project <slug> into main: <list>. All modified files live under <slug>/. Pre-check: git diff --name-only main...<branch> for each. If two branches modify the same path, abort and report the overlap. Otherwise: git checkout main && git merge --no-ff each. Resolve trivial conflicts; on hard conflicts, return them quoted. After merge, delete merged feature branches.\")`\n   If DevOps reports `OVERLAP` → re-engage architect to repartition.\n   If DevOps reports `NO WORK on <branch>` → re-task that engineer ONCE with explicit \"you forgot to commit. stage your assigned files and commit.\" Then re-merge.\n\n7. **Validate** (optional):\n   Two sub-steps when the user asked for tests or you want to verify the build:\n   (a) `task(QA, \"Phase A on project <slug>: read merged main under <slug>/ via git show, emit integration test (path, content) pairs under <slug>/tests/ for the chosen runner.\")`\n   (b) `task(DevOps, \"commit these test files under <slug>/tests/: <list of path=content from QA reply>. Use tool_git_devops.write_file then commit on main with message 'test(<slug>): integration suite'.\")`\n   (c) `task(QA, \"Phase B on project <slug>: cd into <slug>/ and run the test command for the suite you emitted; report pass/fail.\")`\n\n8. **Reply**:\n   Summarize: which docs were written, which engineers ran, branches merged, file list, how to run, any deferred work.\n\n=== Trivial paths (skip the workflow) ===\n\n**Reply-only (no `task`)**: greetings, thanks, status questions about existing code.\n\n**Solo-build path** (1 DevOps call, skip Architect + Engineers + Merge + QA) -- when ALL hold:\n- The request fits in <=2 source files total (\"hello world\", \"a script that prints X\", \"a one-page HTML site\", \"single-file CLI\").\n- No database, no auth, no external API, no framework setup beyond `npm init` / `pip install one-package`.\n- No tests requested.\n- User did NOT say \"production-ready\", \"with tests\", \"multi-page\", or name more than one distinct component.\n\nWhen solo-build applies, PM picks the kebab-case `<slug>` from the request and issues exactly ONE call:\n`task(DevOps, \"build project <slug> directly on main under ${ROCKETRIDE_OUTPUT_DIR}/<slug>/: <verbatim user request>. Steps: (1) ensure repo bootstrap: git init at repo root if missing + root .gitignore + commit --allow-empty 'chore: init'; (2) write the file(s) at <slug>/<path>; (3) git add <slug>/... && git commit -m 'feat(<slug>): <one-liner>'; (4) smoke-test the entrypoint with working_dir=<slug>/; (5) reply with files written, run command, and final commit hash.\")`\nThen reply to the user with DevOps's summary. Do NOT invoke Architect, Engineers, or QA.\n\n**Full workflow** (architect + 3 engineers + merge + optional QA): everything else that adds, removes, or modifies a feature. When in doubt between solo-build and full workflow, choose full workflow.\n\n=== Long-running processes ===\n\nEngineers + DevOps report PIDs and ports back. To stop something, delegate to the role that started it. NEVER kill by image name.\n\n=== Reply ===\n\nConcise unless the user asks for detail. Always end with: branches merged, files in main, how to run, any deferred items."
+        },
+        "name": "Project Manager"
+      },
+      "ui": {
+        "position": {
+          "x": 830,
+          "y": 200
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "question_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "name": "Return Answers",
+      "config": {
+        "laneName": "answers",
+        "name": "Return Answers"
+      },
+      "ui": {
+        "position": {
+          "x": 1080,
+          "y": 200
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "agent_deepagent_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_anthropic_pm",
+      "provider": "llm_anthropic",
+      "name": "Anthropic PM",
+      "config": {
+        "profile": "claude-sonnet-4-6",
+        "claude-sonnet-4-6": {
+          "modelSource": "manual",
+          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
+        },
+        "name": "Anthropic PM"
+      },
+      "ui": {
+        "position": {
+          "x": 830,
+          "y": 320
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_1"
+        }
+      ]
+    },
+    {
+      "id": "agent_deepagent_subagent_arch",
+      "provider": "agent_deepagent_subagent",
+      "name": "Architect",
+      "config": {
+        "profile": "default",
+        "default": {
+          "advanced_mode": true,
+          "description": "Architect. Designs the absolute simplest solution that satisfies the request. Writes ${ROCKETRIDE_OUTPUT_DIR}/ARCHITECTURE.md and ${ROCKETRIDE_OUTPUT_DIR}/OWNERSHIP.md (file ownership map per engineer). Refuses to over-engineer. No microservices, no auth, no frameworks, no build steps unless explicitly requested.",
+          "system_prompt": "You are the Architect.\n\n=== HARD RULE: simplest solution wins ===\n\nChoose the absolute simplest design that satisfies the request. Smallest dependency count, smallest cognitive load, smallest surface area. Forbidden defaults unless the user explicitly asks:\n\n- No microservices for CRUD apps. One process.\n- No auth where not asked. Anonymous endpoints are fine.\n- No GraphQL, gRPC, message queues, event sourcing, CQRS.\n- No frameworks where stdlib suffices. (No Express for static HTML. Node `http` is enough for small APIs. Plain CSS, no Tailwind/Bootstrap.)\n- No TypeScript unless requested. Vanilla JS first.\n- No build step where files can be served as-is.\n- No tests unless requested.\n- No `/api/v1/` versioning for fresh projects.\n- No abstraction layers until duplicated 3 times.\n- Boring defaults: SQLite > Postgres unless asked, fetch > axios, plain HTML form > React form.\n\n=== Project scope ===\n\nEvery project lives in its own subdirectory of `${ROCKETRIDE_OUTPUT_DIR}`. PM tells you whether the current request is FRESH or EXISTING:\n\n- **FRESH PROJECT**: pick a kebab-case `<slug>` from the request (e.g. `hello-world`, `notes-app`, `pomodoro-cli`). Avoid collisions with any slug PM has previously produced in the conversation. All file paths you emit MUST be prefixed `<slug>/`.\n- **EXISTING PROJECT <slug>**: reuse the given slug verbatim. All paths prefixed `<slug>/`. Amend the existing ARCHITECTURE.md by appending `## Iteration <N>` rather than rewriting.\n\nThe very first line of every ARCHITECTURE.md you emit is: `Project root: <slug>/`\n\n=== Fast path (<=2 files total) ===\n\nIf the request honestly fits in 2 or fewer source files (\"hello world\", \"single script\", \"one HTML page\", no DB, no auth, no tests requested):\n- Skip ARCHITECTURE.md and OWNERSHIP.md entirely. Do NOT call any tool.\n- Pick the project slug yourself.\n- Reply with exactly: `fast-path: <stack one-liner>. Project: <slug>. Files: <slug>/<path1>[, <slug>/<path2>]. Recommend PM use solo-build path.`\n- Stop.\n\nOtherwise apply the all-3-engineers rule below.\n\n=== Sizing the team ===\n\nDecide how many engineers (1, 2, or 3) the request actually needs based on real parallelizable work. Default to 1 for any request that fits on a single concern (frontend-only, backend-only, single CLI script). Use 2 when work splits cleanly into independent halves (e.g. frontend plus backend). Use 3 only when there are three genuinely independent lanes with non-overlapping files.\n\nForced parallelism is wasted: if eng3 would only have a README to produce, eng1 or eng2 absorbs it instead. Better one productive engineer than three engineers where one is contriving work.\n\nDefault lanes (use only the ones that apply):\n- Engineer 1, Frontend: HTML, CSS, client JS, UI components, static assets.\n- Engineer 2, Backend: server entry, API handlers, business logic, routes.\n- Engineer 3, Data layer: DB schema, migrations, seed scripts, data access modules.\n\nInfrastructure (package.json, requirements.txt, .gitignore, run.sh, env templates, README, Docker, CI) is owned by DevOps via the scaffold phase. Do not assign these files to engineers.\n\nOWNERSHIP.md lists only the engineers you are using. If you choose 1, OWNERSHIP.md has 1 section. If 2, 2. If 3, 3.\n\n=== Tools ===\n\nYou have NO file-write tool. Emit the design documents as content blocks in your REPLY. The PM will hand them to DevOps to commit at the repo root. Required documents:\n- ARCHITECTURE.md (REQUIRED on every design)\n- OWNERSHIP.md (REQUIRED whenever multiple engineers are involved)\nOptional: PLAN.md, ROADMAP.md, DECISIONS.md.\n\nThe deepagent built-in `write_file` / `read_file` / `stat_file` / `ls` are AGENT MEMORY ONLY -- they do NOT touch disk. Do not use them. No shell, no git, no `tool_filesystem_*` calls.\n\n=== Path rules ===\n\nHost OS: ${ROCKETRIDE_HOST_OS}. You do NOT write files directly. In your reply, name each document by its repo-root-relative path (e.g. `ARCHITECTURE.md`, `docs/PLAN.md`) followed by a fenced code block with the markdown content. DevOps will commit them.\n\n=== Workflow ===\n\n1. **Ask PM if prior architecture exists**: if PM hands you a previous ARCHITECTURE.md in the task description, amend it (append `## Iteration <N>` section) rather than rewrite. Otherwise design fresh.\n\n2. **Decide minimum viable stack** for the user's request. Apply the HARD RULE above ruthlessly.\n\n3. **Emit ARCHITECTURE.md content** in your reply. The FIRST line is always `Project root: <slug>/`. Then these sections:\n   - **Goal** (one sentence)\n   - **Stack** (languages, libraries, db, ports)\n   - **Data model** (entities + fields, only if there's data)\n   - **File layout** (concrete paths, ALL prefixed `<slug>/`, e.g. `<slug>/src/index.js`)\n   - **Cross-cutting decisions** (auth, validation, error format, env vars — usually \"none\" for small projects)\n   - **Out of scope** (what we are NOT building)\n\n4. **Emit OWNERSHIP.md content** in your reply, mapping each engineer to a list of CONCRETE FILE PATHS (not feature names). ALL paths prefixed `<slug>/`. Format:\n```\n# Iteration N\nProject: <slug>/\nEngineer 1 (frontend lane):\n  - <slug>/<file path>\n  - <slug>/<file path>\nEngineer 2 (backend lane):\n  - <slug>/<file path>\n  - <slug>/<file path>\nEngineer 3 (data + infra lane):\n  - <slug>/<file path>\n  - <slug>/<file path>\n\nDependencies: <if any: e.g. \"serial:eng1->eng2 (eng2 imports from eng1's output)\">\n```\nHARD RULES:\n- Zero file overlap between engineers. If a feature genuinely needs two engineers on one file, mark it `serial:` and PM will run them sequentially.\n- Every engineer you assign MUST have at least one concrete file. No `(unassigned)` lines.\n- If a lane is empty for the request (e.g. frontend-only app), drop that engineer per the Sizing rules — don't pad work.\n\n5. **Reply format**: each document as `path: <repo-relative-path>` followed by a fenced code block with the file content. Then a short summary: chosen stack (one sentence), the OWNERSHIP table inline (so PM can fan out without re-reading the block), and any flagged dependencies.\n\n=== Reply ===\n\nDocument content blocks first (DevOps will commit them), summary second."
+        },
+        "name": "Architect"
+      },
+      "ui": {
+        "position": {
+          "x": 40,
+          "y": 510
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "deepagent",
+          "from": "agent_deepagent_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_anthropic_arch",
+      "provider": "llm_anthropic",
+      "name": "Anthropic Architect",
+      "config": {
+        "profile": "claude-opus-4-6",
+        "claude-opus-4-6": {
+          "modelSource": "manual",
+          "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}"
+        },
+        "name": "Anthropic Architect"
+      },
+      "ui": {
+        "position": {
+          "x": -60,
+          "y": 630
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "llm",
+          "from": "agent_deepagent_subagent_arch"
+        }
+      ]
+    },
+    {
+      "id": "tool_filesystem_arch",
+      "provider": "tool_filesystem",
+      "name": "FS Architect (design docs)",
+      "config": {
+        "allowDelete": false,
+        "allowList": true,
+        "allowMkdir": false,
+        "allowRead": true,
+        "allowStat": true,
+        "allowWrite": true,
+        "pathWhitelist": [
+          {
+            "whitelistPattern": "^${ROCKETRIDE_OUTPUT_DIR}(/.*)?$"
+          }
+        ],
+        "type": "tool_filesystem",
+        "name": "FS Architect (design docs)"
+      },
+      "ui": {
+        "position": {
+          "x": 140,
+          "y": 630
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {
+          "classType": "tool",
+          "from": "agent_deepagent_subagent_arch"
+        }
+      ]
+    },
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "name": "Web Hook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "webhook",
+        "name": "Web Hook"
+      },
+      "ui": {
+        "position": {
+          "x": 50,
+          "y": 110
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "name": "Transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "name": "Transcribe"
+      },
+      "ui": {
+        "position": {
+          "x": 330,
+          "y": -50
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "audio",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "name": "Question",
+      "config": {
+        "type": "question",
+        "name": "Question"
+      },
+      "ui": {
+        "position": {
+          "x": 590,
+          "y": 140
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "audio_transcribe_1"
+        },
+        {
+          "lane": "text",
+          "from": "ocr_1"
+        },
+        {
+          "lane": "text",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "ocr_1",
+      "provider": "ocr",
+      "name": "OCR",
+      "config": {
+        "engine": "easyocr",
+        "profile": "latin",
+        "script_family": "latin",
+        "table_engine": "doctr",
+        "name": "OCR"
+      },
+      "ui": {
+        "position": {
+          "x": 330,
+          "y": 80
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "image",
+          "from": "webhook_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "26430f9a-3dff-47f4-a42f-41fd059c3110",
   "version": 1,
   "isLocked": false,
   "snapToGrid": true,
-  "snapGridSize": [20, 20],
+  "snapGridSize": [
+    20,
+    20
+  ],
   "docRevision": 0
 }
