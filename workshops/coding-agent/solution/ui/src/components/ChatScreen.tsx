@@ -7,11 +7,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatHistory } from "../hooks/useChatHistory";
 import { useChatSocket } from "../hooks/useChatSocket";
+import { usePipelineHealth } from "../hooks/usePipelineHealth";
 import type { Message, PendingAttachment } from "../lib/types";
 import { Composer } from "./Composer";
 import { HeroStart } from "./HeroStart";
 import type { PreviewRequest } from "./MessageBubble";
 import { MessageList } from "./MessageList";
+import { PipelineStatusBanner } from "./PipelineStatusBanner";
 import { PreviewModal } from "./PreviewModal";
 import { ResetBanner } from "./ResetBanner";
 
@@ -40,6 +42,7 @@ function pendingAgentMessage(hint?: string): Message {
 export function ChatScreen() {
   const { messages, append, update, wasReset, dismissReset } = useChatHistory();
   const socket = useChatSocket();
+  const { state: pipelineState, ready: pipelineReady } = usePipelineHealth();
   const firstMessageSentRef = useRef(false);
   const [phase, setPhase] = useState<ChatPhase>(() => (messages.length > 0 ? "chat" : "hero"));
   const [preview, setPreview] = useState<PreviewRequest | null>(null);
@@ -170,11 +173,13 @@ export function ChatScreen() {
   return (
     <div className={screenClass}>
       {wasReset && <ResetBanner onDismiss={dismissReset} />}
+      <PipelineStatusBanner state={pipelineState} />
       {phase !== "chat" ? (
         <HeroStart
           onUserText={handleUserText}
           onUserAttachment={handleUserAttachment}
           onError={handleError}
+          pipelineReady={pipelineReady}
         />
       ) : (
         <>
@@ -197,6 +202,7 @@ export function ChatScreen() {
             onUserText={handleUserText}
             onUserAttachment={handleUserAttachment}
             onError={handleError}
+            pipelineReady={pipelineReady}
           />
         </>
       )}

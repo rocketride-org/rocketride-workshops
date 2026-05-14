@@ -15,9 +15,13 @@ type Props = {
   onUserText: (text: string) => Promise<void> | void;
   onUserAttachment: (attachment: PendingAttachment) => Promise<void> | void;
   onError?: (message: string) => void;
+  // When false, every control disables — the pipeline isn't ready to
+  // accept turns (empty pipe, api booting, api unreachable). Default true
+  // so callers that don't care about pipeline state opt in by passing it.
+  pipelineReady?: boolean;
 };
 
-export function Composer({ onUserText, onUserAttachment, onError }: Props) {
+export function Composer({ onUserText, onUserAttachment, onError, pipelineReady = true }: Props) {
   const [inputDraft, setInputDraft] = useState("");
   const [pendingAttachment, setPendingAttachment] = useState<PendingAttachment | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -134,12 +138,14 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
 
   // Mutex: an attachment and typed text are mutually exclusive per message.
   // Server-side path can't carry both, so the composer locks one out as soon
-  // as the other becomes non-empty.
+  // as the other becomes non-empty. Pipeline-not-ready disables every
+  // control regardless of state.
   const hasText = inputDraft.trim().length > 0;
   const hasAttachment = pendingAttachment !== null;
-  const canSend = !isRecording && (hasText || hasAttachment);
-  const attachLocked = isRecording || hasText;
-  const inputLocked = isRecording || hasAttachment;
+  const canSend = pipelineReady && !isRecording && (hasText || hasAttachment);
+  const attachLocked = !pipelineReady || isRecording || hasText;
+  const inputLocked = !pipelineReady || isRecording || hasAttachment;
+  const micLocked = !pipelineReady || (hasText && !isRecording);
 
   return (
     <form
@@ -170,7 +176,7 @@ export function Composer({ onUserText, onUserAttachment, onError }: Props) {
         className={isRecording ? "mic mic-active" : "mic"}
         aria-pressed={isRecording}
         aria-label={isRecording ? "stop recording" : "start recording"}
-        disabled={hasText && !isRecording}
+        disabled={micLocked}
         onClick={() => void toggleMic()}
       >
         <MicIcon size={26} />

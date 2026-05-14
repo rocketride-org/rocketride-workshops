@@ -87,4 +87,19 @@ describe("HeroStart", () => {
     render(<HeroStart {...makeProps()} />);
     expect(screen.getByPlaceholderText(/tell Cody Rider/)).toBeDisabled();
   });
+
+  it("pipelineReady=false disables text input and mic", () => {
+    render(<HeroStart {...makeProps()} pipelineReady={false} />);
+    expect(screen.getByPlaceholderText(/tell Cody Rider/)).toBeDisabled();
+    expect(screen.getByLabelText("start recording")).toBeDisabled();
+  });
+
+  it("pipelineReady=false blocks submission via Enter", async () => {
+    const user = userEvent.setup();
+    const props = makeProps();
+    render(<HeroStart {...props} pipelineReady={false} />);
+    // Disabled inputs swallow keypresses — submission can't fire.
+    await user.type(screen.getByPlaceholderText(/tell Cody Rider/), "should not send{Enter}");
+    expect(props.onUserText).not.toHaveBeenCalled();
+  });
 });

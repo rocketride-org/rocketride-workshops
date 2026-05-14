@@ -11,6 +11,12 @@ from app import main as main_mod
 
 
 class TestHealthEndpoint:
+    @pytest.fixture(autouse=True)
+    def _reset_component_cache(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # Force a fresh pipe-count read for every test in this class so
+        # one test's monkeypatch doesn't leak through the module-level cache.
+        monkeypatch.setattr(main_mod, "_pipe_component_count", None)
+
     def test_unavailable_until_pipelines_initialized(self, monkeypatch: pytest.MonkeyPatch) -> None:
         async def slow_start() -> str:
             await asyncio.sleep(10)
@@ -28,7 +34,10 @@ class TestHealthEndpoint:
         with TestClient(main_mod.app) as tc:
             resp = tc.get("/api/health")
             assert resp.status_code == 200
-            assert resp.json() == {"status": "ok", "pipeline": "unavailable"}
+            body = resp.json()
+            assert body["status"] == "ok"
+            assert body["pipeline"] == "unavailable"
+            assert body["components"] > 0  # solution pipe is fully built
 
     def test_ready_after_init(self, monkeypatch: pytest.MonkeyPatch) -> None:
         async def conn_ok() -> None:
@@ -51,7 +60,37 @@ class TestHealthEndpoint:
                 import time
 
                 time.sleep(0.05)
-            assert tc.get("/api/health").json() == {"status": "ok", "pipeline": "ready"}
+            body = tc.get("/api/health").json()
+            assert body["status"] == "ok"
+            assert body["pipeline"] == "ready"
+            assert body["components"] > 0
+
+    def test_unbuilt_when_pipe_has_no_components(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(main_mod, "pipe_component_count", lambda: 0)
+
+        async def conn_ok() -> None:
+            return None
+
+        async def start_ok() -> str:
+            return "tk_webhook"
+
+        async def disc_ok() -> None:
+            return None
+
+        monkeypatch.setattr(main_mod, "connect_with_retry", conn_ok)
+        monkeypatch.setattr(main_mod, "start_coding_agent", start_ok)
+        monkeypatch.setattr(main_mod, "disconnect", disc_ok)
+        with TestClient(main_mod.app) as tc:
+            # Empty pipe wins over the token state — even if init succeeds,
+            # an empty pipe means there's nothing to run.
+            for _ in range(20):
+                import time
+
+                time.sleep(0.05)
+                if main_mod.app.state.coding_token:
+                    break
+            body = tc.get("/api/health").json()
+            assert body == {"status": "ok", "pipeline": "unbuilt", "components": 0}
 
 
 class TestRuntimeEventDispatch:

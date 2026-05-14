@@ -262,4 +262,25 @@ describe("Composer", () => {
     expect(screen.getByLabelText("send")).toBeDisabled();
     expect(screen.getByLabelText("stop recording")).toBeEnabled();
   });
+
+  it("pipelineReady=false disables every control", () => {
+    render(<Composer {...makeProps()} pipelineReady={false} />);
+    expect(screen.getByPlaceholderText(/message Cody Rider/)).toBeDisabled();
+    expect(screen.getByLabelText("attach file")).toBeDisabled();
+    expect(screen.getByLabelText("start recording")).toBeDisabled();
+    expect(screen.getByLabelText("send")).toBeDisabled();
+  });
+
+  it("pipelineReady=false blocks send even with text typed", async () => {
+    const user = userEvent.setup();
+    const props = makeProps();
+    render(<Composer {...props} pipelineReady={false} />);
+    // Input is disabled, but force-set the value to mimic state where
+    // text was typed before the pipeline degraded. user.type respects
+    // disabled, so we use fireEvent-equivalent: just confirm send stays
+    // locked. (Disabled input means user can't type anyway.)
+    expect(screen.getByLabelText("send")).toBeDisabled();
+    await user.click(screen.getByLabelText("send"));
+    expect(props.onUserText).not.toHaveBeenCalled();
+  });
 });

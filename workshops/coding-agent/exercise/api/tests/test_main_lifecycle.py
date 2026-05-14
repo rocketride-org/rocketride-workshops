@@ -11,7 +11,26 @@ from app import main as main_mod
 
 
 class TestHealthEndpoint:
+    @pytest.fixture(autouse=True)
+    def _reset_component_cache(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # Force a fresh pipe-count read for every test in this class so
+        # one test's monkeypatch doesn't leak through the module-level cache.
+        monkeypatch.setattr(main_mod, "_pipe_component_count", None)
+
+    def test_unbuilt_with_empty_starter_pipe(self) -> None:
+        # The exercise ships with an empty pipe (components: []). The
+        # default health response should report "unbuilt" so the UI locks
+        # its inputs until the participant builds the pipeline.
+        with TestClient(main_mod.app) as tc:
+            resp = tc.get("/api/health")
+            assert resp.status_code == 200
+            assert resp.json() == {"status": "ok", "pipeline": "unbuilt", "components": 0}
+
     def test_unavailable_until_pipelines_initialized(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # Pretend the pipe is populated so we exercise the unavailable
+        # branch — the empty starter pipe would short-circuit to "unbuilt".
+        monkeypatch.setattr(main_mod, "pipe_component_count", lambda: 38)
+
         async def slow_start() -> str:
             await asyncio.sleep(10)
             return ""
@@ -28,9 +47,14 @@ class TestHealthEndpoint:
         with TestClient(main_mod.app) as tc:
             resp = tc.get("/api/health")
             assert resp.status_code == 200
-            assert resp.json() == {"status": "ok", "pipeline": "unavailable"}
+            body = resp.json()
+            assert body["status"] == "ok"
+            assert body["pipeline"] == "unavailable"
+            assert body["components"] == 38
 
     def test_ready_after_init(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(main_mod, "pipe_component_count", lambda: 38)
+
         async def conn_ok() -> None:
             return None
 
@@ -51,7 +75,10 @@ class TestHealthEndpoint:
                 import time
 
                 time.sleep(0.05)
-            assert tc.get("/api/health").json() == {"status": "ok", "pipeline": "ready"}
+            body = tc.get("/api/health").json()
+            assert body["status"] == "ok"
+            assert body["pipeline"] == "ready"
+            assert body["components"] == 38
 
 
 class TestRuntimeEventDispatch:

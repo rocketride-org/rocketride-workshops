@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { afterEach, vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
 if (typeof Element.prototype.scrollIntoView === "undefined") {
@@ -8,6 +8,24 @@ if (typeof Element.prototype.scrollIntoView === "undefined") {
     value: vi.fn(),
   });
 }
+
+// Default fetch stub: every /api/health probe reports a fully-built, ready
+// pipeline. Tests that need the disabled state override this stub via
+// `vi.spyOn(globalThis, "fetch")`.
+beforeEach(() => {
+  if (!vi.isMockFunction(globalThis.fetch)) {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = typeof input === "string" ? input : (input as Request).url;
+      if (url.includes("/api/health")) {
+        return new Response(JSON.stringify({ status: "ok", pipeline: "ready", components: 38 }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      return new Response("not found", { status: 404 });
+    });
+  }
+});
 
 afterEach(() => {
   cleanup();

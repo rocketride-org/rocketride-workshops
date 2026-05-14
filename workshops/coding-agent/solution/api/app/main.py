@@ -261,13 +261,46 @@ app = FastAPI(title="coding-agent solution", lifespan=lifespan)
 class HealthResponse(BaseModel):
     status: str
     pipeline: str
+    components: int
+
+
+# Pipe-file component count is cached after the first read. The pipe file
+# only changes when a workshop participant edits the design — and the UI
+# polls /api/health every few seconds, so a per-call re-read would be
+# wasteful. Use the explicit cache invalidator if the file is ever rewritten
+# from inside the running process.
+_pipe_component_count: int | None = None
+
+
+def pipe_component_count() -> int:
+    """Return the number of components in the active pipe file, or 0 if
+    the file is missing or unreadable."""
+    global _pipe_component_count
+    if _pipe_component_count is not None:
+        return _pipe_component_count
+    try:
+        from app.libs.rocketride.chat import PIPELINE_PATH
+
+        with PIPELINE_PATH.open("r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        components = data.get("components") if isinstance(data, dict) else None
+        _pipe_component_count = len(components) if isinstance(components, list) else 0
+    except (OSError, ValueError):
+        _pipe_component_count = 0
+    return _pipe_component_count
 
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
+    components = pipe_component_count()
     coding = getattr(app.state, "coding_token", None)
-    state = "ready" if coding else "unavailable"
-    return HealthResponse(status="ok", pipeline=state)
+    if components == 0:
+        state = "unbuilt"
+    elif coding:
+        state = "ready"
+    else:
+        state = "unavailable"
+    return HealthResponse(status="ok", pipeline=state, components=components)
 
 
 # ----------------------------------------------------------------------------

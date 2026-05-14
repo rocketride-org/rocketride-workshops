@@ -913,6 +913,17 @@ body {
   font-size: 0.8rem;
 }
 
+.pipeline-banner {
+  background: var(--night-amethyst);
+  color: var(--text-on-dark);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .agent-pending {
   align-self: flex-start;
   max-width: 75%;

@@ -7,9 +7,12 @@ type Props = {
   onUserText: (text: string) => Promise<void> | void;
   onUserAttachment: (attachment: PendingAttachment, text?: string) => Promise<void> | void;
   onError?: (message: string) => void;
+  // When false, every input disables — pipeline isn't ready to accept
+  // turns. Default true so callers that don't care opt in.
+  pipelineReady?: boolean;
 };
 
-export function HeroStart({ onUserText, onUserAttachment, onError }: Props) {
+export function HeroStart({ onUserText, onUserAttachment, onError, pipelineReady = true }: Props) {
   const [draft, setDraft] = useState("");
 
   const handleCaptured = useCallback(
@@ -59,6 +62,7 @@ export function HeroStart({ onUserText, onUserAttachment, onError }: Props) {
         className={isRecording ? "hero-mic hero-mic-active" : "hero-mic"}
         aria-pressed={isRecording}
         aria-label={isRecording ? "stop recording" : "start recording"}
+        disabled={!pipelineReady}
         onClick={() => void toggleMic()}
       >
         <MicIcon size={38} />
@@ -78,7 +82,7 @@ export function HeroStart({ onUserText, onUserAttachment, onError }: Props) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="tell Cody Rider what to build…"
-          disabled={isRecording}
+          disabled={isRecording || !pipelineReady}
         />
       </form>
     </section>
