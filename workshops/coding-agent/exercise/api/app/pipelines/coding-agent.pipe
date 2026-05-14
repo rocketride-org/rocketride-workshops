@@ -1,9 +1,120 @@
 {
-  "components": [],
-  "project_id": "12cfa178-b0b0-4bff-98e6-0e62110e48d6",
+  "components": [
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "name": "Web Hook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "webhook",
+        "name": "Web Hook"
+      },
+      "ui": {
+        "position": {
+          "x": 50,
+          "y": 110
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "name": "Transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "name": "Transcribe"
+      },
+      "ui": {
+        "position": {
+          "x": 330,
+          "y": -50
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "audio",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "name": "Question",
+      "config": {
+        "type": "question",
+        "name": "Question"
+      },
+      "ui": {
+        "position": {
+          "x": 590,
+          "y": 140
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "audio_transcribe_1"
+        },
+        {
+          "lane": "text",
+          "from": "ocr_1"
+        },
+        {
+          "lane": "text",
+          "from": "webhook_1"
+        }
+      ]
+    },
+    {
+      "id": "ocr_1",
+      "provider": "ocr",
+      "name": "OCR",
+      "config": {
+        "engine": "easyocr",
+        "profile": "latin",
+        "script_family": "latin",
+        "table_engine": "doctr",
+        "name": "OCR"
+      },
+      "ui": {
+        "position": {
+          "x": 330,
+          "y": 80
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "image",
+          "from": "webhook_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "4875793f-f5c4-4d1f-97a2-2e80052c46a6",
   "version": 1,
   "isLocked": false,
   "snapToGrid": true,
-  "snapGridSize": [20, 20],
+  "snapGridSize": [
+    20,
+    20
+  ],
   "docRevision": 0
 }
