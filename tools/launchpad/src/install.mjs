@@ -100,6 +100,9 @@ async function ensureRuntimePythonBuildDeps(projectDir, depsDir) {
   }
 }
 
+// TODO: bridge fix — remove this when the RocketRide runtime upstream pins
+// img2table<2.0 in nodes/ocr/requirements.txt and adds transformers to
+// nodes/agent_deepagent/requirements.txt, then bump the runtime version pin.
 async function applyRuntimePatches(depsDir) {
   const patches = [
     {
