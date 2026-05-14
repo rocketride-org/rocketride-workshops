@@ -44,6 +44,8 @@ export async function install({ force = false } = {}) {
     }
     await rm(tmpFile, { force: true });
 
+    await applyRuntimePatches(depsDir);
+
     await writeFile(versionFile, version, "utf8");
     console.log(`launchpad: runtime v${version} installed at ${depsDir}`);
   }
@@ -53,6 +55,7 @@ export async function install({ force = false } = {}) {
   if (!preflight.ok) process.exit(1);
 
   await ensureRuntimePythonBuildDeps(projectDir, depsDir);
+  await ensureApiEnvFile(projectDir);
 }
 
 async function ensureRuntimePythonBuildDeps(projectDir, depsDir) {
@@ -94,6 +97,57 @@ async function ensureRuntimePythonBuildDeps(projectDir, depsDir) {
   if (!ok) {
     console.warn("launchpad: failed to install setuptools into runtime python");
     console.warn("launchpad: engine may fail to compile dependency constraints on first start");
+  }
+}
+
+async function applyRuntimePatches(depsDir) {
+  const patches = [
+    {
+      file: "nodes/ocr/requirements.txt",
+      match: /^img2table\s*$/m,
+      replace: "img2table<2.0",
+    },
+    {
+      file: "nodes/agent_deepagent/requirements.txt",
+      match: /^pydantic\s*$/m,
+      replace: "pydantic\ntransformers",
+    },
+  ];
+
+  for (const patch of patches) {
+    const filePath = resolve(depsDir, patch.file);
+    try {
+      const content = await readFile(filePath, "utf8");
+      if (!patch.match.test(content)) continue;
+      await writeFile(filePath, content.replace(patch.match, patch.replace), "utf8");
+    } catch {
+      // soft-fail: engine will surface a clear error on startup if a patch was needed
+    }
+  }
+}
+
+async function ensureApiEnvFile(projectDir) {
+  const examplePath = resolve(projectDir, "api", ".env.example");
+  const envPath = resolve(projectDir, "api", ".env");
+
+  let envExists = true;
+  try {
+    await access(envPath);
+  } catch {
+    envExists = false;
+  }
+  if (envExists) return;
+
+  try {
+    const content = await readFile(examplePath, "utf8");
+    await writeFile(envPath, content, "utf8");
+    console.log(
+      `launchpad: created api/.env from .env.example — edit it to add your Anthropic key`,
+    );
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      console.warn(`launchpad: could not create api/.env: ${err.message}`);
+    }
   }
 }
 

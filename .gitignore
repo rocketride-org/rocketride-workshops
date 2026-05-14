@@ -58,3 +58,6 @@ logs/
 .claude/
 .rocketride/
 .superpowers/
+
+# Maintainer-only runtime patch notes
+RUNTIME_PATCHES.md
