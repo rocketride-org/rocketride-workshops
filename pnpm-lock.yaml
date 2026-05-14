@@ -41,6 +41,9 @@ importers:
 
   workshops/coding-agent/exercise:
     devDependencies:
+      '@manzt/uv':
+        specifier: ^0.8.13
+        version: 0.8.13
       '@rocketride/runtime':
         specifier: workspace:*
         version: link:../../../tools/launchpad
@@ -104,6 +107,9 @@ importers:
 
   workshops/coding-agent/solution:
     devDependencies:
+      '@manzt/uv':
+        specifier: ^0.8.13
+        version: 0.8.13
       '@rocketride/runtime':
         specifier: workspace:*
         version: link:../../../tools/launchpad
@@ -518,6 +524,52 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@manzt/uv-darwin-arm64@0.8.13':
+    resolution: {integrity: sha512-pyA6mWfhRLvux1oocDnsWl6ZPTMxFkfqONE1bgmCN2pMG1OagUh08ECevYKVHZXUUltMUVEJLd/kk941gPiStQ==}
+    engines: {node: '>= 14'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@manzt/uv-darwin-x64@0.8.13':
+    resolution: {integrity: sha512-YBnw1U1DQpzXF3Lu2qyXaz6KzgLeVDwJajvwJDTYCfSF0nlfNtdsBR/zzyW1AY541/v077+pl1klo6juZ3b4ug==}
+    engines: {node: '>= 14'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@manzt/uv-linux-arm64@0.8.13':
+    resolution: {integrity: sha512-0TqVQ1mxa4GgiqjvkWRHA/rF9+zlAR9gTLfJp1ny3TRTccL6kOkHNKLXljTVzw8UJ6u5B5iS5+ME9i7HcKqsFw==}
+    engines: {node: '>= 14'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@manzt/uv-linux-x64@0.8.13':
+    resolution: {integrity: sha512-6fNAeDBmUNbvUtDmnQ3Rn0lqMIT5/JQoUgzfDAOdTa+ewqP8aT1sj81faU3i8zEnI9vUQLO9X7hVugr3B3aKMw==}
+    engines: {node: '>= 14'}
+    cpu: [x64]
+    os: [linux]
+
+  '@manzt/uv-win32-arm64@0.8.13':
+    resolution: {integrity: sha512-myko4e/sNIwGbBhUyC6maxv7ItisExiS0i6UdqjDBITyLRkidwejxmdfRm9/A0Djr8+i865lXSlJGPjEKbFKEw==}
+    engines: {node: '>= 14'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@manzt/uv-win32-ia32@0.8.13':
+    resolution: {integrity: sha512-ssK+jZClcEBegYEH36qjqkBBbaF8DeovnqtgsksqHUdVEco6Urulu+Qh+YWqANmPFkWMxqSuJYS765fi+PYg1Q==}
+    engines: {node: '>= 14'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@manzt/uv-win32-x64@0.8.13':
+    resolution: {integrity: sha512-XE9V1vCrbp91cc62VNzupBSLGepZKvLF4gcC1ufn4/wWAz/byihFVYo+GpNojA6yJAbWpQIG6/1AkPaEyXJX2w==}
+    engines: {node: '>= 14'}
+    cpu: [x64]
+    os: [win32]
+
+  '@manzt/uv@0.8.13':
+    resolution: {integrity: sha512-pT6kFOg55G65QqZC9Wf84Jh/tDJFvQEPbrJD5rER/YLIB6teLqO8Oxj88hdhvkUzDDBP5pxxzQ7b69gKot1l2g==}
+    hasBin: true
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2503,6 +2555,37 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@manzt/uv-darwin-arm64@0.8.13':
+    optional: true
+
+  '@manzt/uv-darwin-x64@0.8.13':
+    optional: true
+
+  '@manzt/uv-linux-arm64@0.8.13':
+    optional: true
+
+  '@manzt/uv-linux-x64@0.8.13':
+    optional: true
+
+  '@manzt/uv-win32-arm64@0.8.13':
+    optional: true
+
+  '@manzt/uv-win32-ia32@0.8.13':
+    optional: true
+
+  '@manzt/uv-win32-x64@0.8.13':
+    optional: true
+
+  '@manzt/uv@0.8.13':
+    optionalDependencies:
+      '@manzt/uv-darwin-arm64': 0.8.13
+      '@manzt/uv-darwin-x64': 0.8.13
+      '@manzt/uv-linux-arm64': 0.8.13
+      '@manzt/uv-linux-x64': 0.8.13
+      '@manzt/uv-win32-arm64': 0.8.13
+      '@manzt/uv-win32-ia32': 0.8.13
+      '@manzt/uv-win32-x64': 0.8.13
 
   '@pkgjs/parseargs@0.11.0':
     optional: true

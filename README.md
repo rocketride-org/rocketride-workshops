@@ -36,14 +36,13 @@
 
 ## Prerequisites
 
-| Tool                                        | Version    | Purpose                                                                                                                          |
-| ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| [Node.js](https://nodejs.org)               | `>=20`     | Runtime for pnpm and Vite tooling                                                                                                |
-| [pnpm](https://pnpm.io)                     | `>=9`      | Workspace and package manager                                                                                                    |
-| [Python](https://www.python.org/downloads/) | `>=3.11`   | Runs each workshop's API                                                                                                         |
-| [uv](https://docs.astral.sh/uv/)            | latest     | Python environment + dependency manager                                                                                          |
-| [Git](https://git-scm.com/)                 | any        | Clone the repository                                                                                                             |
-| `libc++`                                    | Linux only | The bundled `engine` binary links against `libc++.so.1` — `apt install libc++1` on Debian/Ubuntu, `dnf install libcxx` on Fedora |
+| Tool                                        | Version    | Purpose                                                                                                                                                                                                                                                                                |
+| ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Node.js](https://nodejs.org)               | `>=20`     | Runtime for pnpm and Vite tooling                                                                                                                                                                                                                                                      |
+| [pnpm](https://pnpm.io)                     | `>=9`      | Workspace and package manager                                                                                                                                                                                                                                                          |
+| [Python](https://www.python.org/downloads/) | `>=3.11`   | Runs each workshop's API                                                                                                                                                                                                                                                               |
+| [Git](https://git-scm.com/)                 | any        | Clone the repository                                                                                                                                                                                                                                                                   |
+| LLVM C++ runtime                            | Linux only | `pnpm install` auto-installs `libc++1`, `libc++abi1`, `llvm-libunwind1` (or the dnf/pacman/zypper equivalents) via `sudo -n`. Most systems don't have passwordless sudo, in which case launchpad prints the exact `sudo apt install …` command to run before re-trying `pnpm install`. |
 
 ## Setup
 
@@ -82,15 +81,18 @@ Each workshop ships paired directories:
 
 ## How `@rocketride/runtime` works
 
-Each workshop project's `package.json` declares the runtime version:
+Each workshop project's `package.json` declares the runtime version and pulls `uv` in as a devDependency so the postinstall hook works out of the box on any OS:
 
 ```json
 {
   "rocketride": { "runtime": "latest" },
-  "scripts": { "postinstall": "launchpad install && uv sync --directory api --all-groups" }
+  "scripts": {
+    "postinstall": "launchpad install && pnpm exec uv sync --directory api --all-groups"
+  },
+  "devDependencies": { "@manzt/uv": "^0.8.13" }
 }
 ```
 
-`launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it into the workshop's `runtime/.rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`.
+`launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it into the workshop's `runtime/.rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`. The [`@manzt/uv`](https://www.npmjs.com/package/@manzt/uv) npm package ships a per-platform `uv` binary into `node_modules/.bin/`, so `pnpm exec uv sync` materializes each workshop's Python virtualenv without a separate prerequisite install.
 
 See [`tools/launchpad/README.md`](./tools/launchpad/README.md) for details.

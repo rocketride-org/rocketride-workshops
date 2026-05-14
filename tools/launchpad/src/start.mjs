@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { access } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { findProjectRoot } from "./version.mjs";
+import { verifyNativeDeps } from "./preflight.mjs";
 
 const CANDIDATE_BINARIES = process.platform === "win32" ? ["engine.exe"] : ["engine"];
 
@@ -14,6 +15,10 @@ export async function start(args = []) {
     : resolve(projectDir, "runtime", ".rocketride");
 
   const binary = await resolveEngineBinary(depsDir);
+
+  const preflight = await verifyNativeDeps(binary, { mode: "start" });
+  if (!preflight.ok) process.exit(1);
+
   const engineArgs = args.length > 0 ? args : [DEFAULT_ENTRY_SCRIPT];
 
   console.log(`launchpad: starting ${binary} ${engineArgs.join(" ")}`);

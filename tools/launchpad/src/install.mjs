@@ -7,6 +7,7 @@ import { randomBytes } from "node:crypto";
 import { extract as extractTar } from "tar";
 import extractZip from "extract-zip";
 import { findProjectRoot, getReleaseAssets, pickAsset, resolveVersion } from "./version.mjs";
+import { verifyNativeDeps } from "./preflight.mjs";
 
 export async function install({ force = false } = {}) {
   const { dir: projectDir, spec } = await findProjectRoot();
@@ -19,34 +20,36 @@ export async function install({ force = false } = {}) {
   const version = await resolveVersion(spec);
   console.log(`launchpad: resolved runtime = v${version}`);
 
-  if (!force) {
-    const installed = await readVersionFile(versionFile);
-    if (installed === version) {
-      console.log(`launchpad: runtime v${version} already installed at ${depsDir}. Skipping.`);
-      return;
-    }
-  }
+  const installed = !force && (await readVersionFile(versionFile)) === version;
 
-  const { tag, assets } = await getReleaseAssets(version);
-  const { asset, kind } = pickAsset(assets, version);
-
-  console.log(`launchpad: downloading ${asset.name} (${formatBytes(asset.size)}) from ${tag}`);
-
-  const tmpFile = resolve(tmpdir(), `launchpad-${randomBytes(6).toString("hex")}.${kind}`);
-  await downloadFile(asset.browser_download_url, tmpFile);
-
-  await rm(depsDir, { recursive: true, force: true });
-  await mkdir(depsDir, { recursive: true });
-
-  if (kind === "tar") {
-    await extractTar({ file: tmpFile, cwd: depsDir });
+  if (installed) {
+    console.log(`launchpad: runtime v${version} already installed at ${depsDir}. Skipping.`);
   } else {
-    await extractZip(tmpFile, { dir: depsDir });
-  }
-  await rm(tmpFile, { force: true });
+    const { tag, assets } = await getReleaseAssets(version);
+    const { asset, kind } = pickAsset(assets, version);
 
-  await writeFile(versionFile, version, "utf8");
-  console.log(`launchpad: runtime v${version} installed at ${depsDir}`);
+    console.log(`launchpad: downloading ${asset.name} (${formatBytes(asset.size)}) from ${tag}`);
+
+    const tmpFile = resolve(tmpdir(), `launchpad-${randomBytes(6).toString("hex")}.${kind}`);
+    await downloadFile(asset.browser_download_url, tmpFile);
+
+    await rm(depsDir, { recursive: true, force: true });
+    await mkdir(depsDir, { recursive: true });
+
+    if (kind === "tar") {
+      await extractTar({ file: tmpFile, cwd: depsDir });
+    } else {
+      await extractZip(tmpFile, { dir: depsDir });
+    }
+    await rm(tmpFile, { force: true });
+
+    await writeFile(versionFile, version, "utf8");
+    console.log(`launchpad: runtime v${version} installed at ${depsDir}`);
+  }
+
+  const engineBinary = resolve(depsDir, process.platform === "win32" ? "engine.exe" : "engine");
+  const preflight = await verifyNativeDeps(engineBinary, { mode: "install" });
+  if (!preflight.ok) process.exit(1);
 }
 
 async function readVersionFile(versionFile) {

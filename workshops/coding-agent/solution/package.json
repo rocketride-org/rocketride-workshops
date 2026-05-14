@@ -7,10 +7,11 @@
     "runtime": "3.1.2-experimental"
   },
   "scripts": {
-    "postinstall": "launchpad install && uv sync --directory api --all-groups",
+    "postinstall": "launchpad install && pnpm exec uv sync --directory api --all-groups",
     "dev": "pnpm --filter \"./*\" --parallel run dev"
   },
   "devDependencies": {
-    "@rocketride/runtime": "workspace:*"
+    "@rocketride/runtime": "workspace:*",
+    "@manzt/uv": "^0.8.13"
   }
 }
