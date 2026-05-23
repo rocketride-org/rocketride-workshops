@@ -6,17 +6,30 @@ The UI, API, and runtime are already wired. You build the pipeline only. The emp
 
 By the end you'll have a `Project Manager` orchestrator with six sub-agents: `Architect`, `Engineer 1`, `Engineer 2`, `Engineer 3`, `Reviewer`, `DevOps`, and `QA`.
 
-## Before you start
+## Section 1 — Setup
 
-1. From this directory:
+You'll do everything from VS Code with the RocketRide extension. First boot the solution end-to-end so you have a working reference, then in Section 2 you start building the empty exercise pipeline.
+
+1. **Install VS Code.** Download from https://code.visualstudio.com/ and install.
+
+2. **Install the RocketRide extension.** Open VS Code → Extensions panel (`Ctrl+Shift+X` / `Cmd+Shift+X`) → search "RocketRide" → Install.
+
+3. **Clone the repo.**
 
    ```sh
-   pnpm dev
+   git clone https://github.com/rocketride-org/rocketride-workshops.git
+   cd rocketride-workshops
    ```
 
-   That boots the UI (http://localhost:5173), the API, and the RocketRide runtime together.
+4. **Initialize the repo.** From the workspace root:
 
-2. Set your Anthropic key in `api/.env`:
+   ```sh
+   pnpm install
+   ```
+
+   This pulls JS deps and runs the launchpad postinstall, which downloads and unpacks the RocketRide runtime under `workshops/coding-agent/solution/runtime/.rocketride/` (gitignored).
+
+5. **Set your Anthropic key** in `workshops/coding-agent/solution/api/.env`:
 
    ```
    ROCKETRIDE_URI=localhost:5565
@@ -26,13 +39,22 @@ By the end you'll have a `Project Manager` orchestrator with six sub-agents: `Ar
 
    `ROCKETRIDE_OUTPUT_DIR` is set automatically by the API on startup. It points to `api/.output/` and is the only directory the agents are allowed to touch.
 
-3. Open `api/app/pipelines/coding-agent.pipe` in VS Code. With the RocketRide extension installed it opens as a blank canvas.
+6. **Start the solution server.**
+
+   ```sh
+   cd workshops/coding-agent/solution
+   pnpm dev
+   ```
+
+   This boots the UI (http://localhost:5173), the API, and the RocketRide runtime together. Open the UI in a browser — the canonical reference pipeline replies to a hello prompt. This is what your exercise pipeline will grow into.
+
+7. **Open the exercise canvas.** In VS Code open `workshops/coding-agent/exercise/api/app/pipelines/coding-agent.pipe`. With the RocketRide extension installed it opens as a blank canvas — that's where the rest of the sections happen.
 
 You will not write any system prompts. They are provided here, copy-paste ready. Your job is to add the right nodes, connect the right lanes, and configure the tool whitelists.
 
 ---
 
-## Section 1 — Source and Parsing
+## Section 2 — Source and Parsing
 
 Every pipeline starts with a source. The coding agent uses a single `webhook` source for every modality:
 
@@ -61,7 +83,7 @@ This section is about the **lane model**. The source node emits lanes; parser no
 - `OCR.text` → `Question.text`
 - `Web Hook.text` → `Question.text` (typed messages bypass the parsers)
 
-The `Question` node emits on the `questions` lane that the Project Manager will subscribe to in Section 2.
+The `Question` node emits on the `questions` lane that the Project Manager will subscribe to in Section 3.
 
 ### Prompts
 
@@ -73,9 +95,9 @@ Save the pipe. Confirm the runtime reloads with no validation errors in the Conn
 
 ---
 
-## Section 2 — Project Manager
+## Section 3 — Project Manager
 
-The Project Manager is an `agent_deepagent` (the orchestrator type). It receives `questions` and produces `answers`. It writes nothing itself: its only tool is the auto-injected `task` tool, which it uses to delegate to six sub-agents that you'll add in Sections 3–5.
+The Project Manager is an `agent_deepagent` (the orchestrator type). It receives `questions` and produces `answers`. It writes nothing itself: its only tool is the auto-injected `task` tool, which it uses to delegate to six sub-agents that you'll add in Sections 4–6.
 
 This is where the **control lane** pattern shows up. Agents need an LLM, but the LLM is not data input. It is attached as a `control` connection with `classType: "llm"`. Same goes for tools and sub-agents. **Input lanes carry data. Control lanes carry capabilities.**
 
@@ -195,11 +217,11 @@ Send "hi" through the chat — you should get a conversational reply (the trivia
 
 ---
 
-## Section 3 — Architect Sub-Agent
+## Section 4 — Architect Sub-Agent
 
 Sub-agents are `agent_deepagent_subagent` nodes. They attach to a parent `agent_deepagent` via a **control** connection of `classType: "deepagent"`. The PM doesn't need an input lane to talk to them — the runtime exposes each sub-agent as a callable tool inside the PM's `task` capability, named after the sub-agent node.
 
-The Architect is the design agent. It emits `ARCHITECTURE.md` and `OWNERSHIP.md` as content blocks in its reply — it has no file-write tool of its own. DevOps commits those docs to disk (Section 5). This keeps the Architect lean: a single LLM, no tool wiring, no filesystem config.
+The Architect is the design agent. It emits `ARCHITECTURE.md` and `OWNERSHIP.md` as content blocks in its reply — it has no file-write tool of its own. DevOps commits those docs to disk (Section 6). This keeps the Architect lean: a single LLM, no tool wiring, no filesystem config.
 
 The Architect also **sizes the engineering team** per request (1, 2, or 3 engineers) based on the work it can genuinely parallelize.
 
@@ -294,11 +316,11 @@ Document content blocks first (DevOps will commit them), summary second.
 
 ### Verify
 
-Send "build me a todo list app" through chat. You should see the PM delegate to the Architect, get back a stack proposal + ARCHITECTURE.md/OWNERSHIP.md content blocks, and reply back to you. (Files aren't yet on disk — DevOps will commit them in Section 5.) The PM will then try to delegate to engineers, fail, and apologize. Still expected.
+Send "build me a todo list app" through chat. You should see the PM delegate to the Architect, get back a stack proposal + ARCHITECTURE.md/OWNERSHIP.md content blocks, and reply back to you. (Files aren't yet on disk — DevOps will commit them in Section 6.) The PM will then try to delegate to engineers, fail, and apologize. Still expected.
 
 ---
 
-## Section 4 — Engineer Sub-Agents (×3)
+## Section 5 — Engineer Sub-Agents (×3)
 
 This is the **parallel fan-out** that defines RocketRide's architecture story. Up to three sub-agents, identical structure, run concurrently when the PM dispatches them in one turn. The architect sizes the team (1, 2, or 3) per request via OWNERSHIP.md — every assigned engineer has at least one concrete file. Engineers OWNERSHIP.md doesn't list aren't engaged at all.
 
@@ -383,7 +405,7 @@ Re-send "build me a todo list app". Architect's OWNERSHIP.md will pick 1, 2, or 
 
 ---
 
-## Section 5 — DevOps, QA, and Reviewer
+## Section 6 — DevOps, QA, and Reviewer
 
 Three more sub-agents, each with a distinct role and a different tool footprint:
 
@@ -602,31 +624,6 @@ Concise. Specific. Actionable.
 Send a small build request: "build me a hello world page". This is a fast-path / solo-build case, so PM will go straight to DevOps (skip Architect + engineers + Reviewer). Confirm `api/.output/hello-world/` contains a working project committed to a real git repo.
 
 Then send something bigger: "build me a notes app with a list page, a new-note form, and SQLite storage". This engages the full workflow: bootstrap → scaffold → architect → engineers fan-out (probably 2–3) → Reviewer (APPROVED) → DevOps merge → reply. If you add "with tests", QA's Phase A/B kicks in. Confirm both projects coexist under `api/.output/` in their own subdirs.
-
----
-
-## Section 6 — Break It and Fix It with the Trace
-
-You will not write a system from scratch in this section. The instructor introduces a single misconfiguration that breaks the pipeline in a non-obvious way. Your job: open the runtime trace file, follow the breadcrumb back to the broken node, fix it, re-run.
-
-This teaches **observability**. The pipeline is started with `pipelineTraceLevel: "full"`, which causes every per-node lane write and tool invocation to dump to `api/logs/{YYYY-MM-DD}_tracer.log`.
-
-### Steps
-
-1. Send a real build request:
-
-   ```
-   build me a hello world page
-   ```
-
-2. Pipeline runs, produces an unexpected / empty / error response.
-3. Open `api/logs/{today}_tracer.log` in VS Code.
-4. Search the trace for `apaevt_node_error` or `error` strings.
-5. Identify which node failed and why.
-6. Open the pipeline canvas, fix the misconfiguration.
-7. Re-run the same prompt. Confirm fix.
-
-Hints are available from the instructor at the midpoint if you're stuck.
 
 ---
 
