@@ -112,7 +112,7 @@ async function applyRuntimePatches(depsDir) {
     },
     {
       file: "nodes/agent_deepagent/requirements.txt",
-      match: /^pydantic\s*$/m,
+      match: /^pydantic[ \t]*(?:\r?\n[ \t]*transfo?rmers[ \t]*)?$/m,
       replace: "pydantic\ntransformers",
     },
   ];
