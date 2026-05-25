@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1870"
+     width="1200" height="1870" font-family="'Comic Sans MS','Segoe Print',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 14 12" refX="11" refY="6"
+            markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M0 0 L14 6 L0 12 Z" fill="#1f2530"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="1870" fill="#fbf8ee"/>
+  <line x1="0" y1="0" x2="0" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="28" y1="0" x2="28" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="56" y1="0" x2="56" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="84" y1="0" x2="84" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="112" y1="0" x2="112" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="140" y1="0" x2="140" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="168" y1="0" x2="168" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="196" y1="0" x2="196" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="224" y1="0" x2="224" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="252" y1="0" x2="252" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="280" y1="0" x2="280" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="308" y1="0" x2="308" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="336" y1="0" x2="336" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="364" y1="0" x2="364" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="392" y1="0" x2="392" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="420" y1="0" x2="420" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="448" y1="0" x2="448" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="476" y1="0" x2="476" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="504" y1="0" x2="504" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="532" y1="0" x2="532" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="560" y1="0" x2="560" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="588" y1="0" x2="588" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="616" y1="0" x2="616" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="644" y1="0" x2="644" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="672" y1="0" x2="672" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="700" y1="0" x2="700" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="728" y1="0" x2="728" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="756" y1="0" x2="756" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="784" y1="0" x2="784" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="812" y1="0" x2="812" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="840" y1="0" x2="840" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="868" y1="0" x2="868" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="896" y1="0" x2="896" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="924" y1="0" x2="924" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="952" y1="0" x2="952" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="980" y1="0" x2="980" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1008" y1="0" x2="1008" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1036" y1="0" x2="1036" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1064" y1="0" x2="1064" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1092" y1="0" x2="1092" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1120" y1="0" x2="1120" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1148" y1="0" x2="1148" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="1176" y1="0" x2="1176" y2="1870" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="0" x2="1200" y2="0" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="28" x2="1200" y2="28" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="56" x2="1200" y2="56" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="84" x2="1200" y2="84" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="112" x2="1200" y2="112" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="140" x2="1200" y2="140" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="168" x2="1200" y2="168" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="196" x2="1200" y2="196" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="224" x2="1200" y2="224" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="252" x2="1200" y2="252" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="280" x2="1200" y2="280" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="308" x2="1200" y2="308" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="336" x2="1200" y2="336" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="364" x2="1200" y2="364" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="392" x2="1200" y2="392" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="420" x2="1200" y2="420" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="448" x2="1200" y2="448" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="476" x2="1200" y2="476" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="504" x2="1200" y2="504" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="532" x2="1200" y2="532" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="560" x2="1200" y2="560" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="588" x2="1200" y2="588" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="616" x2="1200" y2="616" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="644" x2="1200" y2="644" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="672" x2="1200" y2="672" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="700" x2="1200" y2="700" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="728" x2="1200" y2="728" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="756" x2="1200" y2="756" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="784" x2="1200" y2="784" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="812" x2="1200" y2="812" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="840" x2="1200" y2="840" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="868" x2="1200" y2="868" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="896" x2="1200" y2="896" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="924" x2="1200" y2="924" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="952" x2="1200" y2="952" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="980" x2="1200" y2="980" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1008" x2="1200" y2="1008" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1036" x2="1200" y2="1036" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1064" x2="1200" y2="1064" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1092" x2="1200" y2="1092" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1120" x2="1200" y2="1120" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1148" x2="1200" y2="1148" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1176" x2="1200" y2="1176" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1204" x2="1200" y2="1204" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1232" x2="1200" y2="1232" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1260" x2="1200" y2="1260" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1288" x2="1200" y2="1288" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1316" x2="1200" y2="1316" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1344" x2="1200" y2="1344" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1372" x2="1200" y2="1372" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1400" x2="1200" y2="1400" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1428" x2="1200" y2="1428" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1456" x2="1200" y2="1456" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1484" x2="1200" y2="1484" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1512" x2="1200" y2="1512" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1540" x2="1200" y2="1540" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1568" x2="1200" y2="1568" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1596" x2="1200" y2="1596" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1624" x2="1200" y2="1624" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1652" x2="1200" y2="1652" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1680" x2="1200" y2="1680" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1708" x2="1200" y2="1708" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1736" x2="1200" y2="1736" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1764" x2="1200" y2="1764" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1792" x2="1200" y2="1792" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1820" x2="1200" y2="1820" stroke="#e7e3d2" stroke-width="1"/>
+<line x1="0" y1="1848" x2="1200" y2="1848" stroke="#e7e3d2" stroke-width="1"/>
+
+    <g>
+      <path d="M50 96
+               Q 36 92, 38 78
+               Q 32 60, 50 48
+               Q 80 38, 140 40
+               Q 280 36, 440 42
+               Q 490 44, 506 56
+               Q 520 76, 510 92
+               Q 500 110, 470 110
+               Q 320 116, 180 112
+               Q 96 110, 50 96 Z"
+            fill="#ffe566" stroke="#1f2530" stroke-width="2"/>
+      <text x="60" y="94" font-family="'Comic Sans MS','Segoe Print',sans-serif"
+            font-weight="900" font-size="44" fill="#1f2530">Coding Agent</text>
+      <text x="530" y="94" font-family="'Comic Sans MS','Segoe Print',sans-serif"
+            font-weight="900" font-size="44" fill="#1f2530">Architecture</text>
+
+      <!-- Legend -->
+      <rect x="900" y="36" width="270" height="86" rx="10" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <text x="1035" y="60" text-anchor="middle" font-family="'Comic Sans MS',sans-serif"
+            font-weight="700" font-size="16" fill="#1f2530">Legend</text>
+      <line x1="918" y1="82" x2="980" y2="82" stroke="#1f2530" stroke-width="2.5"
+            stroke-dasharray="10 5" stroke-linecap="round" class="march"/>
+      <text x="990" y="86" font-family="'Comic Sans MS',sans-serif" font-size="13" fill="#1f2530">control / data flow</text>
+      <line x1="918" y1="106" x2="980" y2="106" stroke="#1f2530" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="990" y="110" font-family="'Comic Sans MS',sans-serif" font-size="13" fill="#1f2530">in-stage pipeline edge</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="64" y="175" width="500" height="230" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="60" y="170" width="500" height="230" rx="14" ry="14"
+            fill="#f8d8eb" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="240.0" y="153.0" width="140" height="34" rx="10" ry="10"
+            fill="#f1b9d8" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="310.0" y="176.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Client</text>
+      
+    <g stroke="#1f2530" stroke-width="2" fill="#bfe1ff">
+      <circle cx="155" cy="270" r="22"/>
+      <ellipse cx="155" cy="270" rx="9.9" ry="22" fill="none"/>
+      <line x1="133" y1="270" x2="177" y2="270" fill="none"/>
+      <line x1="155" y1="248" x2="155" y2="292" fill="none"/>
+    </g>
+    
+    <g stroke="#1f2530" stroke-width="2" fill="#cbe7c7">
+      <rect x="274" y="248" width="32" height="44" rx="10"/>
+      <circle cx="290" cy="294" r="3" fill="#1f2530"/>
+      <path d="M283 260 v18 M290 256 v26 M297 262 v14"
+            stroke="#1f2530" stroke-width="2" fill="none"/>
+    </g>
+    
+    <g stroke="#1f2530" stroke-width="2" fill="#fff">
+      <rect x="403" y="252" width="44" height="36" rx="4"/>
+      <circle cx="416" cy="264" r="4" fill="#f5c45a" stroke="#1f2530"/>
+      <path d="M405 284 L419 270 L431 280 L445 266 L445 286 Z"
+            fill="#9ad4a4"/>
+    </g>
+    <text x="155" y="328" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="15" font-weight="700" fill="#1f2530">Web (text)</text><text x="290" y="328" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="15" font-weight="700" fill="#1f2530">Audio</text><text x="425" y="328" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="15" font-weight="700" fill="#1f2530">Image</text><text x="310.0" y="360" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">Vite + React UI at http://localhost:5173.</text>
+<text x="310.0" y="379" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">One typed, audio, or image message per turn.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="644" y="175" width="500" height="230" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="640" y="170" width="500" height="230" rx="14" ry="14"
+            fill="#d4e6f7" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="816.5" y="153.0" width="147" height="34" rx="10" ry="10"
+            fill="#a9cef0" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="890.0" y="176.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Anthropic API</text>
+      
+    <g>
+      <rect x="784.0" y="248" width="52" height="44" rx="10"
+            fill="#9bb8d6" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="795.0" cy="258" r="3" fill="#1f2530"/>
+      <circle cx="825.0" cy="258" r="3" fill="#1f2530"/>
+      <text x="810.0" y="275" text-anchor="middle"
+            font-family="'Comic Sans MS',sans-serif" font-weight="700" font-size="11"
+            fill="#1f2530">Sonnet</text>
+    </g>
+    
+    <g>
+      <rect x="944.0" y="248" width="52" height="44" rx="10"
+            fill="#e8b69b" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="955.0" cy="258" r="3" fill="#1f2530"/>
+      <circle cx="985.0" cy="258" r="3" fill="#1f2530"/>
+      <text x="970.0" y="275" text-anchor="middle"
+            font-family="'Comic Sans MS',sans-serif" font-weight="700" font-size="11"
+            fill="#1f2530">Haiku</text>
+    </g>
+    <text x="810.0" y="328" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="14" font-weight="700" fill="#1f2530">Claude Sonnet 4.6</text><text x="970.0" y="328" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="14" font-weight="700" fill="#1f2530">Claude Haiku 4.5</text><text x="890.0" y="360" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">Every agent and sub-agent calls Claude through an</text>
+<text x="890.0" y="379" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">Anthropic LLM node. API key loaded from server env.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="64" y="475" width="500" height="220" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="60" y="470" width="500" height="220" rx="14" ry="14"
+            fill="#fdeeb5" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="240.0" y="453.0" width="140" height="34" rx="10" ry="10"
+            fill="#f6d780" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="310.0" y="476.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">API Server</text>
+      <g><rect x="98" y="556" width="44" height="14" rx="3" fill="#bcd6f0" stroke="#1f2530" stroke-width="2"/><circle cx="105" cy="563" r="2" fill="#1f2530"/><circle cx="113" cy="563" r="2" fill="#1f2530"/><rect x="98" y="574" width="44" height="14" rx="3" fill="#bcd6f0" stroke="#1f2530" stroke-width="2"/><circle cx="105" cy="581" r="2" fill="#1f2530"/><circle cx="113" cy="581" r="2" fill="#1f2530"/><rect x="98" y="592" width="44" height="14" rx="3" fill="#bcd6f0" stroke="#1f2530" stroke-width="2"/><circle cx="105" cy="599" r="2" fill="#1f2530"/><circle cx="113" cy="599" r="2" fill="#1f2530"/></g><text x="240" y="548" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="15" font-weight="700" fill="#1f2530">uvicorn on port 8000</text><text x="240" y="580" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">Chat endpoint forwards each</text>
+<text x="240" y="596" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">turn to the runtime over its</text>
+<text x="240" y="612" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">webhook source and streams</text>
+<text x="240" y="628" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">answers back to the UI.</text>
+<text x="240" y="644" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">Webhook source id is set</text>
+<text x="240" y="660" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">to Webhook One.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="644" y="475" width="500" height="220" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="640" y="470" width="500" height="220" rx="14" ry="14"
+            fill="#c7ecd2" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="812.0" y="453.0" width="156" height="34" rx="10" ry="10"
+            fill="#94d4ab" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="890.0" y="476.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Runtime Engine</text>
+      
+    <g>
+      <line x1="728.0" y1="580.0" x2="736.0" y2="580.0" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="722.7279220613578" y1="592.7279220613578" x2="728.3847763108503" y2="598.3847763108503" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="710.0" y1="598.0" x2="710.0" y2="606.0" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="697.2720779386422" y1="592.7279220613578" x2="691.6152236891497" y2="598.3847763108503" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="692.0" y1="580.0" x2="684.0" y2="580.0" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="697.2720779386422" y1="567.2720779386422" x2="691.6152236891497" y2="561.6152236891497" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="710.0" y1="562.0" x2="710.0" y2="554.0" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/><line x1="722.7279220613578" y1="567.2720779386422" x2="728.3847763108503" y2="561.6152236891497" stroke="#1f2530" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="710" cy="580" r="20" fill="#f4c460" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="710" cy="580" r="7" fill="#fbf8ee" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="800" y="548" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="15" font-weight="700" fill="#1f2530">Engine on port 5565</text><text x="800" y="580" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">Loaded by Launchpad. Compiles</text>
+<text x="800" y="596" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">per-node Python deps with uv,</text>
+<text x="800" y="612" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">hosts the pipeline graph, runs</text>
+<text x="800" y="628" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">the LLM and tool nodes, and</text>
+<text x="800" y="644" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">emits lifecycle events.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="64" y="765" width="1080" height="240" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="60" y="760" width="1080" height="240" rx="14" ry="14"
+            fill="#dce8f1" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="513.5" y="743.0" width="173" height="34" rx="10" ry="10"
+            fill="#aac3d4" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="600.0" y="766.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Pipeline Ingress</text>
+      
+            <g>
+              <rect x="98.33333333333334" y="830" width="170" height="150" rx="10"
+                    fill="#fff" stroke="#1f2530" stroke-width="2"/>
+              <text x="183.33333333333334" y="848" text-anchor="middle"
+                    font-family="'Comic Sans MS',sans-serif" font-weight="700"
+                    font-size="14" fill="#1f2530">Webhook In</text>
+              
+    <g>
+      <circle cx="175.33333333333334" cy="872" r="9" fill="#f0b450" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="195.33333333333334" cy="888" r="6" fill="#f0b450" stroke="#1f2530" stroke-width="2"/>
+      <line x1="175.33333333333334" y1="872" x2="195.33333333333334" y2="888" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="183.33333333333334" y="925" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">single source for</text>
+<text x="183.33333333333334" y="943" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">text, image, audio</text>
+            </g>
+            
+
+            <g>
+              <rect x="306.6666666666667" y="830" width="170" height="150" rx="10"
+                    fill="#fff" stroke="#1f2530" stroke-width="2"/>
+              <text x="391.6666666666667" y="848" text-anchor="middle"
+                    font-family="'Comic Sans MS',sans-serif" font-weight="700"
+                    font-size="14" fill="#1f2530">Audio Transcribe</text>
+              
+    <g>
+      <ellipse cx="379.6666666666667" cy="876" rx="9" ry="13" fill="#f3c8b9" stroke="#1f2530" stroke-width="2"/>
+      <path d="M393.6666666666667 866 v24 M400.6666666666667 870 v16 M407.6666666666667 874 v8"
+            stroke="#1f2530" stroke-width="2" fill="none"/>
+    </g>
+    <text x="391.6666666666667" y="925" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">audio to text via</text>
+<text x="391.6666666666667" y="943" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">Whisper</text>
+            </g>
+            
+
+            <g>
+              <rect x="515.0" y="830" width="170" height="150" rx="10"
+                    fill="#fff" stroke="#1f2530" stroke-width="2"/>
+              <text x="600.0" y="848" text-anchor="middle"
+                    font-family="'Comic Sans MS',sans-serif" font-weight="700"
+                    font-size="14" fill="#1f2530">OCR</text>
+              
+    <g>
+      <rect x="578.0" y="862" width="44" height="32" rx="4" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <text x="588.0" y="877" font-family="serif" font-size="14" font-weight="700" fill="#1f2530">A</text>
+      <text x="601.0" y="891" font-family="serif" font-size="14" font-weight="700" fill="#1f2530">B</text>
+      <circle cx="614.0" cy="888" r="6" fill="#cfe6c9" stroke="#1f2530" stroke-width="2"/>
+      <path d="M611.0 888 l3 3 l5 -5" stroke="#1f2530" stroke-width="2" fill="none"/>
+    </g>
+    <text x="600.0" y="925" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">image to text via</text>
+<text x="600.0" y="943" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">Doctr or Surya</text>
+            </g>
+            
+
+            <g>
+              <rect x="723.3333333333334" y="830" width="170" height="150" rx="10"
+                    fill="#fff" stroke="#1f2530" stroke-width="2"/>
+              <text x="808.3333333333334" y="848" text-anchor="middle"
+                    font-family="'Comic Sans MS',sans-serif" font-weight="700"
+                    font-size="14" fill="#1f2530">Question Normalizer</text>
+              
+    <g>
+      <circle cx="808.3333333333334" cy="878" r="18" fill="#bfc4cf" stroke="#1f2530" stroke-width="2"/>
+      <text x="808.3333333333334" y="884" text-anchor="middle" font-family="'Comic Sans MS',sans-serif"
+            font-weight="800" font-size="20" fill="#1f2530">?</text>
+    </g>
+    <text x="808.3333333333334" y="925" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">routes inputs into</text>
+<text x="808.3333333333334" y="943" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">the questions lane</text>
+            </g>
+            
+
+            <g>
+              <rect x="931.6666666666667" y="830" width="170" height="150" rx="10"
+                    fill="#fff" stroke="#1f2530" stroke-width="2"/>
+              <text x="1016.6666666666667" y="848" text-anchor="middle"
+                    font-family="'Comic Sans MS',sans-serif" font-weight="700"
+                    font-size="14" fill="#1f2530">Response Sink</text>
+              
+    <g>
+      <path d="M994.6666666666667 866 q0 -10 10 -10 h24 q10 0 10 10 v10 q0 10 -10 10 h-12 l-10 8 v-8 h-2 q-10 0 -10 -10 z"
+            fill="#bde2c8" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="1008.6666666666667" cy="876" r="2" fill="#1f2530"/>
+      <circle cx="1016.6666666666667" cy="876" r="2" fill="#1f2530"/>
+      <circle cx="1024.6666666666667" cy="876" r="2" fill="#1f2530"/>
+    </g>
+    <text x="1016.6666666666667" y="925" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">sink to the UI as</text>
+<text x="1016.6666666666667" y="943" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#1f2530">the final reply stream</text>
+            </g>
+            
+<path d="M268.33333333333337 905.0 L300.6666666666667 905.0" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M476.6666666666667 905.0 L509.0 905.0" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M685.0 905.0 L717.3333333333334 905.0" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M893.3333333333334 905.0 L925.6666666666667 905.0" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrow)"/>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="204" y="1045" width="800" height="170" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="200" y="1040" width="800" height="170" rx="14" ry="14"
+            fill="#fcd9b6" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="517.5" y="1023.0" width="165" height="34" rx="10" ry="10"
+            fill="#f4ad6e" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="600.0" y="1046.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Project Manager</text>
+      
+    <g>
+      <line x1="310" y1="1130" x2="346.0" y2="1130.0" stroke="#1f2530" stroke-width="2"/><circle cx="346.0" cy="1130.0" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="335.4558441227157" y2="1155.4558441227157" stroke="#1f2530" stroke-width="2"/><circle cx="335.4558441227157" cy="1155.4558441227157" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="310.0" y2="1166.0" stroke="#1f2530" stroke-width="2"/><circle cx="310.0" cy="1166.0" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="284.5441558772843" y2="1155.4558441227157" stroke="#1f2530" stroke-width="2"/><circle cx="284.5441558772843" cy="1155.4558441227157" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="274.0" y2="1130.0" stroke="#1f2530" stroke-width="2"/><circle cx="274.0" cy="1130.0" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="284.5441558772843" y2="1104.5441558772843" stroke="#1f2530" stroke-width="2"/><circle cx="284.5441558772843" cy="1104.5441558772843" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="310.0" y2="1094.0" stroke="#1f2530" stroke-width="2"/><circle cx="310.0" cy="1094.0" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/><line x1="310" y1="1130" x2="335.4558441227157" y2="1104.5441558772843" stroke="#1f2530" stroke-width="2"/><circle cx="335.4558441227157" cy="1104.5441558772843" r="6" fill="#f0c46a" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="310" cy="1130" r="22" fill="#f4a85a" stroke="#1f2530" stroke-width="2"/>
+      <text x="310" y="1135" text-anchor="middle" font-family="'Comic Sans MS',sans-serif"
+            font-weight="800" font-size="16" fill="#1f2530">PM</text>
+    </g>
+    <text x="430" y="1090" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="14" font-weight="700" fill="#1f2530">Orchestrator. Reads questions. Writes nothing directly.</text><text x="430" y="1120" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">Built-in task tool delegates to seven specialist sub-agents.</text>
+<text x="430" y="1139" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">Decomposes work, dispatches in parallel where safe,</text>
+<text x="430" y="1158" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="13" font-weight="400" fill="#1f2530">and summarises results.</text><text x="430" y="1180" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#3a4250">Emits the final answer to the answers lane and</text>
+<text x="430" y="1198" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="12" font-weight="400" fill="#3a4250">back to the UI via the response sink.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="64" y="1265" width="1080" height="420" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="60" y="1260" width="1080" height="420" rx="14" ry="14"
+            fill="#d4f0d2" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="457.5" y="1243.0" width="285" height="34" rx="10" ry="10"
+            fill="#9bd49d" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="600.0" y="1266.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Deep Agent Sub-Agents (seven)</text>
+      
+    <g class="card">
+      <rect x="83.0" y="1314" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="80.0" y="1310" width="245" height="158" rx="10" ry="10"
+            fill="#fff3c4" stroke="#1f2530" stroke-width="2"/>
+      <rect x="147.5" y="1296.0" width="110" height="28" rx="8" ry="8"
+            fill="#f0d676" stroke="#1f2530" stroke-width="2"/>
+      <text x="202.5" y="1315.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Architect</text>
+      <text x="202.5" y="1342" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: none</text>
+<text x="202.5" y="1356" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6</text>
+    <g>
+      <rect x="184.5" y="1374" width="36" height="44" rx="3" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <line x1="190.5" y1="1386" x2="214.5" y2="1386" stroke="#1f2530" stroke-width="2"/>
+      <line x1="190.5" y1="1394" x2="214.5" y2="1394" stroke="#1f2530" stroke-width="2"/>
+      <line x1="190.5" y1="1402" x2="206.5" y2="1402" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="202.5" y="1436" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Emits architecture and ownership notes.</text>
+<text x="202.5" y="1450" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Sizes team to one, two, or three engineers.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="348.0" y="1314" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="345.0" y="1310" width="245" height="158" rx="10" ry="10"
+            fill="#dfe6f7" stroke="#1f2530" stroke-width="2"/>
+      <rect x="412.5" y="1296.0" width="110" height="28" rx="8" ry="8"
+            fill="#a8b9e3" stroke="#1f2530" stroke-width="2"/>
+      <text x="467.5" y="1315.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Engineer 1</text>
+      <text x="467.5" y="1342" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: shell and git</text>
+<text x="467.5" y="1356" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6, frontend</text>
+    <g>
+      <rect x="445.5" y="1380" width="44" height="32" rx="4" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <text x="467.5" y="1402" text-anchor="middle" font-family="monospace"
+            font-size="14" font-weight="700" fill="#1f2530">&lt;UI/&gt;</text>
+    </g>
+    <text x="467.5" y="1436" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Implements its slice on a feature branch.</text>
+<text x="467.5" y="1450" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Writes via the git write file tool.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="613.0" y="1314" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="610.0" y="1310" width="245" height="158" rx="10" ry="10"
+            fill="#dfe6f7" stroke="#1f2530" stroke-width="2"/>
+      <rect x="677.5" y="1296.0" width="110" height="28" rx="8" ry="8"
+            fill="#a8b9e3" stroke="#1f2530" stroke-width="2"/>
+      <text x="732.5" y="1315.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Engineer 2</text>
+      <text x="732.5" y="1342" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: shell and git</text>
+<text x="732.5" y="1356" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6, backend</text>
+    <g>
+      <rect x="714.5" y="1378" width="36" height="10" rx="2" fill="#a4cfa1" stroke="#1f2530" stroke-width="2"/>
+      <rect x="714.5" y="1391" width="36" height="10" rx="2" fill="#a4cfa1" stroke="#1f2530" stroke-width="2"/>
+      <rect x="714.5" y="1404" width="36" height="10" rx="2" fill="#a4cfa1" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="732.5" y="1436" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Parallel branch with the same</text>
+<text x="732.5" y="1450" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">shape as Engineer 1.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="878.0" y="1314" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="875.0" y="1310" width="245" height="158" rx="10" ry="10"
+            fill="#dfe6f7" stroke="#1f2530" stroke-width="2"/>
+      <rect x="942.5" y="1296.0" width="110" height="28" rx="8" ry="8"
+            fill="#a8b9e3" stroke="#1f2530" stroke-width="2"/>
+      <text x="997.5" y="1315.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Engineer 3</text>
+      <text x="997.5" y="1342" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: shell and git</text>
+<text x="997.5" y="1356" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6, data</text>
+    <g>
+      <ellipse cx="997.5" cy="1380" rx="20" ry="6" fill="#f4cf61" stroke="#1f2530" stroke-width="2"/>
+      <path d="M977.5 1380 v28 a20 6 0 0 0 40 0 v-28" fill="#f4cf61" stroke="#1f2530" stroke-width="2"/>
+      <ellipse cx="997.5" cy="1392" rx="20" ry="6" fill="none" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="997.5" y="1436" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Used when the Architect sizes</text>
+<text x="997.5" y="1450" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">the team to three engineers.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="83.0" y="1512" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="80.0" y="1508" width="245" height="158" rx="10" ry="10"
+            fill="#f2d9e7" stroke="#1f2530" stroke-width="2"/>
+      <rect x="147.5" y="1494.0" width="110" height="28" rx="8" ry="8"
+            fill="#dca0bb" stroke="#1f2530" stroke-width="2"/>
+      <text x="202.5" y="1513.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Reviewer</text>
+      <text x="202.5" y="1540" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: git read only</text>
+<text x="202.5" y="1554" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6, safe mode</text>
+    <g>
+      <circle cx="199.5" cy="1591" r="14" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <line x1="210.5" y1="1602" x2="220.5" y2="1612" stroke="#1f2530" stroke-width="3" stroke-linecap="round"/>
+      <text x="199.5" y="1596" text-anchor="middle" font-family="'Comic Sans MS',sans-serif"
+            font-weight="800" font-size="14" fill="#1f2530">v</text>
+    </g>
+    <text x="202.5" y="1634" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Read-only gate. Diffs each branch.</text>
+<text x="202.5" y="1648" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Returns approved or request fixes.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="348.0" y="1512" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="345.0" y="1508" width="245" height="158" rx="10" ry="10"
+            fill="#e0d4f0" stroke="#1f2530" stroke-width="2"/>
+      <rect x="412.5" y="1494.0" width="110" height="28" rx="8" ry="8"
+            fill="#b39dd1" stroke="#1f2530" stroke-width="2"/>
+      <text x="467.5" y="1513.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">DevOps</text>
+      <text x="467.5" y="1540" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: shell and git</text>
+<text x="467.5" y="1554" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Sonnet 4.6, main</text>
+    <g>
+      <circle cx="455.5" cy="1584" r="7" fill="#9bb8d6" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="479.5" cy="1584" r="7" fill="#9bb8d6" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="467.5" cy="1606" r="7" fill="#f0a76e" stroke="#1f2530" stroke-width="2"/>
+      <line x1="455.5" y1="1584" x2="467.5" y2="1606" stroke="#1f2530" stroke-width="2"/>
+      <line x1="479.5" y1="1584" x2="467.5" y2="1606" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="467.5" y="1634" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Bootstraps, scaffolds, commits docs,</text>
+<text x="467.5" y="1648" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">merges, and runs the stack.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="613.0" y="1512" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="610.0" y="1508" width="245" height="158" rx="10" ry="10"
+            fill="#fbd9d0" stroke="#1f2530" stroke-width="2"/>
+      <rect x="677.5" y="1494.0" width="110" height="28" rx="8" ry="8"
+            fill="#eea892" stroke="#1f2530" stroke-width="2"/>
+      <text x="732.5" y="1513.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">QA</text>
+      <text x="732.5" y="1540" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">tools: shell</text>
+<text x="732.5" y="1554" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">model: Haiku 4.5, two phases</text>
+    <g>
+      <rect x="716.5" y="1574" width="32" height="40" rx="4" fill="#fff" stroke="#1f2530" stroke-width="2"/>
+      <rect x="726.5" y="1570" width="12" height="6" rx="2" fill="#bfc4cf" stroke="#1f2530" stroke-width="2"/>
+      <path d="M723.5 1592 l6 6 l12 -14" stroke="#3aaf3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <text x="732.5" y="1634" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Phase A emits test files.</text>
+<text x="732.5" y="1648" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Phase B runs them and reports.</text>
+    </g>
+    
+
+    <g class="card">
+      <rect x="878.0" y="1512" width="245" height="158" rx="10" ry="10"
+            fill="#d9d3bf" opacity="0.5"/>
+      <rect x="875.0" y="1508" width="245" height="158" rx="10" ry="10"
+            fill="#e6efe1" stroke="#1f2530" stroke-width="2"/>
+      <rect x="914.5" y="1494.0" width="166" height="28" rx="8" ry="8"
+            fill="#b2cda3" stroke="#1f2530" stroke-width="2"/>
+      <text x="997.5" y="1513.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="14" fill="#1f2530">Shared Tool Nodes</text>
+      <text x="997.5" y="1540" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">one pair per agent role</text>
+<text x="997.5" y="1554" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#3a4250">shell tool and git tool</text>
+    <g>
+      <path d="M975.5 1586 l10 -10 l8 8 l-10 10 z" fill="#a8c5cc" stroke="#1f2530" stroke-width="2"/>
+      <path d="M999.5 1606 l10 -10 l8 8 l-10 10 z" fill="#a8c5cc" stroke="#1f2530" stroke-width="2"/>
+      <line x1="989.5" y1="1596" x2="1003.5" y2="1610" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="997.5" y="1634" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">All real disk writes go through</text>
+<text x="997.5" y="1648" text-anchor="middle" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">the git write file tool.</text>
+    </g>
+    
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="64" y="1755" width="500" height="110" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="60" y="1750" width="500" height="110" rx="14" ry="14"
+            fill="#ffe49a" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="232.0" y="1733.0" width="156" height="34" rx="10" ry="10"
+            fill="#f5c25a" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="310.0" y="1756.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Project Output</text>
+      
+    <g>
+      <path d="M80 1795 h22 l6 6 h34 v36 h-62 z" fill="#f0c060" stroke="#1f2530" stroke-width="2"/>
+      <path d="M80 1803 h62 v34 h-62 z" fill="#f5d27a" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="230" y="1794" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="14" font-weight="700" fill="#1f2530">One output tree per project</text><text x="230" y="1818" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Architect picks the slug used</text>
+<text x="230" y="1833" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">as the folder name. Examples:</text>
+<text x="230" y="1848" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">hello world, notes app, todo list.</text>
+      
+    </g>
+    
+
+    <g class="card">
+      <rect x="644" y="1755" width="500" height="110" rx="14" ry="14"
+            fill="#d9d3bf" opacity="0.55"/>
+      <rect x="640" y="1750" width="500" height="110" rx="14" ry="14"
+            fill="#ffe49a" stroke="#1f2530" stroke-width="2.2"/>
+      <rect x="807.5" y="1733.0" width="165" height="34" rx="10" ry="10"
+            fill="#f5c25a" stroke="#1f2530" stroke-width="2.2"/>
+      <text x="890.0" y="1756.0" text-anchor="middle"
+            font-family="'Comic Sans MS','Segoe Print',sans-serif" font-weight="700"
+            font-size="18" fill="#1f2530">Shared Git Repo</text>
+      
+    <g>
+      <circle cx="678" cy="1825" r="6" fill="#f4a85a" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="700" cy="1805" r="6" fill="#f4a85a" stroke="#1f2530" stroke-width="2"/>
+      <circle cx="722" cy="1825" r="6" fill="#9bb8d6" stroke="#1f2530" stroke-width="2"/>
+      <path d="M678 1825 q11 -20 22 -20 q11 0 22 20"
+            fill="none" stroke="#1f2530" stroke-width="2"/>
+    </g>
+    <text x="790" y="1794" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="14" font-weight="700" fill="#1f2530">One git repo per session</text><text x="790" y="1818" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">DevOps bootstraps. Engineers branch</text>
+<text x="790" y="1833" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">as engineer one, two, and three.</text>
+<text x="790" y="1848" text-anchor="start" font-family="'Comic Sans MS','Segoe Print',sans-serif" font-size="11" font-weight="400" fill="#1f2530">Reviewer diffs. DevOps merges to main.</text>
+      
+    </g>
+    
+<path d="M160 400 L160 470" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M440 470 L440 400" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M560 555 L640 555" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M640 595 L560 595" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M720 400 L720 470" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M1040 470 L1040 400" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M200 690 L200 760" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M1000 690 L1000 760" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M808 1000 L808 1040" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M1000 1100 L1095 1100 L1095 985" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M350 1210 L350 1260" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M450 1680 L450 1750" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+<path d="M730 1680 L730 1750" fill="none" stroke="#1f2530" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" stroke-dashoffset="0.00" marker-end="url(#arrow)"/>
+</svg>
