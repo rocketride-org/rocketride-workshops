@@ -1,98 +1,100 @@
-<div align="center">
+# RocketRide Workshops
 
-<a href="https://rocketride.ai">
-  <img src="./images/banner-root.svg" alt="RocketRide Workshops" width="100%">
-</a>
+RocketRide's repeatable workshop kit. Workshop content is **Jupyter notebooks** you run in VS Code. You execute cells, and the build and the deploy to RocketRide Cloud happen live from the notebook.
 
-<p>
-  Public, hands-on workshops for the RocketRide AI runtime.<br/>
-  Build real apps that integrate RocketRide. UI, API, and the runtime, end to end.
-</p>
+The repo is organized as **modules**. A workshop is an ordered list of modules, so you download only the notebooks your workshop needs. Every notebook works as a single downloaded file.
 
-<p>
-  Each workshop is a self-contained project pairing a scaffolded <code>exercise/</code> for attendees with a fully-wired <code>solution/</code> reference. Workshops focus on RocketRide integration: pipeline definitions, SDK calls, and runtime orchestration. The surrounding stack (Vite + React, FastAPI, etc.) is intentionally minimal.
-</p>
+## Use it
 
-<p>
-  <img src="./images/icon-python.png" height="28" alt="Python" />&nbsp;&nbsp;
-  <img src="./images/icon-typescript.png" height="28" alt="TypeScript" />
-</p>
-
-<p>
-  <a href="https://rocketride.org">Home</a> |
-  <a href="https://docs.rocketride.org/">Documentation</a> |
-  <a href="https://pypi.org/project/rocketride/">Python SDK</a> |
-  <a href="https://www.npmjs.com/package/rocketride">TypeScript SDK</a> |
-  <a href="https://pypi.org/project/rocketride-mcp/">MCP Server</a>
-</p>
-
-<p>
-  <a href="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/ci.yml"><img src="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/rocketride-org/rocketride-server/releases/tag/server-v3.1.2"><img src="https://img.shields.io/badge/engine-v3.1.2-5f2167?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTEgMTkxIj48cGF0aCBkPSJNMTU5LjUgMTYxLjRMMTUzLjcgMTY3LjJDMTUxLjkgMTY5IDE0OC45IDE2OSAxNDcgMTY3LjJMMTI2LjYgMTQ2LjhDMTE1LjYgMTM1LjggMTE1LjYgMTE4IDEyNi42IDEwN0MxMzguMSA5NS41IDEzOC4xIDc2LjkgMTI2LjYgNjUuNEwxMjUuMSA2My45QzExMy42IDUyLjQgOTUgNTIuNCA4My41IDYzLjlDNzIuNSA3NC45IDU0LjYgNzQuOSA0My42IDYzLjlMMjMuMiA0My41QzIxLjQgNDEuNyAyMS40IDM4LjcgMjMuMiAzNi44TDI5IDMxQzM3IDIzIDQ5LjEgMjAuNSA1OS42IDI0LjlMODcuNSAzNi4zQzk3LjMgNDAuMSAxMDguNCAzOCAxMTYuMyAzMS4xTDEzNyAxMC40QzEzOC42IDguOSAxNDAuNCA3LjQgMTQyLjUgNi4yQzE0Ni4yIDQuMSAxNTAuMyAzIDE1NC41IDIuNkwxODUuNCAwQzE4OC4zLS4zIDE5MC44IDIuMiAxOTAuNSA1LjFMMTg3LjggMzYuNEMxODcuMyA0Mi44IDE4NC41IDQ4LjggMTgwLjEgNTMuNUwxNjAuNSA3My4xQzE1Mi41IDgxLjIgMTUwLjEgOTMuMyAxNTQuNSAxMDMuOEwxNTUuNSAxMDYuMkwxNjEuMiAxMjBMMTY1LjYgMTMwLjlDMTY5LjkgMTQxLjQgMTY3LjUgMTUzLjUgMTU5LjUgMTYxLjVaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0uOCAxOTAuM0MtLjIgMTg5LjMtLjMgMTg3LjYuNiAxODYuNEwyMS4xIDE2MkMzMS4xIDE1MCAzNy45IDEzNy43IDQxLjMgMTI1LjNDNDMuNiAxMTYuNiA0NC42IDEwOC41IDQ0LjEgMTAxLjJDNDQuMSAxMDAuMyA0NC40IDk5LjQgNDUuMSA5OC44QzQ1LjggOTguMiA0Ni44IDk3LjkgNDcuNyA5OC4xQzY1IDEwMS42IDgzLjUgOTguMyA5OC41IDg4LjlDOTkuNiA4OC4yIDEwMS4xIDg4LjQgMTAyIDg5LjNDMTAyLjkgOTAuMiAxMDMuMSA5MS43IDEwMi40IDkyLjhDOTMgMTA3LjggODkuNyAxMjYuMyA5My4yIDE0My41QzkzLjQgMTQ0LjMgOTMuMiAxNDUuMiA5Mi42IDE0NS45QzkyIDE0Ni42IDkxIDE0Ny4yIDkwLjEgMTQ3LjFDODIuOCAxNDYuNiA3NC42IDE0Ny41IDY2IDE0OS45QzUzLjYgMTUzLjIgNDEuMiAxNjAgMjkuMyAxNzAuMUw0LjkgMTkwLjZDMy44IDE5MS41IDIuMSAxOTEuNSAxIDE5MC40SC44WiIgZmlsbD0iI0Y5MzgyMiIvPjwvc3ZnPgo=" alt="Engine v3.1.2"></a>
-  <a href="https://discord.gg/9hr3tdZmEG"><img src="https://img.shields.io/badge/Discord-Join-370b7a?logo=discord&logoColor=white" alt="Discord"></a>
-</p>
-
-</div>
-
-## Prerequisites
-
-| Tool                                        | Version    | Purpose                                                                                                                                                                                                                                                                                |
-| ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Node.js](https://nodejs.org)               | `>=20`     | Runtime for pnpm and Vite tooling                                                                                                                                                                                                                                                      |
-| [pnpm](https://pnpm.io)                     | `>=9`      | Workspace and package manager                                                                                                                                                                                                                                                          |
-| [Python](https://www.python.org/downloads/) | `>=3.11`   | Runs each workshop's API                                                                                                                                                                                                                                                               |
-| [Git](https://git-scm.com/)                 | any        | Clone the repository                                                                                                                                                                                                                                                                   |
-| LLVM C++ runtime                            | Linux only | `pnpm install` auto-installs `libc++1`, `libc++abi1`, `llvm-libunwind1` (or the dnf/pacman/zypper equivalents) via `sudo -n`. Most systems don't have passwordless sudo, in which case launchpad prints the exact `sudo apt install …` command to run before re-trying `pnpm install`. |
-
-## Setup
-
-1. Clone the repository.
-
-   ```sh
-   git clone https://github.com/rocketride-org/rocketride-workshops.git
-   cd rocketride-workshops
-   ```
-
-2. Install everything in one command. Per-workshop `postinstall` hooks download the RocketRide runtime and sync Python dependencies — no follow-up steps required.
-
-   ```sh
-   pnpm install
-   ```
-
-3. Pick a workshop and boot UI + API + runtime together.
-
-   ```sh
-   cd workshops/coding-agent/solution
-   pnpm dev
-   ```
-
-4. Open [http://localhost:5173](http://localhost:5173) — the UI calls `/api/hello`, which exercises the wired RocketRide pipeline.
+1. Open the hub: <https://PAGES_URL_PLACEHOLDER/>, or clone this repo and open `index.html` (it works offline from disk).
+2. Do the at-home setup in [`SETUP.md`](SETUP.md), about 15 minutes.
+3. Download your workshop's notebooks from the hub, open each in VS Code, and run its preflight cell.
 
 ## Workshops
 
-| Workshop                                 | Stack                           | Status                                   |
-| ---------------------------------------- | ------------------------------- | ---------------------------------------- |
-| [coding-agent](./workshops/coding-agent) | Python · FastAPI · Vite + React | Scaffolding ready · workshop content WIP |
+| Workshop      | Modules                                             | Time   |
+| ------------- | --------------------------------------------------- | ------ |
+| Zero to Agent | `alarm-clock` → `notepad-integration` → `app-build` | 60 min |
 
-Each workshop ships paired directories:
+## Layout
 
-- `exercise/` — scaffolded project with TODO stubs. Attendees fill these in.
-- `solution/` — fully-wired reference implementation.
+```
+index.html                  # hub: one card per workshop, built from workshops.js
+workshops.js                # manifest: window.MODULES + window.WORKSHOPS (a script, so it loads on file://)
+SETUP.md                    # at-home setup shared by every workshop
+assets/
+  brand/                    # RocketRide wordmark and mark
+  tokens.css                # shared color and type tokens
+scripts/
+  validate.mjs              # zero-dependency repo check (Node 20)
+  strip.mjs                 # strips notebook outputs before you commit
+modules/
+  <id>/
+    <id>.ipynb              # the notebook
+    README.md               # what it is, time box, requirements
+    FACILITATOR.md          # run of show, troubleshooting, skip-ahead guide
+```
 
-## How `@rocketride/runtime` works
+## Notebook conventions
 
-Each workshop project's `package.json` declares the runtime version and pulls `uv` in as a devDependency so the postinstall hook works out of the box on any OS:
+Every module notebook uses the same Python 3.10+ kernel and the same cell order:
 
-```json
+1. **Title and overview** (markdown): what you build, time box, what "done" looks like.
+2. **Preflight** (code, tagged `preflight`): checks Python, the `rocketride` package, the API key and the connection to `api.rocketride.ai`, plus Node, pnpm and git when the module needs them. Every problem it finds comes with the exact fix. It prints one green "ready" line when everything passes.
+3. **Config** (code, tagged `config`): the **only** cell that reads environment variables. It loads `ROCKETRIDE_*` from the environment or a local `.env`, prompts with `getpass` if the key is missing, and exposes a `CONFIG` dict.
+4. **Connect** (code, tagged `connect`): one shared `client`, plus `start(pipe_path)`, which attaches to a running pipeline instead of failing with "Pipeline is already running".
+5. **Stages**: a markdown cell (goal, what to watch for), then short code cells. Each stage ends with a cell headed `# Skip ahead: run this only if the stage above didn't work`, which writes the finished artifact so a stuck attendee can continue.
+6. **Deploy** (where it applies): deploys to Cloud and prints the live URL.
+7. **What's next** (markdown): docs, Discord and the next module.
+
+Rules:
+
+- **Every cell is safe to re-run.** Writes overwrite, clones skip if the folder exists, and pipelines attach to an existing task.
+- **Self-contained.** No imports from sibling files. Anything the notebook needs, it writes itself or fetches in a cell. Generated files go in `build/` next to the notebook.
+- **No secrets, no outputs in git.** Run `node scripts/strip.mjs` before you commit.
+- Keep code cells short enough to read on a projector.
+
+TypeScript work runs from the same Python kernel, through `%%writefile` cells and shell commands (no TypeScript kernel).
+
+## Add a module
+
+1. Create `modules/<id>/` with `<id>.ipynb`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Keep its Preflight, Config and Connect cells as they are.
+2. Add an entry to `window.MODULES` in `workshops.js`:
+
+   ```js
+   "<id>": {
+     title: "...",
+     summary: "...",
+     duration: 10,                       // minutes; workshop totals are computed from these
+     notebook: "modules/<id>/<id>.ipynb",
+     requires: ["python"]                // plus "node", "pnpm", "git" if needed
+   }
+   ```
+
+3. Clean and check:
+
+   ```sh
+   node scripts/strip.mjs
+   node scripts/validate.mjs
+   ```
+
+## Compose a workshop
+
+A workshop is only a manifest entry. Add it to `window.WORKSHOPS`:
+
+```js
 {
-  "rocketride": { "runtime": "latest" },
-  "scripts": {
-    "postinstall": "launchpad install && pnpm exec uv sync --directory api --all-groups"
-  },
-  "devDependencies": { "@manzt/uv": "^0.8.13" }
+  id: "<workshop-id>",
+  title: "...",
+  summary: "...",
+  funnel: "cloud",          // cloud | local
+  status: "draft",          // live | draft (drafts show on the hub with ?drafts=1)
+  modules: ["alarm-clock", "app-build"]
 }
 ```
 
-`launchpad install` resolves `latest` against the [`rocketride-server`](https://github.com/rocketride-org/rocketride-server/releases) GitHub releases, picks the asset for your OS (`darwin-arm64`, `linux-x64`, or `win64`), extracts it into the workshop's `runtime/.rocketride/`, and records the version for idempotent re-installs. `launchpad start` (run by each workshop's `runtime/` sub-package) launches the extracted `engine` binary against `ai/eaas.py`. The [`@manzt/uv`](https://www.npmjs.com/package/@manzt/uv) npm package ships a per-platform `uv` binary into `node_modules/.bin/`, so `pnpm exec uv sync` materializes each workshop's Python virtualenv without a separate prerequisite install.
+Then run `node scripts/validate.mjs`. CI runs the same check on every push and pull request.
 
-See [`tools/launchpad/README.md`](./tools/launchpad/README.md) for details.
+## Internal notes
+
+Facilitator material that must not be public goes in `.internal/`, which is gitignored. The validator fails if anything under it, or any `.env` file, is tracked.

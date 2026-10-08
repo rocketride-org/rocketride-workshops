@@ -1,7 +1,8 @@
 # Normalise all text files to LF in the repo, regardless of the
-# contributor's core.autocrlf setting. Prettier (.prettierrc.json
-# endOfLine=lf) requires this for cross-platform CI to pass.
+# contributor's core.autocrlf setting, so notebooks diff cleanly.
 * text=auto eol=lf
+
+*.ipynb text eol=lf
 
 # Binary assets — never normalise.
 *.png binary

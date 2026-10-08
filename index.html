@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RocketRide Workshops</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  *{box-sizing:border-box}
+  html,body{background:var(--paper)}
+  body{margin:0; color:var(--ink-2); font-family:var(--sans); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  a{color:var(--info); text-decoration:none}
+  a:hover{color:var(--accent-d)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+  .bar{background:var(--ink); color:#fff}
+  .bar-in{max-width:1000px; margin:0 auto; padding:0 24px; height:58px; display:flex; align-items:center; gap:14px}
+  .bar img{height:18px; width:auto}
+  .bar .tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#fff; background:var(--accent); padding:3px 8px; border-radius:4px}
+  .bar .sp{flex:1}
+  .bar nav{display:flex; gap:18px}
+  .bar nav a{font-family:var(--mono); font-size:12px; color:#9A97BE}
+  .bar nav a:hover{color:#fff}
+
+  main{max-width:1000px; margin:0 auto; padding:48px 24px 72px}
+  .kicker{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-d); margin:0 0 10px}
+  h1{font-size:34px; line-height:1.15; letter-spacing:-.02em; color:var(--ink); margin:0 0 12px; font-weight:650}
+  .lede{font-size:18px; color:var(--mid); max-width:64ch; margin:0 0 40px}
+
+  .card{border:1px solid var(--line); border-radius:var(--r); background:var(--paper); box-shadow:var(--shadow); padding:24px; margin-bottom:24px}
+  .card h2{font-size:22px; line-height:1.3; color:var(--ink); margin:0 0 6px; font-weight:650}
+  .card > p{margin:0 0 14px}
+  .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-family:var(--mono); font-size:12px; color:var(--mid); margin-bottom:12px}
+  .badge{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tint-2); color:var(--ink-2)}
+  .badge.cloud{background:var(--info-soft); color:var(--info)}
+  .badge.draft{background:var(--warn-soft); color:var(--warn)}
+
+  ol{list-style:none; margin:0; padding:0; border-top:1px solid var(--line)}
+  li{display:grid; grid-template-columns:28px 1fr auto; gap:4px 12px; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--line)}
+  .n{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--dim)}
+  .t b{color:var(--ink); font-weight:600}
+  .t span{display:block; font-size:14px; color:var(--mid)}
+  .t .mins{display:inline; font-family:var(--mono); font-size:12px; color:var(--dim); margin-left:8px}
+  .links{display:flex; gap:14px; font-family:var(--mono); font-size:12.5px; white-space:nowrap}
+  .links a.dl{color:var(--accent-d); font-weight:600}
+  li.missing .t b{color:var(--bad)}
+
+  footer{border-top:1px solid var(--line); color:var(--dim); font-size:13px}
+  footer div{max-width:1000px; margin:0 auto; padding:20px 24px}
+  code{font-family:var(--mono); font-size:.9em}
+
+  @media (max-width:640px){
+    .bar-in{padding:0 16px; gap:10px}
+    .bar .tag{display:none}
+    .bar nav{gap:12px}
+    main{padding:32px 16px 56px}
+    h1{font-size:27px}
+    .lede{font-size:16px; margin-bottom:28px}
+    .card{padding:18px}
+    li{grid-template-columns:24px 1fr}
+    .links{grid-column:2}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <img src="assets/brand/rr-wordmark-white.png" alt="RocketRide">
+    <span class="tag">Workshops</span>
+    <span class="sp"></span>
+    <nav>
+      <a href="https://docs.rocketride.org">Docs</a>
+      <a href="https://github.com/rocketride-org">GitHub</a>
+      <a href="https://discord.gg/PMXrtenMsY">Discord</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="kicker">RocketRide workshops</p>
+  <h1>Hands-on workshops, one notebook per module</h1>
+  <p class="lede">Set up once, then download your workshop's notebooks and run them in VS Code. Each module builds something real on RocketRide, from a first pipeline to a deployed app.</p>
+  <div id="workshops"></div>
+</main>
+
+<footer><div>Works offline: clone the repo and open <code>index.html</code>.</div></footer>
+
+<script src="workshops.js"></script>
+<script>
+(function(){
+  var REPO = 'https://github.com/rocketride-org/rocketride-workshops/blob/main/';
+  var modules = window.MODULES || {};
+  var showDrafts = new URLSearchParams(location.search).get('drafts') === '1';
+  var list = (window.WORKSHOPS || []).filter(function(w){ return showDrafts || w.status !== 'draft'; });
+  var root = document.getElementById('workshops');
+
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function link(href, text, cls, download){
+    var a = el('a', cls, text);
+    a.href = href;
+    if (download) a.setAttribute('download', '');
+    return a;
+  }
+  function row(num, title, sub, mins, links, cls){
+    var li = el('li', cls);
+    li.appendChild(el('span', 'n', num));
+    var t = el('div', 't');
+    t.appendChild(el('b', null, title));
+    if (mins != null) t.appendChild(el('span', 'mins', mins + ' min'));
+    if (sub) t.appendChild(el('span', null, sub));
+    li.appendChild(t);
+    var l = el('div', 'links');
+    links.forEach(function(a){ l.appendChild(a); });
+    li.appendChild(l);
+    return li;
+  }
+
+  if (!list.length){ root.appendChild(el('p', null, 'No workshops published yet.')); return; }
+
+  list.forEach(function(w){
+    var ids = w.modules || [];
+    var total = ids.reduce(function(sum, id){ return sum + ((modules[id] || {}).duration || 0); }, 0);
+    var card = el('section', 'card');
+
+    var meta = el('div', 'meta');
+    meta.appendChild(el('span', null, total + ' min · ' + ids.length + ' modules'));
+    if (w.funnel === 'cloud') meta.appendChild(el('span', 'badge cloud', 'Cloud'));
+    if (w.status === 'draft') meta.appendChild(el('span', 'badge draft', 'Draft'));
+    card.appendChild(meta);
+    card.appendChild(el('h2', null, w.title));
+    card.appendChild(el('p', null, w.summary));
+
+    var ol = el('ol');
+    ol.appendChild(row('0', 'Set up at home', 'About 15 minutes, before the workshop.', null,
+      [link(REPO + 'SETUP.md', 'Open SETUP.md')]));
+    ids.forEach(function(id, i){
+      var m = modules[id];
+      if (!m){ ol.appendChild(row(String(i + 1), 'Missing module: ' + id, null, null, [], 'missing')); return; }
+      ol.appendChild(row(String(i + 1), m.title, m.summary, m.duration, [
+        link(m.notebook, 'Download', 'dl', true),
+        link(REPO + m.notebook, 'View on GitHub')
+      ]));
+    });
+    card.appendChild(ol);
+    root.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>

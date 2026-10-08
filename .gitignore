@@ -1,63 +1,31 @@
-# Dependencies
-node_modules/
-.venv/
-.pnpm-store/
-
-# Build output
-dist/
-build/
-*.tsbuildinfo
-.vite/
-
-# Workshop agent output
-.output/
-
-# Test / coverage
-coverage/
-htmlcov/
-.coverage
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# Lint caches
-.eslintcache
-
-# Packaging output
-*.tgz
-
-# Environment files (any depth)
+# Secrets and internal notes: never committed
 .env
 .env.*
-*.env
 !.env.example
+.internal/
+
+# Notebook and module scratch output
+.ipynb_checkpoints/
+modules/*/build/
+modules/notepad-integration/notepad-starter/
+
+# Dependencies and caches
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# Local tool state at the repo root
+/.claude/
+/.rocketride/
+/.superpowers/
+/.vscode/
 
 # Editor / OS
 .idea/
-.vscode/
 .DS_Store
 Thumbs.db
-ehthumbs.db
 Desktop.ini
 *.swp
-*.swo
 *~
-
-# Logs
 *.log
-logs/
-
-# Tool state
-.claude/
-.rocketride/
-.superpowers/
-
-# Maintainer-only runtime patch notes
-RUNTIME_PATCHES.md
