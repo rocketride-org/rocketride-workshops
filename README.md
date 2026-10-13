@@ -6,7 +6,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 ## Use it
 
-1. Open the hub: <https://PAGES_URL_PLACEHOLDER/>, or clone this repo and open `index.html` (it works offline from disk).
+1. Open the hub: <https://rocketride-org.github.io/rocketride-workshops/>, or clone this repo and open `index.html` (it works offline from disk).
 2. Do the at-home setup in [`SETUP.md`](SETUP.md), about 15 minutes.
 3. Download your workshop's notebooks from the hub, open each in VS Code, and run its preflight cell.
 
