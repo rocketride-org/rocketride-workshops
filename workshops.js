@@ -1,7 +1,7 @@
 window.MODULES = {
   "alarm-clock": {
     title: "Alarm clock",
-    summary: "Build and run a pipeline in five minutes.",
+    summary: "Build a drop zone that turns any file into text, and schedule it on your Prod team, 9 to 6 on weekdays.",
     duration: 5,
     notebook: "modules/alarm-clock/alarm-clock.ipynb",
     guide: "modules/alarm-clock/index.html",
