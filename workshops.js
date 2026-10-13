@@ -4,6 +4,7 @@ window.MODULES = {
     summary: "Build and run a pipeline in five minutes.",
     duration: 5,
     notebook: "modules/alarm-clock/alarm-clock.ipynb",
+    guide: "modules/alarm-clock/index.html",
     requires: ["python"],
   },
   "notepad-integration": {
@@ -11,6 +12,7 @@ window.MODULES = {
     summary: "Add a pipeline to a TypeScript notepad app with the TS SDK.",
     duration: 15,
     notebook: "modules/notepad-integration/notepad-integration.ipynb",
+    guide: "modules/notepad-integration/index.html",
     requires: ["python", "node", "pnpm", "git"],
   },
   "app-build": {
@@ -18,6 +20,7 @@ window.MODULES = {
     summary: "Build a simple app from scratch and deploy it to RocketRide Cloud.",
     duration: 40,
     notebook: "modules/app-build/app-build.ipynb",
+    guide: "modules/app-build/index.html",
     requires: ["python"],
   },
 };

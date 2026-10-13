@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zero to Agent: Alarm clock | RocketRide Workshops</title>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/codelab.css">
+</head>
+<body data-key="zero-to-agent.alarm-clock">
+
+<div class="bar">
+  <div class="bar-in">
+    <img src="../../assets/brand/rr-wordmark-white.png" alt="RocketRide">
+    <span class="tag">Codelab</span>
+    <span class="nm">Zero to Agent</span>
+    <span class="sp"></span>
+    <a class="home" href="../../index.html">&larr; All workshops</a>
+    <span class="meta" id="meta"></span>
+    <button class="menub" id="menub" aria-expanded="false">Steps</button>
+  </div>
+  <div class="prog"><i id="prog"></i></div>
+</div>
+
+<div class="deck">
+  <nav class="rail" id="rail">
+    <h6>The build</h6>
+    <ol id="raillist"></ol>
+  </nav>
+
+  <main id="main">
+
+<!-- ===== 1 ===== -->
+<section class="phase" data-title="Start here" data-dur="0">
+
+  <div class="lead hero">
+    <span class="stepno">01</span>
+    <div>
+      <p class="kicker">RocketRide workshop <i>/ project 1 of 3</i></p>
+      <h1>Alarm clock</h1>
+      <p class="sub">Zero to Agent</p>
+      <p class="lede">In five minutes you build and run a tiny pipeline from a notebook, to see how fast RocketRide gets from nothing to a working result.</p>
+    </div>
+  </div>
+
+  <h2>What you are building</h2>
+  <p>A tiny <strong>alarm-clock pipeline</strong>, built and run from one notebook. It's the smallest thing that shows the whole loop: write a pipeline, start it on RocketRide Cloud, send it something, get an answer back.</p>
+  <div class="note warn">
+    <b class="k">TODO(joshua)</b>
+    <p>What the alarm clock does, in one or two sentences.</p>
+  </div>
+
+  <h2>Where RocketRide comes in</h2>
+  <p>RocketRide is an open source runtime for AI pipelines. A pipeline is a small file describing a chain of steps. RocketRide runs it on a C++ engine in the cloud, and you drive it from Python with the <strong>RocketRide SDK</strong>.</p>
+  <p>For today that means you write no servers, queues or model plumbing. You write the pipeline, and one call starts it.</p>
+
+  <h2>The 5 minutes</h2>
+  <div class="grid"><table>
+    <thead><tr><th>Time</th><th>What happens</th><th>You leave with</th></tr></thead>
+    <tbody>
+      <tr><td>At home</td><td>Step 2, about 15 minutes</td><td>Editor and Python ready, notebook downloaded</td></tr>
+      <tr><td>0:00</td><td>Run Preflight, Config and Connect</td><td>A green <code>ready</code> and a connected client</td></tr>
+      <tr><td>0:01</td><td>Stage 1: build the pipeline</td><td>A pipeline file</td></tr>
+      <tr><td>0:03</td><td>Stage 2: run it</td><td>A running pipeline and its first answer</td></tr>
+      <tr><td>After</td><td>Deploy, if the room has time</td><td>A live URL</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note good">
+    <b class="k">What counts as done</b>
+    <p>Your pipeline runs on RocketRide Cloud and the notebook prints its answer. Deploy is optional.</p>
+  </div>
+
+  <h2>How it fits together</h2>
+  <div class="grid"><table>
+    <thead><tr><th>Piece</th><th>Job</th><th>Where it lives</th></tr></thead>
+    <tbody>
+      <tr><td>Notebook</td><td>Runs every step</td><td><code>alarm-clock.ipynb</code></td></tr>
+      <tr><td>Pipeline file</td><td>Describes the steps</td><td><code>build/alarm-clock.pipe</code>, written by Stage 1</td></tr>
+      <tr><td>RocketRide client</td><td>Starts the pipeline and sends it input</td><td>The Connect cell</td></tr>
+      <tr><td>RocketRide Cloud</td><td>Runs the pipeline</td><td><code>api.rocketride.ai</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note">
+    <b class="k">Not an engineer?</b>
+    <p>Every line of code is already in the notebook. You run cells with <strong>Shift+Enter</strong> and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
+  </div>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what a pipeline is.</span></label>
+</section>
+
+<!-- ===== 2 ===== -->
+<section class="phase" data-title="Set up at home" data-dur="15">
+
+  <div class="lead">
+    <span class="stepno">02</span>
+    <div>
+      <p class="kicker">Before the event <i>/ 15 minutes</i></p>
+      <h1>Set up at home</h1>
+      <p class="lede">The project itself is five minutes. Setup is fifteen at home, and can take the whole session on conference wifi.</p>
+    </div>
+  </div>
+
+  <h2>What you need</h2>
+  <div class="grid"><table>
+    <tbody>
+      <tr><td>Editor</td><td>VS Code, Cursor or Windsurf, with admin rights on the laptop</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python3 --version</code>. The notebook runs on it.</td></tr>
+      <tr><td>Cloud account</td><td>Signed up, email confirmed, and <strong>subscribed to RocketRide Cloud</strong>. Deploying needs a subscription.</td></tr>
+      <tr><td>RocketRide API key</td><td>Created in your RocketRide Cloud account</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="tabs">
+    <div class="tl"><button class="on">Mac</button><button>Windows and Linux</button></div>
+    <div class="tp on">
+      <p>Two shortcuts you use throughout. <strong>Command palette</strong> is <code>Cmd+Shift+P</code>, the search box for every command your editor knows. <strong>Extensions</strong> is <code>Cmd+Shift+X</code>.</p>
+    </div>
+    <div class="tp">
+      <p>Two shortcuts you use throughout. <strong>Command palette</strong> is <code>Ctrl+Shift+P</code>, the search box for every command your editor knows. <strong>Extensions</strong> is <code>Ctrl+Shift+X</code>.</p>
+    </div>
+  </div>
+
+  <h2>Install the notebook extensions <span class="mins">4 min</span></h2>
+  <ol class="run">
+    <li>Open Extensions and search <strong>Python</strong>. Install the one from Microsoft (<code>ms-python.python</code>).</li>
+    <li>Search <strong>Jupyter</strong> and install it too (<code>ms-toolsai.jupyter</code>).</li>
+    <li>Reload the window if it asks.</li>
+  </ol>
+  <div class="note good"><b class="k">Done when</b><p>Both extensions show as installed, and a new <code>.ipynb</code> file opens as a notebook with cells.</p></div>
+  <details class="fold"><summary>Using Cursor or Windsurf?</summary><div class="fb"><p>They install from Open VSX rather than the VS Code marketplace. Python and Jupyter are published there, so the same searches work.</p></div></details>
+
+  <h2>Install Python and the SDK <span class="mins">4 min</span></h2>
+  <ol class="run">
+    <li>Check your version. If it's older than 3.10, install a current one from <a href="https://www.python.org/downloads/">python.org</a>.</li>
+    <li>Install the RocketRide SDK and the notebook kernel into that Python.
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride ipykernel</pre></div>
+    </li>
+  </ol>
+  <details class="fold"><summary>On Windows</summary><div class="fb"><p>Use <code>python</code> instead of <code>python3</code>, or the launcher: <code>py -m pip install rocketride ipykernel</code>.</p></div></details>
+
+  <h2>Save your API key <span class="mins">3 min</span></h2>
+  <p>Do this now. A missing key is the most common thing that stops people in the room.</p>
+  <ol class="run">
+    <li>Sign in to RocketRide Cloud, start a subscription, and create an API key.</li>
+    <li>Make a folder for the workshop. In it, create a file called <code>.env</code>:
+      <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_APIKEY=your-api-key
+ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
+    </li>
+  </ol>
+  <div class="note warn">
+    <b class="k">Keep it out of the notebook</b>
+    <p>Never paste your key into a cell, and never commit a <code>.env</code> file. If there is no <code>.env</code>, the notebook's Config cell asks for the key and keeps it only for the session.</p>
+  </div>
+
+  <h2>Get the notebook <span class="mins">4 min</span></h2>
+  <div class="btns">
+    <a class="btn" href="alarm-clock.ipynb" download>Download alarm-clock.ipynb</a>
+    <a class="btn ghost" href="https://github.com/rocketride-org/rocketride-workshops/blob/main/modules/alarm-clock/alarm-clock.ipynb">View on GitHub</a>
+  </div>
+  <ol class="run">
+    <li>Save the notebook into the folder with your <code>.env</code>, and open the folder with <strong>File</strong>, <strong>Open Folder</strong>.</li>
+    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick the Python where you installed <code>rocketride</code>.</li>
+    <li>Run the <strong>Preflight</strong> cell with <strong>Shift+Enter</strong>.</li>
+  </ol>
+  <figure><div class="draw"><p style="margin:0;font-family:var(--mono);font-size:12px;color:var(--dim)">TODO(joshua): screenshot of the kernel picker with the right interpreter selected.</p></div></figure>
+  <div class="note good"><b class="k">Done when</b><p>Preflight prints a green <strong>✅ ready</strong>.</p></div>
+
+  <details class="fold"><summary>It says No module named 'rocketride'</summary><div class="fb"><p>The kernel is a different Python from the one you installed into. Pick another interpreter in <strong>Select Kernel</strong>, or run <code>%pip install rocketride ipykernel</code> in a new cell and restart the kernel.</p></div></details>
+  <details class="fold"><summary>It asks me to install ipykernel</summary><div class="fb"><p>Accept the prompt, or run <code>python3 -m pip install ipykernel</code> for that interpreter.</p></div></details>
+  <details class="fold"><summary>Can't reach api.rocketride.ai</summary><div class="fb"><p>No internet, or a VPN or proxy is blocking it. Switch networks or turn the VPN off, then run Preflight again.</p></div></details>
+
+  <div class="note fac">
+    <b class="k">Stuck on any of this?</b>
+    <p>Come 10 minutes early. A facilitator runs a help desk before the start, and that is the only setup help there is time for. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route, and the docs are at <a href="https://docs.rocketride.org">docs.rocketride.org</a>.</p>
+  </div>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Extensions installed, SDK installed, key saved, Preflight prints ready.</span></label>
+</section>
+
+<!-- ===== 3 ===== -->
+<section class="phase" data-title="Open the notebook" data-dur="1">
+
+  <div class="lead">
+    <span class="stepno">03</span>
+    <div>
+      <p class="kicker">In the room <i>/ 1 minute</i></p>
+      <h1>Open the notebook</h1>
+      <p class="lede">Three cells, top to bottom. They check your machine, load your key, and connect to RocketRide Cloud.</p>
+    </div>
+  </div>
+
+  <div class="grid"><table>
+    <thead><tr><th>Cell</th><th>What it does</th><th>You see</th></tr></thead>
+    <tbody>
+      <tr><td>Preflight</td><td>Checks Python, the SDK, your key and the connection. Every problem comes with its fix.</td><td><code>✅ ready</code></td></tr>
+      <tr><td>Config</td><td>The only cell that reads your environment. Loads <code>ROCKETRIDE_*</code> from the environment or <code>.env</code>, and asks for the key if it's missing.</td><td><code>API key: set</code></td></tr>
+      <tr><td>Connect</td><td>Opens one shared RocketRide client for every later cell.</td><td><code>Connected to https://api.rocketride.ai</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b class="k">Every cell is safe to run again</b><p>Files are overwritten, and starting a pipeline attaches to the running one instead of failing. When in doubt, run it again.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>All three cells ran without a red error and the last one says <strong>Connected</strong>.</p></div>
+
+  <details class="fold"><summary>The Config cell keeps asking for my key</summary><div class="fb"><p>There is no <code>ROCKETRIDE_APIKEY</code> in your environment or in a <code>.env</code> next to the notebook. Paste the key when asked: it's kept for the session. To skip the prompt next time, create the <code>.env</code> from Step 2.</p></div></details>
+  <details class="fold"><summary>Connect fails with Invalid or expired access_token</summary><div class="fb"><p>The key is wrong or was revoked. Create a new one in RocketRide Cloud, update your <code>.env</code>, restart the kernel and run the three cells again.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Preflight ready, key set, client connected.</span></label>
+</section>
+
+<!-- ===== 4 ===== -->
+<section class="phase" data-title="Build and run" data-dur="4">
+
+  <div class="lead">
+    <span class="stepno">04</span>
+    <div>
+      <p class="kicker">The build <i>/ 4 minutes, two stages</i></p>
+      <h1>Build and run</h1>
+      <p class="lede">Write the pipeline. Then start it and send it something.</p>
+    </div>
+  </div>
+
+  <p>Each stage ends with something you can see in the notebook. If a stage doesn't work, the last cell of that stage is a <strong>skip-ahead</strong> cell that puts you exactly where the stage should have ended.</p>
+
+  <h2>Stage 1. Build the pipeline <span class="mins">2 min</span></h2>
+  <div class="note warn"><b class="k">TODO(joshua)</b><p>The goal, the cells to run, and what to watch for.</p></div>
+  <div class="note good"><b class="k">Done when</b><p><code>build/alarm-clock.pipe</code> exists next to the notebook.</p></div>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead: run this only if the stage above didn't work</code> at the end of Stage 1. It writes the finished pipeline to <code>build/</code>.</p></div></details>
+
+  <h2>Stage 2. Run it <span class="mins">2 min</span></h2>
+  <div class="note warn"><b class="k">TODO(joshua)</b><p>The goal, the cells to run, and what a good answer looks like.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>The notebook prints your pipeline's answer.</p></div>
+  <details class="fold"><summary>Pipeline is already running</summary><div class="fb"><p>There is one running task per user and pipeline. The notebook's <code>start()</code> attaches to it instead of failing, so run the cell again. Or stop the task from the RocketRide sidebar.</p></div></details>
+  <details class="fold"><summary>The answer says LLM error</summary><div class="fb"><p>A bad or stale model key doesn't fail the run. The error comes back as the answer. Ask a facilitator to check the model key, then stop the pipeline and start it again: keys are read when a pipeline starts.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Your pipeline ran on RocketRide Cloud and answered.</span></label>
+</section>
+
+<!-- ===== 5 ===== -->
+<section class="phase" data-title="Deploy" data-dur="0">
+
+  <div class="lead">
+    <span class="stepno">05</span>
+    <div>
+      <p class="kicker">Stretch <i>/ optional</i></p>
+      <h1>Deploy</h1>
+      <p class="lede">If the room has time, publish your pipeline to RocketRide Cloud from the notebook and get a live URL.</p>
+    </div>
+  </div>
+
+  <h2>Deploy your own</h2>
+  <ol class="run">
+    <li>Run the <strong>Deploy</strong> cell. It publishes your build and prints the live URL.</li>
+    <li>Open the URL and send it one input to confirm it answers.</li>
+  </ol>
+  <div class="note warn"><b class="k">TODO(joshua)</b><p>The deploy cell, and what the live URL shows.</p></div>
+  <div class="note"><b class="k">Room running behind?</b><p>Skip this. The last project ends with a deploy that everyone does.</p></div>
+
+  <h2>Next project</h2>
+  <div class="ports">
+    <a href="../notepad-integration/index.html"><b>Integrate RocketRide into an existing app</b><span>project 2 of 3 / 15 min</span></a>
+    <a href="../../index.html"><b>All workshops</b><span>back to the hub</span></a>
+  </div>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Deployed, or skipped on purpose.</span></label>
+</section>
+
+<!-- ===== REF ===== -->
+<section class="phase" data-title="Words you will hear" data-dur="0" data-ref="1">
+
+  <div class="lead">
+    <span class="stepno">&nbsp;</span>
+    <div>
+      <p class="kicker">Reference</p>
+      <h1>Words you will hear</h1>
+      <p class="lede">Nothing here needs a computer science degree. Every term the steps use is in this list.</p>
+    </div>
+  </div>
+
+  <h2>The ideas</h2>
+  <div class="grid"><table>
+    <tbody>
+      <tr><td>Pipeline</td><td>A chain of steps that runs in RocketRide. Data goes in one end, a result comes out the other. Saved as a <code>.pipe</code> file.</td></tr>
+      <tr><td>Agent</td><td>An AI that doesn't just answer. It reads a situation, makes a decision, and explains why.</td></tr>
+      <tr><td>LLM</td><td>Large language model. The AI that reads and writes text.</td></tr>
+      <tr><td>Prompt</td><td>The written instructions you give a model or an agent.</td></tr>
+      <tr><td>Task</td><td>One running copy of a pipeline. There is one per user and pipeline.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>The tools</h2>
+  <div class="grid"><table>
+    <tbody>
+      <tr><td>RocketRide</td><td>An open source runtime for AI pipelines, with a C++ engine and a cloud you deploy to.</td></tr>
+      <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time. Text cells explain, code cells do the work.</td></tr>
+      <tr><td>Cell</td><td>One block in a notebook. Run it with <strong>Shift+Enter</strong>.</td></tr>
+      <tr><td>Kernel</td><td>The Python that runs a notebook's cells. Pick it with <strong>Select Kernel</strong>.</td></tr>
+      <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide Python SDK.</td></tr>
+      <tr><td>API key</td><td>The password a service gives you so your code can call it.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>The pieces of this project</h2>
+  <div class="grid"><table>
+    <tbody>
+      <tr><td>Preflight</td><td>The first code cell. Checks your machine and prints <code>ready</code>.</td></tr>
+      <tr><td>Config</td><td>The only cell that reads your environment. Every later cell uses its <code>CONFIG</code>.</td></tr>
+      <tr><td>Connect</td><td>Opens the shared RocketRide client.</td></tr>
+      <tr><td>Skip ahead</td><td>The last cell of each stage. Puts you where the stage should have ended.</td></tr>
+      <tr><td>Deploy</td><td>Putting your pipeline on the internet so anyone with the link can use it.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Where to go next</h2>
+  <div class="ports">
+    <a href="https://docs.rocketride.org"><b>Docs</b><span>docs.rocketride.org</span></a>
+    <a href="https://github.com/rocketride-org/rocketride-server"><b>GitHub</b><span>rocketride-org/rocketride-server</span></a>
+    <a href="https://discord.gg/PMXrtenMsY"><b>Discord</b><span>support and getting-started</span></a>
+    <a href="https://www.youtube.com/@RocketRide-ai"><b>YouTube</b><span>youtube.com/@RocketRide-ai</span></a>
+  </div>
+</section>
+
+  </main>
+</div>
+
+<script src="../../assets/codelab.js"></script>
+</body>
+</html>

@@ -6,9 +6,9 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 ## Use it
 
-1. Open the hub: <https://rocketride-org.github.io/rocketride-workshops/>, or clone this repo and open `index.html` (it works offline from disk).
+1. Open the hub: <https://rocketride-org.github.io/rocketride-workshops/>, or clone this repo and open `index.html` (it works offline from disk). Pick a project card to open its step-by-step guide.
 2. Do the at-home setup in [`SETUP.md`](SETUP.md), about 15 minutes.
-3. Download your workshop's notebooks from the hub, open each in VS Code, and run its preflight cell.
+3. Follow each project's guide: it links the notebook to download, and walks you from setup through the build to the deploy.
 
 ## Workshops
 
@@ -19,18 +19,22 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 ## Layout
 
 ```
-index.html                  # hub: one card per workshop, built from workshops.js
+index.html                  # hub: project cards for each workshop, built from workshops.js
 workshops.js                # manifest: window.MODULES + window.WORKSHOPS (a script, so it loads on file://)
 SETUP.md                    # at-home setup shared by every workshop
 assets/
   brand/                    # RocketRide wordmark and mark
+  fonts/                    # IBM Plex Sans and Mono (SIL OFL), served locally
   tokens.css                # shared color and type tokens
+  codelab.css               # codelab layout and components (hub and guides)
+  codelab.js                # guide behaviour: step rail, pager, checkpoints, copy buttons
 scripts/
   validate.mjs              # zero-dependency repo check (Node 20)
   strip.mjs                 # strips notebook outputs before you commit
 modules/
   <id>/
     <id>.ipynb              # the notebook
+    index.html              # the project guide (codelab page)
     README.md               # what it is, time box, requirements
     FACILITATOR.md          # run of show, troubleshooting, skip-ahead guide
 ```
@@ -58,7 +62,9 @@ TypeScript work runs from the same Python kernel, through `%%writefile` cells an
 
 ## Add a module
 
-1. Create `modules/<id>/` with `<id>.ipynb`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Keep its Preflight, Config and Connect cells as they are.
+1. Create `modules/<id>/` with `<id>.ipynb`, `index.html`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Keep its Preflight, Config and Connect cells as they are.
+
+   The guide (`index.html`) keeps the same phases as every other project: **Start here**, **Set up at home**, **Open the notebook**, the build, the finish (deploy or clean up), and **Words you will hear** as reference. Each phase is a `<section class="phase" data-title="..." data-dur="<minutes>">`. The rail, pager and progress are built by `assets/codelab.js`; give `<body>` a unique `data-key` so progress is saved per guide.
 2. Add an entry to `window.MODULES` in `workshops.js`:
 
    ```js
@@ -67,6 +73,7 @@ TypeScript work runs from the same Python kernel, through `%%writefile` cells an
      summary: "...",
      duration: 10,                       // minutes; workshop totals are computed from these
      notebook: "modules/<id>/<id>.ipynb",
+     guide: "modules/<id>/index.html",
      requires: ["python"]                // plus "node", "pnpm", "git" if needed
    }
    ```

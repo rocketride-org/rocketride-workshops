@@ -29,6 +29,8 @@ for (const [id, m] of Object.entries(MODULES)) {
   if (!m.notebook) fail(`workshops.js: module "${id}" has no notebook`);
   else if (!existsSync(join(root, m.notebook)))
     fail(`workshops.js: module "${id}" notebook does not exist: ${m.notebook}`);
+  if (m.guide && !existsSync(join(root, m.guide)))
+    fail(`workshops.js: module "${id}" guide does not exist: ${m.guide}`);
   if (typeof m.duration !== "number")
     fail(`workshops.js: module "${id}" duration must be a number of minutes`);
 }
@@ -45,7 +47,7 @@ const folders = existsSync(modulesDir)
   : [];
 for (const d of folders) {
   if (!MODULES[d]) fail(`modules/${d}: not listed in window.MODULES`);
-  for (const f of ["README.md", "FACILITATOR.md", `${d}.ipynb`]) {
+  for (const f of ["README.md", "FACILITATOR.md", "index.html", `${d}.ipynb`]) {
     if (!existsSync(join(modulesDir, d, f))) fail(`modules/${d}: missing ${f}`);
   }
 }
@@ -91,34 +93,41 @@ for (const d of folders) {
   }
 }
 
-// 4. Relative links in the hub resolve
-const hub = join(root, "index.html");
-const isExternal = (u) => /^([a-z][a-z0-9+.-]*:|\/\/|#)/i.test(u);
-if (existsSync(hub)) {
-  const html = readFileSync(hub, "utf8");
-  for (const m of html.matchAll(/\s(?:src|href)\s*=\s*["']([^"']+)["']/gi)) {
-    const ref = m[1];
-    if (isExternal(ref)) continue;
-    const target = decodeURI(ref.split(/[?#]/)[0]);
-    if (target && !existsSync(resolve(root, target))) fail(`index.html: broken link ${ref}`);
-  }
-} else {
-  fail("index.html: missing");
-}
-
-// 5. No external resources or fetch() in any HTML file
+// 4. Relative links in every HTML and CSS file resolve
+if (!existsSync(join(root, "index.html"))) fail("index.html: missing");
 const skip = new Set(["node_modules", ".git", ".internal", "build"]);
-function walk(dir, out = []) {
+function walk(dir, ext, out = []) {
   for (const name of readdirSync(dir)) {
     if (skip.has(name) || (name.startsWith(".") && name !== ".github")) continue;
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) walk(p, out);
-    else if (name.endsWith(".html")) out.push(p);
+    if (statSync(p).isDirectory()) walk(p, ext, out);
+    else if (name.endsWith(ext)) out.push(p);
   }
   return out;
 }
+const isExternal = (u) => /^([a-z][a-z0-9+.-]*:|\/\/|#)/i.test(u);
+function checkRefs(file, refs) {
+  for (const ref of refs) {
+    if (isExternal(ref)) continue;
+    const target = decodeURI(ref.split(/[?#]/)[0]);
+    if (target && !existsSync(resolve(dirname(file), target)))
+      fail(`${rel(file)}: broken link ${ref}`);
+  }
+}
+const htmlFiles = walk(root, ".html");
+for (const file of htmlFiles) {
+  const html = readFileSync(file, "utf8");
+  checkRefs(file, [...html.matchAll(/\s(?:src|href)\s*=\s*["']([^"']+)["']/gi)].map((m) => m[1]));
+}
 const remote = /^(https?:)?\/\//i;
-for (const file of walk(root)) {
+for (const file of walk(root, ".css")) {
+  const refs = [...readFileSync(file, "utf8").matchAll(/url\(\s*["']?([^"')\s]+)/gi)].map((m) => m[1]);
+  for (const ref of refs) if (remote.test(ref)) fail(`${rel(file)}: external CSS resource ${ref}`);
+  checkRefs(file, refs);
+}
+
+// 5. No external resources or fetch() in any HTML file
+for (const file of htmlFiles) {
   const html = readFileSync(file, "utf8");
   for (const m of html.matchAll(/<script\b[^>]*\ssrc\s*=\s*["']([^"']+)["']/gi)) {
     if (remote.test(m[1])) fail(`${rel(file)}: external script ${m[1]}`);
