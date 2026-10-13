@@ -39,6 +39,17 @@
     </div>
   </div>
 
+  <div class="promo">
+    <div class="pt">
+      <span class="pk">Promo code</span>
+      <p>Build with RocketRide on us. Claim your credits at <a href="https://cloud.rocketride.ai" target="_blank" rel="noopener">cloud.rocketride.ai</a>.</p>
+    </div>
+    <div class="pc">
+      <span class="code" id="promo-code">ZERO2AGENTLA</span>
+      <button type="button" class="promo-cp">Copy</button>
+    </div>
+  </div>
+
   <div class="note fac">
     <b class="k">Before the event</b>
     <p>Set up once, at home, in about 15 minutes: <a href="https://github.com/rocketride-org/rocketride-workshops/blob/main/SETUP.md">SETUP.md</a>. Every project guide repeats the steps it needs in <strong>Set up at home</strong>.</p>
@@ -111,6 +122,21 @@
     });
     sec.appendChild(grid);
     root.appendChild(sec);
+  });
+})();
+</script>
+<script>
+(function(){
+  var btn = document.querySelector('.promo-cp');
+  var code = document.getElementById('promo-code');
+  if (!btn || !code) return;
+  function sel(){ try { var r=document.createRange(); r.selectNodeContents(code); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch(e){} }
+  btn.addEventListener('click', function(){
+    var ok = function(){ btn.textContent='Copied'; btn.classList.add('ok'); setTimeout(function(){btn.textContent='Copy'; btn.classList.remove('ok');},1500); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code.textContent).then(ok, sel);
+      else sel();
+    } catch(e){ sel(); }
   });
 })();
 </script>

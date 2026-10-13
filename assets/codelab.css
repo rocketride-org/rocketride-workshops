@@ -117,6 +117,30 @@ code{font-family:var(--mono); font-size:.855em; color:var(--ink); background:var
 .note.fac{border-left-color:var(--accent); background:var(--accent-soft); border-color:#F7D9D2} .note.fac b.k{color:var(--accent-d)}
 .note ul{margin-bottom:0}
 
+/* ============ promo ============ */
+.promo{
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  background:var(--ink); color:#fff; border-radius:var(--r); padding:18px 22px; margin:6px 0 28px;
+  box-shadow:var(--shadow); border-left:4px solid var(--accent);
+}
+.promo .pt{flex:1 1 220px; min-width:0}
+.promo .pk{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#FF8F72; font-weight:600; margin-bottom:4px}
+.promo .pt p{margin:0; font-size:15px; line-height:1.5; color:#D9D8EA}
+.promo .pt a{color:#fff; border-bottom-color:rgba(255,255,255,.4)}
+.promo .pt a:hover{color:#FF8F72; border-bottom-color:#FF8F72}
+.promo .pc{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.promo .code{
+  font-family:var(--mono); font-size:18px; font-weight:600; letter-spacing:.08em; color:#fff;
+  background:rgba(255,255,255,.08); border:1.5px dashed rgba(255,255,255,.35); border-radius:6px; padding:7px 14px;
+  user-select:all;
+}
+.promo button{
+  font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; font-weight:600;
+  background:var(--accent); color:#fff; border:0; border-radius:5px; padding:10px 14px; cursor:pointer;
+}
+.promo button:hover{background:var(--accent-d)}
+.promo button.ok{background:var(--ok)}
+
 /* ============ fold ============ */
 details.fold{border:1px solid var(--line); border-radius:var(--r); margin:0 0 20px; background:var(--paper); overflow:hidden}
 details.fold summary{
