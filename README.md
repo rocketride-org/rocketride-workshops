@@ -12,9 +12,9 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 ## Workshops
 
-| Workshop      | Modules                                             | Time   |
-| ------------- | --------------------------------------------------- | ------ |
-| Zero to Agent | `alarm-clock` → `notepad-integration` → `app-build` | 60 min |
+| Workshop      | Modules                                                  | Time   |
+| ------------- | -------------------------------------------------------- | ------ |
+| Zero to Agent | `alarm-clock` → `notepad-integration` → `specter-mutual` | 60 min |
 
 ## Layout
 
@@ -60,6 +60,8 @@ Rules:
 
 TypeScript work runs from the same Python kernel, through `%%writefile` cells and shell commands (no TypeScript kernel).
 
+A long module can split into parts. `<id>.ipynb` holds the overview, Preflight, Config and the shared helpers, and each part (`01-….ipynb`, `02-….ipynb`, …) starts with `%run ./<id>.ipynb` followed by `await connect()`. Keep `<id>.ipynb` free of top-level `await`: `%run` can't run it. Parts hand work to each other through files in `build/`, and a part's skip-ahead cell can rewrite its files with the shared `replay()` helper. `specter-mutual` is the example.
+
 ## Add a module
 
 1. Create `modules/<id>/` with `<id>.ipynb`, `index.html`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Keep its Preflight, Config and Connect cells as they are.
@@ -96,7 +98,7 @@ A workshop is only a manifest entry. Add it to `window.WORKSHOPS`:
   summary: "...",
   funnel: "cloud",          // cloud | local
   status: "draft",          // live | draft (drafts show on the hub with ?drafts=1)
-  modules: ["alarm-clock", "app-build"]
+  modules: ["alarm-clock", "specter-mutual"]
 }
 ```
 

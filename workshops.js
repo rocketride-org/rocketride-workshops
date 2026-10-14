@@ -15,13 +15,14 @@ window.MODULES = {
     guide: "modules/notepad-integration/index.html",
     requires: ["python", "node", "pnpm", "git"],
   },
-  "app-build": {
-    title: "Build and deploy an app",
-    summary: "Build a simple app from scratch and deploy it to RocketRide Cloud.",
+  "specter-mutual": {
+    title: "Specter Mutual: zero to a deployed app",
+    summary:
+      "Build an AI claims reviewer from nothing: an agent that decides, a policy engine that holds it to the rules, and a portal deployed to your workspace.",
     duration: 40,
-    notebook: "modules/app-build/app-build.ipynb",
-    guide: "modules/app-build/index.html",
-    requires: ["python"],
+    notebook: "modules/specter-mutual/specter-mutual.ipynb",
+    guide: "modules/specter-mutual/index.html",
+    requires: ["python", "node", "pnpm"],
   },
 };
 
@@ -33,6 +34,6 @@ window.WORKSHOPS = [
       "Ship your first RocketRide pipeline, integrate one into a real app, then build and deploy your own.",
     funnel: "cloud", // cloud | local
     status: "live", // live | draft
-    modules: ["alarm-clock", "notepad-integration", "app-build"],
+    modules: ["alarm-clock", "notepad-integration", "specter-mutual"],
   },
 ];

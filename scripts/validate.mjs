@@ -60,9 +60,15 @@ const isTagged = (cell, tag) =>
   new RegExp(`^#+\\s*${tag}\\b`, "i").test(src(cell).trimStart());
 const src = (cell) => (Array.isArray(cell.source) ? cell.source.join("") : (cell.source ?? ""));
 
-for (const d of folders) {
-  const file = join(modulesDir, d, `${d}.ipynb`);
-  if (!existsSync(file)) continue;
+// Every notebook in a module folder is checked. A module may split into parts that load
+// <id>.ipynb with %run, so only <id>.ipynb needs the Preflight and Config cells.
+const moduleNotebooks = folders.flatMap((d) =>
+  readdirSync(join(modulesDir, d))
+    .filter((f) => f.endsWith(".ipynb"))
+    .map((f) => ({ file: join(modulesDir, d, f), isMain: f === `${d}.ipynb` })),
+);
+
+for (const { file, isMain } of moduleNotebooks) {
   const name = rel(file);
   const raw = readFileSync(file, "utf8");
   let nb;
@@ -87,6 +93,7 @@ for (const d of folders) {
       fail(`${name}: cell ${i} reads environment variables; only the Config cell may`);
     }
   });
+  if (!isMain) continue;
   for (const tag of ["preflight", "config"]) {
     if (!nb.cells.some((c) => c.cell_type === "code" && isTagged(c, tag)))
       fail(`${name}: no ${tag} cell`);
@@ -167,7 +174,7 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-const nbCount = folders.length;
+const nbCount = moduleNotebooks.length;
 console.log(
   `validate: ok (${WORKSHOPS.length} workshop(s), ${Object.keys(MODULES).length} module(s), ${nbCount} notebook(s))`,
 );
