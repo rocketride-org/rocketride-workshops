@@ -1,9 +1,9 @@
 # Alarm clock
 
-The first and fastest module. Attendees build a drop zone: drop any file (PDF, Word document, image, audio or video) and a pipeline returns its text. Then they set it like an alarm clock, deployed to their organization's Prod team and scheduled to run from 9am to 6pm, Monday to Friday.
+The first and fastest module. Attendees build an analog alarm clock app: a ticking clock face with a time picker and an alarm that flashes and beeps. The notebook creates the app from RocketRide's app template, writes the clock, deploys it to RocketRide Cloud, and publishes it to the attendee's own desktop, where it opens on cloud.rocketride.ai.
 
 **Time:** 5 minutes
 
-**Requires:** Python 3.10+ with `rocketride`, and a RocketRide Cloud account with an active subscription, an API key, and a team called Prod (or another team) you can deploy to.
+**Requires:** Python 3.10+, a RocketRide Cloud API key, and a developer id for the organization (claimed once in the App Builder's Deploy tab). The notebook installs the `rocketride` SDK itself. Node and pnpm aren't needed: RocketRide Cloud builds the app.
 
-**Before you start:** do the at-home setup in [SETUP.md](../../SETUP.md), then open [`alarm-clock.ipynb`](alarm-clock.ipynb) in VS Code and run the Preflight cell.
+**Before you start:** open [`alarm-clock.ipynb`](alarm-clock.ipynb) in VS Code and click **Run All**.

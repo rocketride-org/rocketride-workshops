@@ -4,41 +4,49 @@ Operational notes for running this module. Time box: **5 minutes**.
 
 ## Run of show
 
-| Stage                       | Time     | Where people fall behind                                           |
-| --------------------------- | -------- | ------------------------------------------------------------------ |
-| Preflight, Config, Connect  | 1 min    | Anyone who skipped SETUP.md. Send them to the kernel picker first. |
-| Stage 1: Build the drop zone | 1 min   | Rarely. It only writes a file.                                     |
-| Stage 2: Drop a file        | 2 min    | First start of the pipeline is slow. Have them wait, then re-run.  |
-| Set the alarm               | 1 min    | No Prod team, or no permission to deploy to it. See below.         |
+| Stage                         | Time  | Where people fall behind                                                     |
+| ----------------------------- | ----- | ---------------------------------------------------------------------------- |
+| Setup, Config, Connect        | 1 min | First run installs the SDK (about a minute). Anyone with the wrong kernel.   |
+| Stage 1: Create the app       | 1 min | No developer id for the org. See below.                                      |
+| Stage 2: Draw the clock       | 1 min | Rarely. It only writes two files.                                            |
+| Stage 3: Deploy and open it   | 2 min | The cloud build takes a minute or two. Have them watch the build steps print. |
 
 ## Before the event
 
-- [ ] The org-level model API key in RocketRide Variables is current. A stale key doesn't fail loudly (see below).
-- [ ] Attendees ran this notebook's Preflight cell at home and saw `ready`.
-- [ ] Attendees have a team called Prod they can deploy to, or know which team to put in `TEAM_NAME`.
-- [ ] Test a deploy from the notebook on the venue wifi, and keep a backup deployment ready.
-- [ ] Run the notebook top to bottom yourself on the venue wifi.
+- [ ] Decide which org attendees deploy into, and whether it has a developer id. To claim one live, it must be empty.
+- [ ] To clear a developer id: a sys.admin opens admin-ui → Orgs → the org → Edit, clears **Developer Id** and saves. Users can't rename or remove a claimed id themselves.
+- [ ] Run the notebook top to bottom yourself on the venue wifi, and time the Stage 3 build.
+- [ ] Open the printed link and check the clock ticks and the alarm rings.
+
+## Claiming a developer id live
+
+1. An org admin opens the RocketRide App Builder in VS Code and goes to the **Deploy** tab.
+2. The registration banner asks for a developer id: letters and underscores only, for example `acme_labs`. `local` and `rocketride` are taken.
+3. Click **Register**. Each org can claim only one id, and it can't be changed afterwards without a sys.admin.
+4. Back in the notebook, run Stage 1 again. It reconnects and picks up the new id.
+
+If the banner doesn't appear after an admin cleared the id, close and reopen the App Builder tab: it reads the id when it opens.
 
 ## Troubleshooting
 
-| Symptom                                                        | Cause                                                                                                       | Fix                                                                                                                                       |
-| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| The answer text says `LLM error …`                             | The model key is bad, missing or stale. A bad key doesn't fail the run; the error comes back as the answer. | Fix the model key in the RocketRide sidebar under account menu → Variables, then stop the running task and start it again.                |
-| "Pipeline is already running"                                  | There is one task per user + pipeline. An earlier run, or another cell, still owns it.                      | Use the Connect cell's `start()`, which attaches to the running task. Or stop the task in the RocketRide sidebar.                         |
-| A key or variable change has no effect                         | Variables are read when the task starts, not on each run.                                                   | Stop the running task and start it again after any Variables change.                                                                      |
-| One attendee still fails with a valid org key                  | A user-level variable with the same name overrides the org-level one.                                       | Fix or delete the attendee's user-level variable, then restart the task.                                                                  |
-| `No module named 'rocketride'`                                 | The notebook's kernel is a different Python from the one `rocketride` was installed into.                   | Select Kernel → Python Environments → the right interpreter. Or run `%pip install rocketride ipykernel` in a cell and restart the kernel. |
-| VS Code asks to install `ipykernel`, or the kernel won't start | The selected interpreter has no `ipykernel`.                                                                | Accept the prompt, or run `python3 -m pip install ipykernel` for that interpreter.                                                        |
-| Preflight: `Can't reach api.rocketride.ai`                     | No internet, or a VPN or proxy blocks it.                                                                   | Switch networks or turn off the VPN, then rerun Preflight. On venue wifi, try a phone hotspot.                                            |
-| Set the alarm: `No team called "Prod"`                        | The org has no team with that name, or the attendee isn't in it.                                            | Set `TEAM_NAME` to one of the teams the error lists, or have an org admin create a Prod team and add them.                                |
-| Set the alarm fails on publish or deploy                       | No active subscription, or no permission to deploy to that team.                                            | Check the subscription, and the attendee's role on the team.                                                                             |
-| Wake times are an hour off                                     | The cell converts local time with today's UTC offset; the clocks have changed since.                        | Run the Set the alarm cell again.                                                                                                         |
-| `Text back:` is empty                                          | The file had no text to find: a photo with no writing, a video with no speech.                              | Try a document or a screenshot of text.                                                                                                   |
-| The Config cell keeps asking for the key                       | No `ROCKETRIDE_APIKEY` in the environment or in a `.env` next to the notebook.                              | Paste the key when asked; it's kept for the session. To skip the prompt, create the `.env` described in SETUP.md.                         |
+| Symptom                                                        | Cause                                                                                       | Fix                                                                                                                         |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Stage 1: `Your organization has no developer id yet`           | The org hasn't claimed a developer id.                                                      | Claim one (see above), then run Stage 1 again.                                                                              |
+| Stage 1 still says no developer id after claiming              | The notebook's connection has the old identity.                                             | Run the Stage 1 skip-ahead cell, which reconnects. Or restart the kernel and **Run All**.                                   |
+| Stage 3: deploy refused, namespace or permission error         | The app id's prefix isn't this org's developer id, or the attendee can't deploy apps.       | Run the Stage 1 skip-ahead cell to recreate the app under the right id. Check the attendee's org role.                      |
+| Stage 3: `The cloud build of vN failed`                        | The clock code doesn't compile, usually after an edit to `APP_TSX`.                         | Read the build log the cell prints. Run the Stage 2 skip-ahead cell to restore the finished clock, then run Stage 3 again. |
+| Stage 3: `vN is still building`                                | The cloud build took longer than 5 minutes.                                                 | Wait a minute, then run the Stage 3 skip-ahead cell. It publishes the newest finished version.                              |
+| The link opens but the clock isn't on the desktop              | The desktop shows new apps after it refreshes.                                              | Reload the page, or sign out and back in.                                                                                   |
+| The alarm flashes but doesn't beep                             | The browser blocks sound until you click on the page.                                       | Click **Set alarm** (that click turns sound on), and check the tab isn't muted.                                             |
+| `No module named 'rocketride'` after Setup                     | The SDK was updated while it was already imported.                                          | Restart the kernel, then **Run All**.                                                                                       |
+| Setup: `Couldn't install the RocketRide SDK`                   | pip failed: no internet, a proxy, or no pip in that Python.                                 | Read the pip error the cell prints. Switch networks, or pick another Python in **Select Kernel**.                           |
+| VS Code asks to install `ipykernel`, or the kernel won't start | The selected interpreter has no `ipykernel`.                                                | Accept the prompt, or run `python3 -m pip install ipykernel` for that interpreter.                                          |
+| The Config cell keeps asking for the key                       | No `ROCKETRIDE_APIKEY` in the environment or in a `.env` next to the notebook.              | Paste the key when asked; it's kept for the session. To skip the prompt, create the `.env` described in SETUP.md.           |
 
 ## Skip-ahead guide
 
 Every stage ends with a cell headed `# Skip ahead: run this only if the stage above didn't work`. Running it puts the attendee where the stage should have ended, so they can carry on with the next stage.
 
-- **Stuck in Stage 1:** point them to the `# Skip ahead` cell at the end of Stage 1. It writes the finished pipeline to `build/`.
-- **Stuck in Stage 2:** point them to the `# Skip ahead` cell at the end of Stage 2. It stops any stuck copy of the pipeline and starts a fresh one.
+- **Stuck in Stage 1:** the skip-ahead cell reconnects, deletes `build/apps/alarm_clock` and creates the app again from the template.
+- **Stuck in Stage 2:** the skip-ahead cell writes the finished clock and README.
+- **Stuck in Stage 3:** the skip-ahead cell publishes the newest version that finished building, and prints the link.

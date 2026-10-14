@@ -1,7 +1,7 @@
 window.MODULES = {
   "alarm-clock": {
     title: "Alarm clock",
-    summary: "Build a drop zone that turns any file into text, and schedule it on your Prod team, 9 to 6 on weekdays.",
+    summary: "Build an analog alarm clock app and deploy it to RocketRide Cloud.",
     duration: 5,
     notebook: "modules/alarm-clock/alarm-clock.ipynb",
     guide: "modules/alarm-clock/index.html",

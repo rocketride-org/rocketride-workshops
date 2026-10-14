@@ -39,36 +39,32 @@
       <p class="kicker">RocketRide workshop <i>/ project 1 of 3</i></p>
       <h1>Alarm clock</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In five minutes you build a drop zone that turns any file into text, then set it like an alarm clock: live on your Prod team from 9 to 6, Monday to Friday.</p>
+      <p class="lede">In five minutes you build an analog alarm clock app, deploy it to RocketRide Cloud, and open it in your browser.</p>
     </div>
   </div>
 
   <h2>What you are building</h2>
-  <p>A <strong>drop zone</strong>. You drop a file on a pad in your browser, and it comes back as text on the page. The file can be almost anything: a PDF, a Word document, a photo of a whiteboard, a voice memo or a video.</p>
-  <p>Then you set it like an <strong>alarm clock</strong>. One cell deploys it to your organization's <strong>Prod</strong> team and schedules it to wake at 9:00 AM and sleep at 6:00 PM, Monday to Friday.</p>
-  <div class="note">
-    <b class="k">The brief</b>
-    <p>An app with a drag and drop interface. A file dropped onto a drop zone goes through a pipeline that parses it and returns the text, which the app displays. The file can be a video, image, sound, PDF, docx and so on. It should run from 9am to 6pm, Monday through Friday, deployed to the organization's Prod team.</p>
-  </div>
+  <p>An <strong>alarm clock app</strong>. It has a round clock face whose hands move every second, a time picker, and an alarm: when the clock reaches the time you set, the face flashes and it beeps until you press <strong>Stop</strong>.</p>
+  <p>The notebook doesn't stop at your laptop. It <strong>deploys</strong> the app to RocketRide Cloud, which builds it, and <strong>publishes</strong> it to your own RocketRide desktop. You finish with a link that opens your clock on cloud.rocketride.ai.</p>
 
   <h2>Where RocketRide comes in</h2>
-  <p>RocketRide is an open source runtime for AI pipelines. A pipeline is a small file describing a chain of steps. RocketRide runs it on a C++ engine in the cloud, and you drive it from Python with the <strong>RocketRide SDK</strong>.</p>
-  <p>For today that means you write no servers, queues or model plumbing. You write the pipeline, and one call starts it.</p>
+  <p>RocketRide runs AI pipelines and the apps built on them. An <strong>app</strong> is a small web page, written in React, that RocketRide shows inside its own window, with your theme and sign-in already in place. You drive everything from Python with the <strong>RocketRide SDK</strong>.</p>
+  <p>For today that means you install no web tooling. The SDK creates the app from RocketRide's template, and RocketRide Cloud builds and hosts it.</p>
 
   <h2>The 5 minutes</h2>
   <div class="grid"><table>
     <thead><tr><th>Time</th><th>What happens</th><th>You leave with</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>Step 2, about 15 minutes</td><td>Editor and Python ready, subscription active, notebook downloaded</td></tr>
-      <tr><td>0:00</td><td>Run Preflight, Config and Connect</td><td>A green <code>ready</code> and a connected client</td></tr>
-      <tr><td>0:01</td><td>Stage 1: build the drop zone</td><td>A five-step pipeline file</td></tr>
-      <tr><td>0:02</td><td>Stage 2: drop a file</td><td>Text back from a file, and a drop zone link</td></tr>
-      <tr><td>0:04</td><td>Set the alarm</td><td>Deployed to Prod, awake 9 to 6 on weekdays</td></tr>
+      <tr><td>Before</td><td>Step 2, about 10 minutes</td><td>Editor and Python ready, API key saved, developer id claimed</td></tr>
+      <tr><td>0:00</td><td>Run Setup, Config and Connect</td><td>The SDK installed and a connected client</td></tr>
+      <tr><td>0:01</td><td>Stage 1: create the app</td><td>An app folder from RocketRide's template</td></tr>
+      <tr><td>0:02</td><td>Stage 2: draw the clock</td><td>The clock face and alarm in <code>src/App.tsx</code></td></tr>
+      <tr><td>0:03</td><td>Stage 3: deploy and open it</td><td>Your clock, live, and a link to it</td></tr>
     </tbody>
   </table></div>
   <div class="note good">
     <b class="k">What counts as done</b>
-    <p>The <strong>Set the alarm</strong> cell prints your Prod deployment and its next wake times: 9:00 AM on the next three weekdays.</p>
+    <p>The last cell prints <strong>Open your clock</strong>, and the link shows your clock ticking.</p>
   </div>
 
   <h2>How it fits together</h2>
@@ -76,30 +72,30 @@
     <thead><tr><th>Piece</th><th>Job</th><th>Where it lives</th></tr></thead>
     <tbody>
       <tr><td>Notebook</td><td>Runs every step</td><td><code>alarm-clock.ipynb</code></td></tr>
-      <tr><td>Pipeline file</td><td>Describes the five steps</td><td><code>build/alarm-clock.pipe</code>, written by Stage 1</td></tr>
-      <tr><td>Drop zone</td><td>The page you drop files on</td><td>A link printed by Stage 2</td></tr>
-      <tr><td>RocketRide client</td><td>Starts the pipeline, sends files, deploys</td><td>The Connect cell</td></tr>
-      <tr><td>Prod team</td><td>Runs the deployed drop zone on its schedule</td><td>Your RocketRide Cloud organization</td></tr>
+      <tr><td>App folder</td><td>The app's source: its manifest, icon, README and React code</td><td><code>build/apps/alarm_clock/</code>, written by Stages 1 and 2</td></tr>
+      <tr><td>RocketRide client</td><td>Creates, checks, uploads and publishes the app</td><td>The Connect cell</td></tr>
+      <tr><td>RocketRide Cloud</td><td>Builds the app and serves it</td><td>Your organization's account</td></tr>
+      <tr><td>Your desktop</td><td>Where the published clock shows up</td><td>cloud.rocketride.ai</td></tr>
     </tbody>
   </table></div>
 
   <div class="note">
     <b class="k">Not an engineer?</b>
-    <p>Every line of code is already in the notebook. You run cells with <strong>Shift+Enter</strong> and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
+    <p>Every line of code is already in the notebook. You click <strong>Run All</strong> and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what a pipeline is.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what a RocketRide app is.</span></label>
 </section>
 
 <!-- ===== 2 ===== -->
-<section class="phase" data-title="Set up at home" data-dur="15">
+<section class="phase" data-title="Set up at home" data-dur="10">
 
   <div class="lead">
     <span class="stepno">02</span>
     <div>
-      <p class="kicker">Before the event <i>/ 15 minutes</i></p>
+      <p class="kicker">Before the event <i>/ 10 minutes</i></p>
       <h1>Set up at home</h1>
-      <p class="lede">The project itself is five minutes. Setup is fifteen at home, and can take the whole session on conference wifi.</p>
+      <p class="lede">The project itself is five minutes. Setup is ten at home, and can take the whole session on conference wifi.</p>
     </div>
   </div>
 
@@ -107,10 +103,9 @@
   <div class="grid"><table>
     <tbody>
       <tr><td>Editor</td><td>VS Code, Cursor or Windsurf, with admin rights on the laptop</td></tr>
-      <tr><td>Python 3.10+</td><td><code>python3 --version</code>. The notebook runs on it.</td></tr>
-      <tr><td>Cloud account</td><td>Signed up, email confirmed, and <strong>subscribed to RocketRide Cloud</strong>. The last step deploys, and deploying needs a subscription.</td></tr>
-      <tr><td>Prod team</td><td>A team called <strong>Prod</strong> in your organization that you can deploy to. Another team works too: you change one line.</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python3 --version</code>. The notebook installs everything else it needs.</td></tr>
       <tr><td>RocketRide API key</td><td>Created in your RocketRide Cloud account</td></tr>
+      <tr><td>Developer id</td><td>Your organization's publisher name, the first part of every app id. Claimed once per organization (see below).</td></tr>
     </tbody>
   </table></div>
 
@@ -128,24 +123,16 @@
   <ol class="run">
     <li>Open Extensions and search <strong>Python</strong>. Install the one from Microsoft (<code>ms-python.python</code>).</li>
     <li>Search <strong>Jupyter</strong> and install it too (<code>ms-toolsai.jupyter</code>).</li>
+    <li>Search <strong>RocketRide</strong> and install it. You use its App Builder to claim a developer id.</li>
     <li>Reload the window if it asks.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>Both extensions show as installed, and a new <code>.ipynb</code> file opens as a notebook with cells.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>The extensions show as installed, and a new <code>.ipynb</code> file opens as a notebook with cells.</p></div>
   <details class="fold"><summary>Using Cursor or Windsurf?</summary><div class="fb"><p>They install from Open VSX rather than the VS Code marketplace. Python and Jupyter are published there, so the same searches work.</p></div></details>
-
-  <h2>Install Python and the SDK <span class="mins">4 min</span></h2>
-  <ol class="run">
-    <li>Check your version. If it's older than 3.10, install a current one from <a href="https://www.python.org/downloads/">python.org</a>.</li>
-    <li>Install the RocketRide SDK and the notebook kernel into that Python.
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride ipykernel</pre></div>
-    </li>
-  </ol>
-  <details class="fold"><summary>On Windows</summary><div class="fb"><p>Use <code>python</code> instead of <code>python3</code>, or the launcher: <code>py -m pip install rocketride ipykernel</code>.</p></div></details>
 
   <h2>Save your API key <span class="mins">3 min</span></h2>
   <p>Do this now. A missing key is the most common thing that stops people in the room.</p>
   <ol class="run">
-    <li>Sign in to RocketRide Cloud, start a subscription, and create an API key.</li>
+    <li>Sign in to RocketRide Cloud and create an API key.</li>
     <li>Make a folder for the workshop. In it, create a file called <code>.env</code>:
       <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_APIKEY=your-api-key
 ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
@@ -156,29 +143,36 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
     <p>Never paste your key into a cell, and never commit a <code>.env</code> file. If there is no <code>.env</code>, the notebook's Config cell asks for the key and keeps it only for the session.</p>
   </div>
 
-  <h2>Get the notebook <span class="mins">4 min</span></h2>
+  <h2>Claim a developer id <span class="mins">1 min</span></h2>
+  <p>Every app's id starts with your organization's <strong>developer id</strong>, for example <code>acme_labs.alarm_clock</code>. An organization claims it once, and every member shares it. If someone in your organization already claimed one, skip this.</p>
+  <ol class="run">
+    <li>Open the RocketRide <strong>App Builder</strong> and go to the <strong>Deploy</strong> tab.</li>
+    <li>The banner asks for a developer id. Use letters and underscores only, for example <code>acme_labs</code>, and click <strong>Register</strong>.</li>
+  </ol>
+  <div class="note warn"><b class="k">Choose carefully</b><p>A developer id can't be renamed or removed afterwards. Only an org admin can claim it.</p></div>
+
+  <h2>Get the notebook <span class="mins">2 min</span></h2>
   <div class="btns">
     <a class="btn" href="alarm-clock.ipynb" download>Download alarm-clock.ipynb</a>
     <a class="btn ghost" href="https://github.com/rocketride-org/rocketride-workshops/blob/main/modules/alarm-clock/alarm-clock.ipynb">View on GitHub</a>
   </div>
   <ol class="run">
     <li>Save the notebook into the folder with your <code>.env</code>, and open the folder with <strong>File</strong>, <strong>Open Folder</strong>.</li>
-    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick the Python where you installed <code>rocketride</code>.</li>
-    <li>Run the <strong>Preflight</strong> cell with <strong>Shift+Enter</strong>.</li>
+    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick Python 3.10 or newer.</li>
+    <li>Run the <strong>Setup</strong> cell with <strong>Shift+Enter</strong>. The first time, it installs the RocketRide SDK.</li>
   </ol>
   <figure><div class="draw"><p style="margin:0;font-family:var(--mono);font-size:12px;color:var(--dim)">TODO(joshua): screenshot of the kernel picker with the right interpreter selected.</p></div></figure>
-  <div class="note good"><b class="k">Done when</b><p>Preflight prints a green <strong>✅ ready</strong>.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>Setup prints a green <strong>✅ ready</strong>.</p></div>
 
-  <details class="fold"><summary>It says No module named 'rocketride'</summary><div class="fb"><p>The kernel is a different Python from the one you installed into. Pick another interpreter in <strong>Select Kernel</strong>, or run <code>%pip install rocketride ipykernel</code> in a new cell and restart the kernel.</p></div></details>
   <details class="fold"><summary>It asks me to install ipykernel</summary><div class="fb"><p>Accept the prompt, or run <code>python3 -m pip install ipykernel</code> for that interpreter.</p></div></details>
-  <details class="fold"><summary>Can't reach api.rocketride.ai</summary><div class="fb"><p>No internet, or a VPN or proxy is blocking it. Switch networks or turn the VPN off, then run Preflight again.</p></div></details>
+  <details class="fold"><summary>Couldn't install the RocketRide SDK</summary><div class="fb"><p>The cell prints pip's error. Usually it's no internet, or a VPN or proxy blocking it. Switch networks, then run Setup again.</p></div></details>
 
   <div class="note fac">
     <b class="k">Stuck on any of this?</b>
     <p>Come 10 minutes early. A facilitator runs a help desk before the start, and that is the only setup help there is time for. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route, and the docs are at <a href="https://docs.rocketride.org">docs.rocketride.org</a>.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Extensions installed, SDK installed, key saved, Preflight prints ready.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Extensions installed, key saved, developer id claimed, Setup prints ready.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -189,94 +183,95 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
     <div>
       <p class="kicker">In the room <i>/ 1 minute</i></p>
       <h1>Open the notebook</h1>
-      <p class="lede">Three cells, top to bottom. They check your machine, load your key, and connect to RocketRide Cloud.</p>
+      <p class="lede">Three cells, top to bottom. They install the SDK, load your key, and connect to RocketRide Cloud. <strong>Run All</strong> runs them for you.</p>
     </div>
   </div>
 
   <div class="grid"><table>
     <thead><tr><th>Cell</th><th>What it does</th><th>You see</th></tr></thead>
     <tbody>
-      <tr><td>Preflight</td><td>Checks Python, the SDK, your key and the connection. Every problem comes with its fix.</td><td><code>✅ ready</code></td></tr>
+      <tr><td>Setup</td><td>Installs the RocketRide SDK into this notebook's Python, if it isn't there yet.</td><td><code>✅ ready</code></td></tr>
       <tr><td>Config</td><td>The only cell that reads your environment. Loads <code>ROCKETRIDE_*</code> from the environment or <code>.env</code>, and asks for the key if it's missing.</td><td><code>API key: set</code></td></tr>
       <tr><td>Connect</td><td>Opens one shared RocketRide client for every later cell.</td><td><code>Connected to https://api.rocketride.ai</code></td></tr>
     </tbody>
   </table></div>
-  <div class="note"><b class="k">Every cell is safe to run again</b><p>Files are overwritten, and starting a pipeline attaches to the running one instead of failing. When in doubt, run it again.</p></div>
+  <div class="note"><b class="k">Every cell is safe to run again</b><p>Files are overwritten, and each deploy publishes the next version. When in doubt, run it again.</p></div>
   <div class="note good"><b class="k">Done when</b><p>All three cells ran without a red error and the last one says <strong>Connected</strong>.</p></div>
 
   <details class="fold"><summary>The Config cell keeps asking for my key</summary><div class="fb"><p>There is no <code>ROCKETRIDE_APIKEY</code> in your environment or in a <code>.env</code> next to the notebook. Paste the key when asked: it's kept for the session. To skip the prompt next time, create the <code>.env</code> from Step 2.</p></div></details>
   <details class="fold"><summary>Connect fails with Invalid or expired access_token</summary><div class="fb"><p>The key is wrong or was revoked. Create a new one in RocketRide Cloud, update your <code>.env</code>, restart the kernel and run the three cells again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Preflight ready, key set, client connected.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>SDK ready, key set, client connected.</span></label>
 </section>
 
 <!-- ===== 4 ===== -->
-<section class="phase" data-title="Build and run" data-dur="3">
+<section class="phase" data-title="Build the clock" data-dur="2">
 
   <div class="lead">
     <span class="stepno">04</span>
     <div>
-      <p class="kicker">The build <i>/ 3 minutes, two stages</i></p>
-      <h1>Build and run</h1>
-      <p class="lede">Write the drop-zone pipeline. Then start it and drop a file on it.</p>
+      <p class="kicker">The build <i>/ 2 minutes, two stages</i></p>
+      <h1>Build the clock</h1>
+      <p class="lede">Create the app from RocketRide's template. Then draw the clock into it.</p>
     </div>
   </div>
 
   <p>Each stage ends with something you can see in the notebook. If a stage doesn't work, the last cell of that stage is a <strong>skip-ahead</strong> cell that puts you exactly where the stage should have ended.</p>
 
-  <h2>Stage 1. Build the drop zone <span class="mins">1 min</span></h2>
-  <p>Run the Stage 1 cell. It writes a pipeline of five steps:</p>
+  <h2>Stage 1. Create the app <span class="mins">1 min</span></h2>
+  <p>Run the Stage 1 cell. It reads your organization's developer id, then creates the app under <code>build/apps/alarm_clock/</code> from RocketRide's app template:</p>
   <div class="grid"><table>
-    <thead><tr><th>Step</th><th>Takes</th><th>Gives</th></tr></thead>
+    <thead><tr><th>File</th><th>What it is</th></tr></thead>
     <tbody>
-      <tr><td>Dropper</td><td>A file dropped on its web page</td><td>The file</td></tr>
-      <tr><td>Parse</td><td>Any file</td><td>Text from documents, and the audio, video or images inside</td></tr>
-      <tr><td>Audio transcribe</td><td>Audio and video</td><td>The words spoken in it</td></tr>
-      <tr><td>OCR</td><td>Images</td><td>The text in the picture</td></tr>
-      <tr><td>Response</td><td>Text from all three</td><td>The text, back to whoever dropped the file</td></tr>
+      <tr><td><code>package.json</code></td><td>The app's manifest: its id, name, icon and the packages it uses</td></tr>
+      <tr><td><code>src/App.tsx</code></td><td>The screen. Stage 2 replaces it with the clock.</td></tr>
+      <tr><td><code>src/AppDescriptor.ts</code></td><td>How RocketRide finds and shows the app</td></tr>
+      <tr><td><code>icon.svg</code>, <code>README.md</code></td><td>The app's icon and store listing</td></tr>
     </tbody>
   </table></div>
-  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>Wrote build/alarm-clock.pipe</code> and a map of the five steps.</p></div>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead: run this only if the stage above didn't work</code> at the end of Stage 1. It writes the finished pipeline to <code>build/</code>.</p></div></details>
+  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>App id:</code> with your developer id, then the list of files.</p></div>
+  <details class="fold"><summary>Your organization has no developer id yet</summary><div class="fb"><p>Claim one in the App Builder's <strong>Deploy</strong> tab (Step 2), then run Stage 1 again. It reconnects and picks up the new id.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead: run this only if the stage above didn't work</code> at the end of Stage 1. It reconnects and creates the app again from a clean template.</p></div></details>
 
-  <h2>Stage 2. Drop a file <span class="mins">2 min</span></h2>
-  <ol class="run">
-    <li>Run the Stage 2 cell. It starts the pipeline, sends it a small sample file, and prints the text that comes back.</li>
-    <li>Open the <strong>Drop zone</strong> link it prints, and drop any file you have on the pad: a PDF, a screenshot, a voice memo.</li>
-    <li>Optional: put the path of a file in <code>MY_FILE</code> and run the cell again to send it from the notebook.</li>
-  </ol>
-  <div class="note good"><b class="k">Done when</b><p>The notebook prints <code>Text back:</code> followed by <em>Hello from the drop zone</em>.</p></div>
-  <details class="fold"><summary>Pipeline is already running</summary><div class="fb"><p>There is one running task per user and pipeline. The cell attaches to it instead of failing, so run it again. If it still fails, run the skip-ahead cell: it stops the old copy and starts a fresh one.</p></div></details>
-  <details class="fold"><summary>Text back is empty</summary><div class="fb"><p>The file had no text the pipeline could find: a photo with no writing in it, or a video with no speech. Try a document or a screenshot of some text. Large audio and video files take longer, so give them a minute.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2. It restarts the pipeline and prints a fresh drop zone link.</p></div></details>
+  <h2>Stage 2. Draw the clock <span class="mins">1 min</span></h2>
+  <p>Run the Stage 2 cell. It writes the clock into <code>src/App.tsx</code>:</p>
+  <ul>
+    <li>A round <strong>face</strong> with 60 ticks and 12 numerals, and hour, minute and second hands that move every second.</li>
+    <li>A <strong>digital readout</strong> under it.</li>
+    <li>An <strong>alarm</strong>: pick a time and press <strong>Set alarm</strong>. When the clock gets there, the face flashes and it beeps until you press <strong>Stop</strong>.</li>
+  </ul>
+  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>Wrote src/App.tsx</code> and <code>Wrote README.md</code>.</p></div>
+  <details class="fold"><summary>Want to change it?</summary><div class="fb"><p>The clock is the text in <code>APP_TSX</code>. Change a color or the beep's pitch (<code>880</code>), run Stage 2, then run Stage 3 to publish the new version.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2. It writes the finished clock.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>A file went in and its text came back.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The app exists and the clock is written into it.</span></label>
 </section>
 
 <!-- ===== 5 ===== -->
-<section class="phase" data-title="Set the alarm" data-dur="1">
+<section class="phase" data-title="Deploy and open it" data-dur="2">
 
   <div class="lead">
     <span class="stepno">05</span>
     <div>
-      <p class="kicker">The finish <i>/ 1 minute</i></p>
-      <h1>Set the alarm</h1>
-      <p class="lede">One cell deploys the drop zone to your Prod team and schedules it: awake 9:00 AM to 6:00 PM, Monday to Friday.</p>
+      <p class="kicker">The finish <i>/ 2 minutes</i></p>
+      <h1>Deploy and open it</h1>
+      <p class="lede">One cell sends the app to RocketRide Cloud, waits while it builds, publishes it to your desktop, and prints the link.</p>
     </div>
   </div>
 
   <h2>What the cell does</h2>
   <ol class="run">
-    <li>Finds the team called <strong>Prod</strong> in your organization. To use another team, change <code>TEAM_NAME</code> at the top of the cell.</li>
-    <li><strong>Publishes</strong> your pipeline as a new version and <strong>deploys</strong> it to that team.</li>
-    <li>Sets the <strong>alarm</strong>: a schedule that starts it at 9:00 AM your time on weekdays and keeps it running for nine hours, until 6:00 PM.</li>
-    <li>Prints the next three wake times, and the live drop zone link if it's awake right now.</li>
+    <li><strong>Checks</strong> the app on your laptop: the manifest, the id, the icon and the README.</li>
+    <li><strong>Deploys</strong> it: uploads the app's source as a new version.</li>
+    <li>Waits while RocketRide Cloud <strong>builds</strong> it, and prints each build step. This takes a minute or two.</li>
+    <li><strong>Publishes</strong> it to <strong>@me</strong>, your own desktop, and prints <strong>Open your clock</strong> with the link.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>Deployed "Drop zone"</code> to your team and three wake times at 9:00 AM on weekdays.</p></div>
-  <details class="fold"><summary>No team called "Prod"</summary><div class="fb"><p>The error lists the teams you have. Set <code>TEAM_NAME</code> to one of them and run the cell again, or ask an admin of your organization to create a Prod team.</p></div></details>
-  <details class="fold"><summary>Deploy fails straight away</summary><div class="fb"><p>Deploying needs an <strong>active RocketRide Cloud subscription</strong> and permission to deploy to that team. Check both in your account, then run the cell again.</p></div></details>
-  <details class="fold"><summary>The wake times are an hour off</summary><div class="fb"><p>The cell turns 9:00 AM your time into the server's time using your clock today. After the clocks change for daylight saving, run it again.</p></div></details>
-  <p>Running it again is safe: it publishes a new version, points the same deployment at it, and sets the same schedule.</p>
+  <div class="note good"><b class="k">Done when</b><p>The link opens your clock and the second hand is moving. Set an alarm one minute ahead and wait for it to ring.</p></div>
+  <details class="fold"><summary>The cloud build failed</summary><div class="fb"><p>The cell prints the end of the build log. If you edited the clock, the log points at the line. Run the Stage 2 skip-ahead cell to restore the finished clock, then run Stage 3 again.</p></div></details>
+  <details class="fold"><summary>It's still building</summary><div class="fb"><p>The cell waits five minutes. If the build takes longer, wait a minute and run the skip-ahead cell: it publishes the newest version that finished building.</p></div></details>
+  <details class="fold"><summary>The alarm flashes but doesn't beep</summary><div class="fb"><p>Browsers only play sound after you click on the page. Press <strong>Set alarm</strong> to turn sound on, and check the tab isn't muted.</p></div></details>
+  <details class="fold"><summary>The clock isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it refreshes. Reload cloud.rocketride.ai, or use the link the cell printed.</p></div></details>
+  <p>Running it again is safe: it publishes the next version, and the same link opens it.</p>
 
   <h2>Next project</h2>
   <div class="ports">
@@ -284,7 +279,7 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
     <a href="../../index.html"><b>All workshops</b><span>back to the hub</span></a>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Deployed to Prod, awake 9 to 6 on weekdays.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Your clock is live on cloud.rocketride.ai.</span></label>
 </section>
 
 <!-- ===== REF ===== -->
@@ -302,40 +297,39 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   <h2>The ideas</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>Pipeline</td><td>A chain of steps that runs in RocketRide. Data goes in one end, a result comes out the other. Saved as a <code>.pipe</code> file.</td></tr>
-      <tr><td>Agent</td><td>An AI that doesn't just answer. It reads a situation, makes a decision, and explains why.</td></tr>
-      <tr><td>LLM</td><td>Large language model. The AI that reads and writes text.</td></tr>
-      <tr><td>Prompt</td><td>The written instructions you give a model or an agent.</td></tr>
-      <tr><td>Task</td><td>One running copy of a pipeline. There is one per user and pipeline.</td></tr>
+      <tr><td>App</td><td>A small web page that RocketRide shows inside its own window, with your theme and sign-in already in place.</td></tr>
+      <tr><td>Pipeline</td><td>A chain of steps that runs in RocketRide. Data goes in one end, a result comes out the other. This project doesn't need one.</td></tr>
+      <tr><td>React</td><td>A popular library for building web pages out of components. RocketRide apps are written with it.</td></tr>
+      <tr><td>Build</td><td>Turning an app's source code into the files a browser loads. RocketRide Cloud does it for you.</td></tr>
     </tbody>
   </table></div>
 
   <h2>The tools</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>RocketRide</td><td>An open source runtime for AI pipelines, with a C++ engine and a cloud you deploy to.</td></tr>
+      <tr><td>RocketRide</td><td>An open source runtime for AI pipelines and apps, with a cloud you deploy to.</td></tr>
       <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time. Text cells explain, code cells do the work.</td></tr>
       <tr><td>Cell</td><td>One block in a notebook. Run it with <strong>Shift+Enter</strong>.</td></tr>
       <tr><td>Kernel</td><td>The Python that runs a notebook's cells. Pick it with <strong>Select Kernel</strong>.</td></tr>
       <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide Python SDK.</td></tr>
       <tr><td>API key</td><td>The password a service gives you so your code can call it.</td></tr>
+      <tr><td>App Builder</td><td>The RocketRide extension's screen for designing, packaging and deploying apps.</td></tr>
     </tbody>
   </table></div>
 
   <h2>The pieces of this project</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>Preflight</td><td>The first code cell. Checks your machine and prints <code>ready</code>.</td></tr>
+      <tr><td>Setup</td><td>The first code cell. Installs the RocketRide SDK and prints <code>ready</code>.</td></tr>
       <tr><td>Config</td><td>The only cell that reads your environment. Every later cell uses its <code>CONFIG</code>.</td></tr>
       <tr><td>Connect</td><td>Opens the shared RocketRide client.</td></tr>
       <tr><td>Skip ahead</td><td>The last cell of each stage. Puts you where the stage should have ended.</td></tr>
-      <tr><td>Drop zone</td><td>The web page the dropper step serves. Drop a file on it to send it through the pipeline.</td></tr>
-      <tr><td>Parse</td><td>The step that opens a file and pulls out its text, plus any audio, video or images inside.</td></tr>
-      <tr><td>OCR</td><td>Optical character recognition: reading the text in a picture.</td></tr>
-      <tr><td>Transcribe</td><td>Turning speech in audio or video into text.</td></tr>
-      <tr><td>Team</td><td>A group in your RocketRide organization. Teams double as environments, like Prod.</td></tr>
-      <tr><td>Deploy</td><td>Pointing a team at a published version of your pipeline so it runs there.</td></tr>
-      <tr><td>Schedule</td><td>When a deployed pipeline wakes up, and for how long. Written as a cron expression, like <code>0 9 * * 1-5</code>.</td></tr>
+      <tr><td>Template</td><td>The starter app RocketRide creates for you, so every app has the same shape.</td></tr>
+      <tr><td>Developer id</td><td>Your organization's publisher name. Every app id starts with it, like <code>acme_labs.alarm_clock</code>.</td></tr>
+      <tr><td>Manifest</td><td>The <code>appManifest</code> block in <code>package.json</code>: the app's id, name, icon and README.</td></tr>
+      <tr><td>Deploy</td><td>Uploading a new version of the app's source to RocketRide Cloud, which builds it.</td></tr>
+      <tr><td>Publish</td><td>Choosing who sees a version. <code>@me</code> is your own desktop; teams and the public store are the other choices.</td></tr>
+      <tr><td>Version</td><td>One numbered upload of the app. Versions never change, so each deploy makes the next one.</td></tr>
     </tbody>
   </table></div>
 
