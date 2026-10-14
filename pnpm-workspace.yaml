@@ -1,0 +1,6 @@
+# RocketRide app workspace — one root install links every app under apps/.
+packages:
+  - 'apps/*'
+overrides:
+  shell: 'file:.rocketride/shell/shell.tgz'
+  rocketride: 'file:.rocketride/client/rocketride.tgz'

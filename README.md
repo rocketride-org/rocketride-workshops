@@ -23,7 +23,7 @@ index.html                  # hub: project cards for each workshop, built from w
 workshops.js                # manifest: window.MODULES + window.WORKSHOPS (a script, so it loads on file://)
 SETUP.md                    # at-home setup shared by every workshop
 assets/
-  brand/                    # RocketRide wordmark and mark
+  brand/                    # RocketRide wordmark
   fonts/                    # IBM Plex Sans and Mono (SIL OFL), served locally
   tokens.css                # shared color and type tokens
   codelab.css               # codelab layout and components (hub and guides)
