@@ -46,9 +46,9 @@
   <h2>What you are building</h2>
   <p><strong>notepad-starter</strong> is a tiny notepad: create, edit, delete and list notes, stored in your browser. Vite and TypeScript, no framework, small enough to read in two minutes.</p>
   <p>You add one feature to it: an <strong>✨ Assist</strong> button in the editor that sends the open note to a RocketRide pipeline and shows what comes back. Most real AI work looks like this. You don't start from a blank page, you add AI to an app that already exists.</p>
-  <div class="note warn">
-    <b class="k">TODO(joshua)</b>
-    <p>What the Assist pipeline does with the note, in one sentence.</p>
+  <div class="note">
+    <b class="k">What Assist does</b>
+    <p>It sends the open note to a RocketRide pipeline that summarizes it in 3 to 5 bullets with Claude, and shows the bullets under the editor.</p>
   </div>
 
   <h2>Where RocketRide comes in</h2>
@@ -79,8 +79,9 @@
       <tr><td>Notebook</td><td>Runs every step: clone, install, write files, start the app</td><td><code>notepad-integration.ipynb</code></td></tr>
       <tr><td>Notepad app</td><td>The existing app you are changing</td><td><code>./notepad-starter</code>, cloned by Stage 1</td></tr>
       <tr><td>RocketRide client</td><td>One shared, connected SDK client</td><td><code>src/rocketride.ts</code></td></tr>
-      <tr><td>Assist button</td><td>Sends the note, shows the answer</td><td><code>src/main.ts</code></td></tr>
-      <tr><td>Pipeline</td><td>Does the AI work</td><td>RocketRide Cloud</td></tr>
+      <tr><td>Summarize pipeline</td><td>The five steps that turn a note into bullets</td><td><code>src/assist-pipeline.json</code>, run on RocketRide Cloud</td></tr>
+      <tr><td><code>runAssist()</code></td><td>Starts the pipeline and sends the note</td><td><code>src/assist.ts</code></td></tr>
+      <tr><td>Assist button</td><td>Calls <code>runAssist()</code>, shows the answer</td><td><code>src/main.ts</code></td></tr>
     </tbody>
   </table></div>
 
@@ -113,6 +114,7 @@
       <tr><td>git</td><td><code>git --version</code>. Stage 1 clones the app.</td></tr>
       <tr><td>Cloud account</td><td>Signed up, email confirmed, and <strong>subscribed to RocketRide Cloud</strong></td></tr>
       <tr><td>RocketRide API key</td><td>Created in your RocketRide Cloud account</td></tr>
+      <tr><td>Model key</td><td>An Anthropic key saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your organization's RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone.</td></tr>
     </tbody>
   </table></div>
 
@@ -135,14 +137,12 @@
   <div class="note good"><b class="k">Done when</b><p>Both extensions show as installed, and a new <code>.ipynb</code> file opens as a notebook with cells.</p></div>
   <details class="fold"><summary>Using Cursor or Windsurf?</summary><div class="fb"><p>They install from Open VSX rather than the VS Code marketplace. Python and Jupyter are published there, so the same searches work.</p></div></details>
 
-  <h2>Install Python and the SDK <span class="mins">3 min</span></h2>
+  <h2>Install Python <span class="mins">3 min</span></h2>
   <ol class="run">
     <li>Check your version. If it's older than 3.10, install a current one from <a href="https://www.python.org/downloads/">python.org</a>.</li>
-    <li>Install the RocketRide SDK and the notebook kernel into that Python.
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride ipykernel</pre></div>
-    </li>
+    <li>That's all. The notebook's Preflight cell installs the RocketRide SDK into that Python for you.</li>
   </ol>
-  <details class="fold"><summary>On Windows</summary><div class="fb"><p>Use <code>python</code> instead of <code>python3</code>, or the launcher: <code>py -m pip install rocketride ipykernel</code>.</p></div></details>
+  <details class="fold"><summary>On Windows</summary><div class="fb"><p>Use <code>python --version</code> instead of <code>python3 --version</code>, or the launcher: <code>py --version</code>.</p></div></details>
 
   <h2>Install Node, pnpm and git <span class="mins">3 min</span></h2>
   <div class="grid"><table>
@@ -176,16 +176,15 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   </div>
   <ol class="run">
     <li>Save the notebook into the folder with your <code>.env</code>, and open the folder with <strong>File</strong>, <strong>Open Folder</strong>.</li>
-    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick the Python where you installed <code>rocketride</code>.</li>
+    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick Python 3.10 or newer.</li>
     <li>Run the <strong>Preflight</strong> cell with <strong>Shift+Enter</strong>.</li>
   </ol>
   <figure><div class="draw"><p style="margin:0;font-family:var(--mono);font-size:12px;color:var(--dim)">TODO(joshua): screenshot of the kernel picker with the right interpreter selected.</p></div></figure>
   <div class="note good"><b class="k">Done when</b><p>Preflight prints a green <strong>✅ ready</strong>.</p></div>
 
-  <details class="fold"><summary>It says No module named 'rocketride'</summary><div class="fb"><p>The kernel is a different Python from the one you installed into. Pick another interpreter in <strong>Select Kernel</strong>, or run <code>%pip install rocketride ipykernel</code> in a new cell and restart the kernel.</p></div></details>
+  <details class="fold"><summary>It says Couldn't install the RocketRide SDK</summary><div class="fb"><p>The cell prints pip's error. Usually it's no internet, or a VPN or proxy blocking it. Switch networks, then run Preflight again.</p></div></details>
   <details class="fold"><summary>It asks me to install ipykernel</summary><div class="fb"><p>Accept the prompt, or run <code>python3 -m pip install ipykernel</code> for that interpreter.</p></div></details>
   <details class="fold"><summary>Node, pnpm or git is missing or too old</summary><div class="fb"><p>Preflight names the fix for each one. Install or upgrade, then <strong>restart your editor</strong>: a running kernel doesn't see a changed <code>PATH</code>.</p></div></details>
-  <details class="fold"><summary>Can't reach api.rocketride.ai</summary><div class="fb"><p>No internet, or a VPN or proxy is blocking it. Switch networks or turn the VPN off, then run Preflight again.</p></div></details>
 
   <div class="note fac">
     <b class="k">Stuck on any of this?</b>
@@ -203,14 +202,14 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
     <div>
       <p class="kicker">In the room <i>/ 2 minutes</i></p>
       <h1>Open the notebook</h1>
-      <p class="lede">Three cells, top to bottom. They check your machine, load your key, and connect to RocketRide Cloud.</p>
+      <p class="lede">Three cells, top to bottom. They install the SDK and check your machine, load your key, and connect to RocketRide Cloud. <strong>Run All</strong> runs the whole notebook.</p>
     </div>
   </div>
 
   <div class="grid"><table>
     <thead><tr><th>Cell</th><th>What it does</th><th>You see</th></tr></thead>
     <tbody>
-      <tr><td>Preflight</td><td>Checks Python, the SDK, your key, the connection, and Node, pnpm and git. Every problem comes with its fix.</td><td><code>✅ ready</code></td></tr>
+      <tr><td>Preflight</td><td>Installs the RocketRide SDK if it's missing, then checks Node, pnpm and git. Every problem comes with its fix.</td><td><code>✅ ready</code></td></tr>
       <tr><td>Config</td><td>The only cell that reads your environment. Loads <code>ROCKETRIDE_*</code> from the environment or <code>.env</code>, and asks for the key if it's missing.</td><td><code>API key: set</code></td></tr>
       <tr><td>Connect</td><td>Opens one shared RocketRide client for every later cell.</td><td><code>Connected to https://api.rocketride.ai</code></td></tr>
     </tbody>
@@ -258,24 +257,55 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
 
   <h2>Stage 2. Add the RocketRide client <span class="mins">5 min</span></h2>
   <ol class="run">
-    <li>Run the cell that adds the SDK: <code>pnpm add rocketride</code>.</li>
-    <li>Run the <code>%%writefile notepad-starter/src/rocketride.ts</code> cell. It writes one shared, connected client that every part of the app uses.</li>
+    <li>Run the cell that adds the SDK: <code>pnpm add rocketride@1.4.0</code>.</li>
+    <li>Run the <code>%%writefile notepad-starter/src/rocketride.ts</code> cell. It writes one shared client that every part of the app uses:
+      <div class="src"><div class="bar2"><span>src/rocketride.ts</span><button class="cp-btn">Copy</button></div><pre><span class="k">let</span> client: RocketRideClient | <span class="k">null</span> = <span class="k">null</span>;
+
+<span class="c">/** One shared, connected client. Connects on first use. */</span>
+<span class="k">export async function</span> getClient(): Promise&lt;RocketRideClient&gt; {
+  <span class="k">if</span> (!client) {
+    client = <span class="k">new</span> RocketRideClient({ uri: env.ROCKETRIDE_URI, auth: env.ROCKETRIDE_APIKEY, env });
+  }
+  <span class="k">if</span> (!client.isConnected()) <span class="k">await</span> client.connect();
+  <span class="k">return</span> client;
+}</pre></div>
+    </li>
+    <li>Run the key cell. It writes your RocketRide key to <code>notepad-starter/.env.local</code>, where Vite reads it, and restarts the dev server so it picks the key up.</li>
   </ol>
-  <div class="note warn"><b class="k">TODO(joshua)</b><p>The finished <code>src/rocketride.ts</code> cell, and what to watch for in this stage.</p></div>
-  <div class="note good"><b class="k">Done when</b><p><code>rocketride</code> is in <code>package.json</code> and the app still loads in the browser.</p></div>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2. It checks out the finished client files from the app's <code>integrated</code> branch and reinstalls.</p></div></details>
+  <div class="note"><b class="k">Watch for</b><p><code>+ rocketride 1.4.0</code> from pnpm, then <code>Wrote .env.local</code> and the notepad address again. The app looks the same: the client only connects when the button needs it, in Stage 3.</p></div>
+  <div class="note good"><b class="k">Done when</b><p><code>rocketride</code> is in <code>package.json</code>, <code>.env.local</code> exists, and the app still loads in the browser.</p></div>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2. It checks out the finished client files from the app's <code>integrated</code> branch, reinstalls, and writes <code>.env.local</code>.</p></div></details>
 
   <h2>Stage 3. Call your pipeline from the app <span class="mins">5 min</span></h2>
   <ol class="run">
-    <li>Run the <code>%%writefile</code> cell for the feature. The dev server reloads on save.</li>
-    <li>Run the <strong>Run it</strong> cell and open the app.</li>
-    <li>Open a note and press <strong>✨ Assist</strong>.</li>
+    <li>Run the pipeline cell. It writes the Summarize pipeline to <code>src/assist-pipeline.json</code> and runs it once from Python with a sample note, so you see bullets in the notebook before the app does.</li>
+    <li>Run the <code>%%writefile notepad-starter/src/assist.ts</code> cell. It writes <code>runAssist()</code>, the one function the button calls:
+      <div class="src"><div class="bar2"><span>src/assist.ts</span><button class="cp-btn">Copy</button></div><pre><span class="k">export async function</span> runAssist(note: Note): Promise&lt;string&gt; {
+  <span class="k">const</span> rr = <span class="k">await</span> getClient();
+  <span class="k">const</span> { token } = <span class="k">await</span> rr.use({ pipeline: ASSIST_PIPELINE, useExisting: <span class="k">true</span> });
+  <span class="k">const</span> result = <span class="k">await</span> rr.send(token, note.body, {}, <span class="s">'text/plain'</span>);
+  <span class="k">return</span> String(result?.answers?.[0] ?? <span class="s">'No answer came back.'</span>);
+}</pre></div>
+    </li>
+    <li>Run the button cell. It adds the <strong>✨ Assist</strong> button and its output panel to the editor. The app reloads by itself.</li>
+    <li>Open a note, write a few sentences, and press <strong>✨ Assist</strong>.</li>
   </ol>
-  <div class="note warn"><b class="k">TODO(joshua)</b><p>The pipeline-backed feature, its call site, and what a good answer looks like.</p></div>
+  <div class="grid"><table>
+    <thead><tr><th>Pipeline step</th><th>Takes</th><th>Gives</th></tr></thead>
+    <tbody>
+      <tr><td>Webhook</td><td>The note, sent as text</td><td>Text</td></tr>
+      <tr><td>Question</td><td>Text</td><td>A question for the model</td></tr>
+      <tr><td>Prompt</td><td>The question</td><td>The question plus "summarize in 3 to 5 bullets"</td></tr>
+      <tr><td>Anthropic (Claude)</td><td>The question</td><td>The bullets</td></tr>
+      <tr><td>Response</td><td>The bullets</td><td>The answer, back to the app</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b class="k">What a good answer looks like</b><p>Three to five short lines starting with a bullet, each one a fact from your note, and nothing else. A one-line note gets one or two bullets.</p></div>
   <div class="note good"><b class="k">Done when</b><p>An answer from your pipeline appears under the editor.</p></div>
-  <details class="fold"><summary>The answer says LLM error</summary><div class="fb"><p>A bad or stale model key doesn't fail the run. The error comes back as the answer. Ask a facilitator to check the model key, then try again.</p></div></details>
+  <details class="fold"><summary>The answer says LLM error, or mentions the API key</summary><div class="fb"><p>A bad, stale or missing model key doesn't fail the run. The error comes back as the answer. The pipeline reads <code>ROCKETRIDE_ANTHROPIC_KEY</code> from your organization's RocketRide Variables. Ask a facilitator to check it, then try again.</p></div></details>
+  <details class="fold"><summary>The app shows RocketRide error</summary><div class="fb"><p>The app couldn't connect. Usually <code>.env.local</code> is missing, or the dev server started before it existed. Run the key cell from Stage 2 again: it rewrites the file and restarts the dev server. Then reload the page.</p></div></details>
   <details class="fold"><summary>The app didn't change after a %%writefile cell</summary><div class="fb"><p>The dev server isn't running, or the tab is stale. Run the start cell from Stage 1 again and reload the page.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 3. It checks out the finished feature from the <code>integrated</code> branch.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 3. It checks out the finished feature from the <code>integrated</code> branch: the pipeline, <code>runAssist()</code> and the button.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Pressing Assist on a note shows an answer from your pipeline.</span></label>
 </section>
@@ -294,12 +324,13 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
 
   <h2>Clean up</h2>
   <ol class="run">
-    <li>Run the <strong>Clean up</strong> cell. It stops the dev server this notebook started.</li>
+    <li>Run the <strong>Clean up</strong> cell. It stops the dev server this notebook started, and the Summarize pipeline.</li>
     <li>Keep <code>./notepad-starter</code> if you want to keep playing. It's yours.</li>
   </ol>
 
   <h2>Take it further</h2>
   <ul>
+    <li>Change what Assist does: edit the prompt's instructions in <code>src/assist-pipeline.json</code>, for example "Suggest a better title".</li>
     <li>Add a second button that calls a different pipeline with the same client.</li>
     <li>Compare your files with the app's <code>integrated</code> branch: <code>git diff main integrated</code>.</li>
   </ul>
@@ -314,7 +345,7 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
     <a href="../../index.html"><b>All workshops</b><span>back to the hub</span></a>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Dev server stopped.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Dev server and pipeline stopped.</span></label>
 </section>
 
 <!-- ===== REF ===== -->
@@ -359,12 +390,15 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   <h2>The pieces of this project</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>Preflight</td><td>The first code cell. Checks your machine and prints <code>ready</code>.</td></tr>
+      <tr><td>Preflight</td><td>The first code cell. Installs the SDK, checks your machine and prints <code>ready</code>.</td></tr>
       <tr><td>Config</td><td>The only cell that reads your environment. Every later cell uses its <code>CONFIG</code>.</td></tr>
       <tr><td>Connect</td><td>Opens the shared RocketRide client.</td></tr>
       <tr><td>Skip ahead</td><td>The last cell of each stage. Puts you where the stage should have ended.</td></tr>
       <tr><td><code>main</code> and <code>integrated</code></td><td>The app's two branches: the plain notepad, and the finished integration.</td></tr>
       <tr><td>Dev server</td><td>The local server at <code>127.0.0.1:5173</code> that serves the app while you work.</td></tr>
+      <tr><td><code>.env.local</code></td><td>The app's settings file. Holds your RocketRide key for local development; git ignores it.</td></tr>
+      <tr><td>Webhook</td><td>The pipeline step that receives data sent to it, here the note's text.</td></tr>
+      <tr><td>Variables</td><td>Settings stored in your RocketRide organization, like the model key. Pipelines read them on the server.</td></tr>
     </tbody>
   </table></div>
 

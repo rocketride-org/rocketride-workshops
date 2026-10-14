@@ -95,7 +95,8 @@ for (const d of folders) {
 
 // 4. Relative links in every HTML and CSS file resolve
 if (!existsSync(join(root, "index.html"))) fail("index.html: missing");
-const skip = new Set(["node_modules", ".git", ".internal", "build"]);
+// notepad-starter is the app notepad-integration clones next to its notebook (gitignored).
+const skip = new Set(["node_modules", ".git", ".internal", "build", "notepad-starter"]);
 function walk(dir, ext, out = []) {
   for (const name of readdirSync(dir)) {
     if (skip.has(name) || (name.startsWith(".") && name !== ".github")) continue;
