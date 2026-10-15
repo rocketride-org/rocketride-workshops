@@ -240,7 +240,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>claude</pre></div>
     </li>
     <li>Ask for the clock:
-      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Build a basic analog alarm clock in apps/alarm_clock: a ticking clock face with hour, minute and second hands, the digital time under it, a time picker and a Set alarm button. When the alarm time comes, flash the face and beep until I press Stop. Replace the template README with a short description of the clock. Don't deploy it.</pre></div>
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Build a basic analog alarm clock in apps/alarm_clock: a ticking clock face with hour, minute and second hands, the digital time under it, a time picker and a Set alarm button. When the alarm time comes, flash the face and beep until I press Stop. Replace the template README and the description in package.json with a short description of the clock. Don't deploy it.</pre></div>
     </li>
   </ol>
   <p>Claude reads the <code>CLAUDE.md</code> and RocketRide docs that init put in the folder, so it knows how a RocketRide app is put together. Let it edit the files it asks about.</p>
@@ -253,8 +253,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
     <li>Set an alarm one minute ahead and wait for it to ring.</li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The preview shows your clock with the second hand moving.</p></div>
-  <details class="fold"><summary>The App Builder doesn't open, or <code>.rrapp</code> opens as text</summary><div class="fb"><p>The editor opened your project folder in <strong>Restricted Mode</strong>, which turns off the RocketRide extension (and most others). Open the Command Palette (<strong>Ctrl+Shift+P</strong>, or <strong>Cmd+Shift+P</strong> on a Mac), run <strong>Workspaces: Manage Workspace Trust</strong> and click <strong>Trust</strong>. Then open <code>alarm_clock.rrapp</code> again.</p></div></details>
-  <details class="fold"><summary>The App Builder won't open, or the preview never loads</summary><div class="fb"><p>Your editor hasn't trusted the project folder yet, so it runs in <strong>Restricted Mode</strong> and the RocketRide extension stays switched off. Click <strong>Restricted Mode</strong> in the status bar (or the banner at the top), then <strong>Trust</strong>, and confirm <strong>Trust Folder and Continue</strong>. You can also run <strong>Workspaces: Manage Workspace Trust</strong> from the command palette. Then open the <code>.rrapp</code> file again.</p></div></details>
+  <details class="fold"><summary>The App Builder won't open, <code>.rrapp</code> opens as text, or the preview never loads</summary><div class="fb"><p>Your editor hasn't trusted the project folder yet, so it runs in <strong>Restricted Mode</strong> and the RocketRide extension stays switched off. Click <strong>Restricted Mode</strong> in the status bar (or the banner at the top), then <strong>Trust</strong>, and confirm <strong>Trust Folder and Continue</strong>. You can also run <strong>Workspaces: Manage Workspace Trust</strong> from the command palette. Then open the <code>.rrapp</code> file again.</p></div></details>
   <details class="fold"><summary>Want to change it?</summary><div class="fb"><p>Ask Claude: a different color, a louder beep, a snooze button. The preview rebuilds every time a file is saved.</p></div></details>
   <details class="fold"><summary>The preview shows an error, or stays blank</summary><div class="fb"><p>Open the <strong>Errors</strong> pane next to Preview, copy the error into Claude and ask it to fix it.</p></div></details>
   <details class="fold"><summary>No Claude Code, or still stuck? Use the fallback</summary><div class="fb"><p>Download <a href="alarm-clock.ipynb" download>alarm-clock.ipynb</a> into your project folder, open it, pick a Python 3.10+ kernel, and run its one code cell. It writes a finished clock into <code>apps/alarm_clock</code>, and the preview picks it up.</p></div></details>
@@ -328,7 +327,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
       <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide Python SDK.</td></tr>
       <tr><td><code>rocketride</code> command</td><td>Installed with the SDK. <code>init</code> sets up a workspace, <code>app create</code> makes an app.</td></tr>
       <tr><td>Claude Code</td><td>A coding agent you talk to in the terminal. It reads the workspace's <code>CLAUDE.md</code> to learn the platform.</td></tr>
-      <tr><td>API key</td><td>The password a service gives you so your code can call it. <code>rocketride init</code> makes one when you sign in.</td></tr>
+      <tr><td>API key</td><td>The password a service gives you so your code can call it. You create one at cloud.rocketride.ai and save it in <code>.env</code>.</td></tr>
       <tr><td>App Builder</td><td>The RocketRide extension's screen for an app: <strong>Design</strong> shows it live, <strong>Deploy</strong> ships it.</td></tr>
       <tr><td>Preview</td><td>The App Builder's live view of your app. It rebuilds every time a file is saved.</td></tr>
     </tbody>
