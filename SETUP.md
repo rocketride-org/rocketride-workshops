@@ -38,15 +38,16 @@ Restart your editor after installing them, so its terminals see them. The hub li
 2. **Start a RocketRide Cloud subscription.** Deploying from the App Builder fails without an active subscription.
 3. Find your organization's **developer id**: open the RocketRide App Builder's **Deploy** tab. If your organization hasn't claimed one, an org admin claims it there. You pass it to `rocketride app create`.
 
-## 5. Signing in
+## 5. Your API key
 
-You don't create or copy an API key. Each project starts with:
+Create an API key at [cloud.rocketride.ai](https://cloud.rocketride.ai) and keep it handy. Each project starts with a `.env` file in the project folder, made with your editor's **New File** button:
 
 ```sh
-rocketride init --uri https://api.rocketride.ai
+ROCKETRIDE_URI=https://api.rocketride.ai
+ROCKETRIDE_APIKEY=your-api-key
 ```
 
-The first time, it opens your browser to sign in, then saves a key to `.env` in the project folder and makes git ignore it. The notebooks' RocketRide client reads that `.env` on its own. To sign in again, delete `.env` and run init again.
+Then `rocketride init` reads it. (rocketride 1.4.0 can't sign in through the browser, so the key in `.env` is required.) Don't make the file with `echo ... > .env` in PowerShell: that writes UTF-16, and `rocketride` fails with `UnicodeDecodeError ... byte 0xff`. The notebooks' RocketRide client reads the same `.env`.
 
 Never commit a `.env` file or paste a key into a notebook cell.
 
@@ -64,11 +65,11 @@ If the notebook says `No module named 'rocketride'`, the kernel is pointing at a
 
 ## 8. Check everything
 
-In an empty folder, run the first two steps of any project:
+In an empty folder, save the `.env` from step 5, then run:
 
 ```sh
 pip install rocketride
-rocketride init --uri https://api.rocketride.ai
+rocketride init
 ```
 
 If init ends with `Workspace initialized against https://api.rocketride.ai`, you're set. Delete the folder, or keep it for the workshop.

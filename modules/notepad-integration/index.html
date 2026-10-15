@@ -159,7 +159,7 @@
   <p>Do this now. No account is the most common thing that stops people in the room.</p>
   <ol class="run">
     <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
-    <li>That's all. You don't create a key by hand: <code>rocketride init</code> signs you in through your browser and saves a key to your project's <code>.env</code>.</li>
+    <li>Create a RocketRide API key at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and keep it handy. In Step 3 you save it to your project's <code>.env</code>.</li>
   </ol>
   <div class="note warn">
     <b class="k">Keep it out of the notebook</b>
@@ -200,9 +200,14 @@
     <li>Install the RocketRide package:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride</pre></div>
     </li>
-    <li>Make the folder a RocketRide workspace. Your browser opens so you can sign in to RocketRide Cloud:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init --uri https://api.rocketride.ai</pre></div>
-      It writes <code>.env</code> with your RocketRide address and key, plus the RocketRide docs and a <code>CLAUDE.md</code> for coding agents.
+    <li><b>Save your RocketRide key.</b> Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Then, in the editor's Explorer, click <strong>New File</strong>, name it <code>.env</code> (in the project folder itself), paste these two lines, put your key in place of <code>your-api-key</code>, and save:
+      <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_URI=https://api.rocketride.ai
+ROCKETRIDE_APIKEY=your-api-key</pre></div>
+      <div class="note warn"><b class="k">Make .env in the editor, not the terminal</b><p>On Windows, <code>echo ... &gt; .env</code> in PowerShell saves the file as UTF-16, and every <code>rocketride</code> command then stops with <code>UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff</code>. A file made with the editor's <strong>New File</strong> button is saved correctly. Never commit <code>.env</code> or paste your key into a notebook.</p></div>
+    </li>
+    <li>Make the folder a RocketRide workspace. Init reads your key from <code>.env</code>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init</pre></div>
+      It prints <code>Using existing credentials for https://api.rocketride.ai</code>, then adds the RocketRide docs and a <code>CLAUDE.md</code> for coding agents.
     </li>
     <li>Clone the notepad app into the folder and install it:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>git clone https://github.com/rocketride-org/notepad-starter
@@ -220,8 +225,10 @@ pnpm dev --host 127.0.0.1 --port 5173 --strictPort</pre></div>
   <div class="note good"><b class="k">Done when</b><p>The project folder has <code>.env</code>, <code>notepad-starter/</code> and the notebook side by side, and the notepad at <code>127.0.0.1:5173</code> keeps a note after a reload.</p></div>
   <div class="note"><b class="k">Why --ignore-workspace?</b><p>If a folder above yours has a <code>pnpm-workspace.yaml</code>, pnpm would use it instead of the app's own settings. The flag keeps pnpm inside <code>notepad-starter</code>.</p></div>
 
-  <details class="fold"><summary>The browser sign-in doesn't open</summary><div class="fb"><p>The command prints a sign-in link: copy it into your browser and finish there. If it still fails, check you're online and run <code>rocketride init --uri https://api.rocketride.ai</code> again in the project folder.</p></div></details>
-  <details class="fold"><summary>rocketride: command not found</summary><div class="fb"><p>pip installed it into a <code>Scripts</code> (Windows) or <code>bin</code> folder that isn't on your <code>PATH</code>. Run it through Python instead, which works the same: <code>python -m rocketride.cli.main init --uri https://api.rocketride.ai</code> (or <code>python3</code>, or <code>py</code> on Windows).</p></div></details>
+  <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p>Init didn't find your key. Check that <code>.env</code> sits in the folder the terminal is in (not in a subfolder), that it has both lines spelled exactly as shown, and that it's saved. This version of <code>rocketride</code> can't sign in through the browser, so the key in <code>.env</code> is required.</p></div></details>
+  <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was saved as UTF-16. Open it in the editor, click <strong>UTF-16 LE</strong> in the status bar at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Or delete it and make it again with <strong>New File</strong>.</p></div></details>
+  <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one at cloud.rocketride.ai, paste it into <code>.env</code>, save, and run <code>rocketride init</code> again.</p></div></details>
+  <details class="fold"><summary>rocketride: command not found</summary><div class="fb"><p>pip installed it into a <code>Scripts</code> (Windows) or <code>bin</code> folder that isn't on your <code>PATH</code>. Run it through Python instead, which works the same: <code>python -m rocketride.cli.main init</code> (or <code>python3</code>, or <code>py</code> on Windows).</p></div></details>
   <details class="fold"><summary>pip can't install rocketride</summary><div class="fb"><p>No internet, or a proxy blocking it: switch networks and run it again. If it says <code>externally-managed-environment</code>, your Python is a system one: make a virtual environment with <code>python3 -m venv .venv</code>, activate it, install there, and pick <code>.venv</code> in <strong>Select Kernel</strong>.</p></div></details>
   <details class="fold"><summary>pnpm, node or git: command not found</summary><div class="fb"><p>Install it from the table in step 2 (<code>npm install -g pnpm@latest</code> for pnpm), then <strong>restart your editor</strong>: open terminals don't see a changed <code>PATH</code>.</p></div></details>
   <details class="fold"><summary>pnpm install fails or hangs</summary><div class="fb"><p>Run it again. If it still fails, run <code>pnpm store prune</code>, then <code>pnpm install --ignore-workspace</code> again.</p></div></details>
@@ -255,7 +262,7 @@ pnpm dev --host 127.0.0.1 --port 5173 --strictPort</pre></div>
   <div class="note good"><b class="k">Done when</b><p>The cell prints <code>Found the notepad app</code> and <code>Connected to RocketRide</code>.</p></div>
   <details class="fold"><summary>No .env here</summary><div class="fb"><p>The notebook isn't in your project folder, or the folder wasn't initialized. Save the notebook next to <code>.env</code> and <code>notepad-starter/</code>, open it from there, and run the cell again.</p></div></details>
   <details class="fold"><summary>No module named 'rocketride'</summary><div class="fb"><p>The notebook's kernel is a different Python from the one you ran <code>pip install rocketride</code> with. Pick the right one in <strong>Select Kernel</strong>, or run <code>pip install rocketride</code> for the kernel's Python.</p></div></details>
-  <details class="fold"><summary>Invalid or expired access_token</summary><div class="fb"><p>The saved key was revoked. Run <code>rocketride init --uri https://api.rocketride.ai</code> again in the project folder to sign in again, then restart the kernel and run the Connect cell.</p></div></details>
+  <details class="fold"><summary>Invalid or expired access_token</summary><div class="fb"><p>The key in <code>.env</code> was revoked. Create a new one at cloud.rocketride.ai, paste it into <code>.env</code>, save, then restart the kernel and run the Connect cell.</p></div></details>
 
   <h2>Stage 2. Add the RocketRide client <span class="mins">5 min</span></h2>
   <ol class="run">

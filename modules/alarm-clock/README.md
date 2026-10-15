@@ -6,7 +6,8 @@ The first and fastest module. Attendees start a RocketRide project by hand, the 
 
 ```sh
 pip install rocketride
-rocketride init --uri https://api.rocketride.ai
+# .env (made with the editor's New File, UTF-8): ROCKETRIDE_URI=https://api.rocketride.ai and ROCKETRIDE_APIKEY=<key>
+rocketride init
 rocketride app create alarm_clock --name "Alarm Clock" --developer <your developer id>
 claude
 ```

@@ -6,7 +6,7 @@ Operational notes for running this module. Time box: **15 minutes**. Attendees d
 
 | Step                         | Time  | Where people fall behind                                                                       |
 | ---------------------------- | ----- | ---------------------------------------------------------------------------------------------- |
-| Start the project            | 4 min | `rocketride` not on PATH. The sign-in tab opens behind the editor. A wrong `--developer`.       |
+| Start the project            | 4 min | `rocketride` not on PATH. A `.env` saved as UTF-16 or in the wrong folder. A wrong `--developer`.|
 | Ask Claude for the clock     | 3 min | No Claude Code, or not signed in: send them to the fallback notebook.                           |
 | See it in the App Builder    | 2 min | pnpm missing, so the preview can't build. First build is slow on venue wifi.                    |
 | Deploy from the App Builder  | 6 min | The cloud build takes a minute or two. Have them watch the version card's build ticker.         |
@@ -34,8 +34,9 @@ If the banner doesn't appear after an admin cleared the id, close and reopen the
 | ------------------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `rocketride: command not found`                              | pip's scripts folder isn't on `PATH`.                                      | Use `python -m rocketride.cli.main` with the same arguments, or install into a virtual environment and activate it.      |
 | pip: `externally-managed-environment`                        | A system Python that blocks pip.                                           | `python3 -m venv .venv`, activate it, run `pip install rocketride` again.                                                |
-| `rocketride init` says it's probing `localhost:5565`         | `--uri https://api.rocketride.ai` was left out.                            | Ctrl+C and rerun with the `--uri`.                                                                                       |
-| Init waits forever                                           | The sign-in tab opened behind the editor, or no browser opened.            | Find the tab, or open the link init printed.                                                                             |
+| Init: `Error: No authorization provided`                     | No usable key in `.env`. rocketride 1.4.0 can't sign in through the browser (its server probe logs in with an empty key), so the key in `.env` is required. | Check `.env` is in the project folder, has `ROCKETRIDE_URI=https://api.rocketride.ai` and `ROCKETRIDE_APIKEY=<key>`, and is saved. |
+| Init: `UnicodeDecodeError` ... `byte 0xff`                   | `.env` was made with `echo ... > .env` in PowerShell, which writes UTF-16. | In VS Code: status bar **UTF-16 LE** → **Save with Encoding** → **UTF-8**. Or recreate it with **New File**.             |
+| Init: `Stored credentials ... were rejected`                 | The key is wrong or revoked.                                               | New key at cloud.rocketride.ai, paste into `.env`, rerun `rocketride init`.                                              |
 | `app create` fails on `pnpm`                                 | pnpm isn't installed, or the editor started before it was.                 | `npm install -g pnpm@latest`, restart the editor, run `pnpm install` in the project folder.                              |
 | App id starts with `local.`                                  | `--developer` was left out.                                                | Delete `apps/alarm_clock` and rerun `app create` with `--developer <id>`.                                                |
 | `claude: command not found`                                  | Claude Code isn't installed, or the terminal predates the install.         | Use the fallback notebook: save it in the project folder and run its cell.                                               |

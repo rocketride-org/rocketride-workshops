@@ -107,7 +107,7 @@
       <tr><td>Editor</td><td>VS Code, Cursor or Windsurf, with the Python, Jupyter and RocketRide extensions</td></tr>
       <tr><td>Python 3.10+</td><td><code>python --version</code> (<code>python3</code> on macOS and Linux). You install the RocketRide package yourself in Step 3.</td></tr>
       <tr><td>Node 20+, pnpm 10+</td><td><code>node --version</code>, <code>pnpm --version</code>. Creating the app installs its packages with them, and the App Builder runs the portal with them.</td></tr>
-      <tr><td>Cloud account</td><td>A RocketRide Cloud account with an active subscription. <code>rocketride init</code> signs you in through your browser.</td></tr>
+      <tr><td>Cloud account</td><td>A RocketRide Cloud account with an active subscription. You create an API key there and save it in your project's <code>.env</code> (Step 3).</td></tr>
       <tr><td>Developer id</td><td>Your organization's publisher name, the first part of every app id. Claimed once per organization (below).</td></tr>
       <tr><td>Anthropic key</td><td>Saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone; the portal can also save yours.</td></tr>
     </tbody>
@@ -126,7 +126,7 @@
   <h2>Get your RocketRide Cloud account <span class="mins">3 min</span></h2>
   <ol class="run">
     <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
-    <li>That's all. You don't create a key by hand: <code>rocketride init</code> in Step 3 signs you in through your browser and saves a key to <code>.env</code> in your project folder.</li>
+    <li>Create a RocketRide API key at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and keep it handy. In Step 3 you save it to <code>.env</code> in your project folder.</li>
   </ol>
   <div class="note warn">
     <b class="k">Keep it out of the notebook</b>
@@ -167,14 +167,20 @@
   <p>The RocketRide Python package, which gives you the <code>rocketride</code> command, plus <code>nbformat</code>, which lets the notebooks load each other.</p>
   <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride nbformat</pre></div>
   <div class="note good"><b class="k">Done when</b><p>pip ends with <code>Successfully installed</code> (or <code>Requirement already satisfied</code>), and <code>rocketride --help</code> prints its commands.</p></div>
-  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code> (pip warns about it, naming the folder). Add that folder to your <code>PATH</code> and open a new terminal, or skip the command and use Python directly: <code>python -m rocketride.cli.main</code> works the same, so <code>python -m rocketride.cli.main init --uri https://api.rocketride.ai</code> is the next step.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code> (pip warns about it, naming the folder). Add that folder to your <code>PATH</code> and open a new terminal, or skip the command and use Python directly: <code>python -m rocketride.cli.main</code> works the same, so <code>python -m rocketride.cli.main init</code> is the next step.</p></div></details>
   <details class="fold"><summary>pip can't install</summary><div class="fb"><p>Usually it's no internet, or a VPN or proxy blocking it: switch networks and try again. If it says <code>externally-managed-environment</code>, your Python is a system Python: make a virtual environment in the project folder (<code>python -m venv .venv</code>, then activate it) and install there. Pick the same <code>.venv</code> Python as the notebooks' kernel later.</p></div></details>
 
   <h2>Initialize the workspace <span class="mins">1 min</span></h2>
-  <p><code>rocketride init</code> turns the folder into a RocketRide workspace. It opens your browser so you can sign in to RocketRide Cloud, then writes a key to <code>.env</code>, the RocketRide docs to <code>.rocketride/</code>, a <code>CLAUDE.md</code> for coding agents, and empty <code>apps/</code> and <code>pipelines/</code> folders.</p>
-  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init --uri https://api.rocketride.ai</pre></div>
+  <p>First save your key. Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Then, in the editor's Explorer, click <strong>New File</strong>, name it <code>.env</code> (in the project folder itself), paste these two lines, put your key in place of <code>your-api-key</code>, and save:</p>
+  <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_URI=https://api.rocketride.ai
+ROCKETRIDE_APIKEY=your-api-key</pre></div>
+  <div class="note warn"><b class="k">Make .env in the editor, not the terminal</b><p>On Windows, <code>echo ... &gt; .env</code> in PowerShell saves the file as UTF-16, and every <code>rocketride</code> command then stops with <code>UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff</code>. A file made with the editor's <strong>New File</strong> button is saved correctly. Never commit <code>.env</code> or paste your key into a notebook.</p></div>
+  <p>Then <code>rocketride init</code> turns the folder into a RocketRide workspace. It reads your key from <code>.env</code>, then writes the RocketRide docs to <code>.rocketride/</code>, a <code>CLAUDE.md</code> for coding agents, and empty <code>apps/</code> and <code>pipelines/</code> folders.</p>
+  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init</pre></div>
   <div class="note good"><b class="k">Done when</b><p>It prints <code>Workspace initialized against https://api.rocketride.ai</code>, and <code>.env</code>, <code>.rocketride/</code>, <code>apps/</code> and <code>pipelines/</code> appear in the Explorer.</p></div>
-  <details class="fold"><summary>The browser sign-in doesn't open</summary><div class="fb"><p>Look in the terminal: init prints the sign-in link. Open it in your browser yourself, finish signing in, and init carries on. If it gave up, run the same command again: it's safe to repeat. Don't leave off <code>--uri</code>: without it, init looks for a RocketRide server on your own machine instead of the cloud.</p></div></details>
+  <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p>Init didn't find your key. Check that <code>.env</code> sits in the folder the terminal is in (not in a subfolder), that it has both lines spelled exactly as shown, and that it's saved. This version of <code>rocketride</code> can't sign in through the browser, so the key in <code>.env</code> is required.</p></div></details>
+  <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was saved as UTF-16. Open it in the editor, click <strong>UTF-16 LE</strong> in the status bar at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Or delete it and make it again with <strong>New File</strong>.</p></div></details>
+  <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one at cloud.rocketride.ai, paste it into <code>.env</code>, save, and run <code>rocketride init</code> again.</p></div></details>
 
   <h2>Create the app <span class="mins">2 min</span></h2>
   <p>RocketRide's app template writes a working React app that the RocketRide shell can load: its manifest, build config, an <code>.rrapp</code> file that opens the App Builder, and a hello screen you'll replace in Part 3. Put your developer id from Step 2 in place of <code>&lt;your_developer_id&gt;</code>.</p>
@@ -287,6 +293,7 @@
     <li>File a claim in the portal and watch the decision come back.</li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The Preview shows the Specter Mutual portal, and a claim you file gets a decision with a payout and a letter.</p></div>
+  <details class="fold"><summary>The App Builder won't open, or the preview never loads</summary><div class="fb"><p>Your editor hasn't trusted the project folder yet, so it runs in <strong>Restricted Mode</strong> and the RocketRide extension stays switched off. Click <strong>Restricted Mode</strong> in the status bar (or the banner at the top), then <strong>Trust</strong>, and confirm <strong>Trust Folder and Continue</strong>. You can also run <strong>Workspaces: Manage Workspace Trust</strong> from the command palette. Then open the <code>.rrapp</code> file again.</p></div></details>
   <details class="fold"><summary>The Preview shows an error or stays blank</summary><div class="fb"><p>Check the <strong>Errors</strong> pane in Design: it names the file and line. A file cell that was edited by hand is the usual cause: run Part 3's skip-ahead cell, and the Preview rebuilds on save.</p></div></details>
   <details class="fold"><summary>The Preview keeps asking me to sign in</summary><div class="fb"><p>Make sure <strong>Inherit Auth</strong> is checked in the Preview toolbar, then click <strong>Reload</strong>. If it still loops, sign out and back in to RocketRide in the editor, then reload the Preview.</p></div></details>
   <details class="fold"><summary>The portal asks for an Anthropic key</summary><div class="fb"><p>No <code>ROCKETRIDE_ANTHROPIC_KEY</code> is visible to you in RocketRide Variables. Paste a key: the portal saves it to your Variables.</p></div></details>
@@ -368,7 +375,7 @@
   <div class="grid"><table>
     <tbody>
       <tr><td>RocketRide</td><td>An open source runtime for AI pipelines and apps, with a cloud you deploy to.</td></tr>
-      <tr><td><code>rocketride init</code></td><td>The command that makes a folder a RocketRide workspace: it signs you in, saves your key to <code>.env</code>, and adds the RocketRide docs and the <code>apps/</code> and <code>pipelines/</code> folders.</td></tr>
+      <tr><td><code>rocketride init</code></td><td>The command that makes a folder a RocketRide workspace: it checks the key in <code>.env</code>, saves your key to <code>.env</code>, and adds the RocketRide docs and the <code>apps/</code> and <code>pipelines/</code> folders.</td></tr>
       <tr><td><code>rocketride app create</code></td><td>The command that writes a new app from RocketRide's template into <code>apps/</code> and installs its packages.</td></tr>
       <tr><td>Workspace</td><td>Your project folder once <code>rocketride init</code> has run in it. Apps, pipelines and notebooks all live there.</td></tr>
       <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time.</td></tr>
