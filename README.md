@@ -39,6 +39,25 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 <div align="center">
 
+<h3>Alarm clock: your first deployed app</h3>
+
+<p>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/alarm-clock/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
+  &nbsp;
+  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/alarm-clock"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
+</p>
+
+<p>Build an analog alarm clock app: a ticking clock face with a time picker and an alarm that flashes and beeps. The notebook creates the app from RocketRide's app template, writes the clock, deploys it to RocketRide Cloud and publishes it to your desktop on cloud.rocketride.ai.</p>
+
+<img src="images/alarm-clock.png" alt="The alarm clock app: an analog clock face above the digital time, a time picker with a Set alarm button, and the alarm status" width="75%">
+
+
+<p><sub><b>5 min</b> &nbsp;·&nbsp; app template → clock UI → cloud deploy → publish &nbsp;·&nbsp; needs Python 3.10+</sub></p>
+
+</div>
+
+<div align="center">
+
 <h3>Specter Mutual: zero to a deployed app</h3>
 
 <p>
