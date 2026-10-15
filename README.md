@@ -4,54 +4,57 @@
   <img src="images/banner.png" alt="RocketRide Workshops" width="100%">
 </a>
 
+<p>
+  <strong>Hands-on RocketRide workshops, run from Jupyter notebooks in VS Code.</strong><br/>
+  Build AI pipelines and the apps around them, then deploy to RocketRide Cloud, live from the notebook.
+</p>
+
+<p>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/"><img src="https://img.shields.io/badge/Workshops_Site-12111a?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTEgMTkxIj48cGF0aCBkPSJNMTU5LjUgMTYxLjRMMTUzLjcgMTY3LjJDMTUxLjkgMTY5IDE0OC45IDE2OSAxNDcgMTY3LjJMMTI2LjYgMTQ2LjhDMTE1LjYgMTM1LjggMTE1LjYgMTE4IDEyNi42IDEwN0MxMzguMSA5NS41IDEzOC4xIDc2LjkgMTI2LjYgNjUuNEwxMjUuMSA2My45QzExMy42IDUyLjQgOTUgNTIuNCA4My41IDYzLjlDNzIuNSA3NC45IDU0LjYgNzQuOSA0My42IDYzLjlMMjMuMiA0My41QzIxLjQgNDEuNyAyMS40IDM4LjcgMjMuMiAzNi44TDI5IDMxQzM3IDIzIDQ5LjEgMjAuNSA1OS42IDI0LjlMODcuNSAzNi4zQzk3LjMgNDAuMSAxMDguNCAzOCAxMTYuMyAzMS4xTDEzNyAxMC40QzEzOC42IDguOSAxNDAuNCA3LjQgMTQyLjUgNi4yQzE0Ni4yIDQuMSAxNTAuMyAzIDE1NC41IDIuNkwxODUuNCAwQzE4OC4zLS4zIDE5MC44IDIuMiAxOTAuNSA1LjFMMTg3LjggMzYuNEMxODcuMyA0Mi44IDE4NC41IDQ4LjggMTgwLjEgNTMuNUwxNjAuNSA3My4xQzE1Mi41IDgxLjIgMTUwLjEgOTMuMyAxNTQuNSAxMDMuOEwxNTUuNSAxMDYuMkwxNjEuMiAxMjBMMTY1LjYgMTMwLjlDMTY5LjkgMTQxLjQgMTY3LjUgMTUzLjUgMTU5LjUgMTYxLjVaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0uOCAxOTAuM0MtLjIgMTg5LjMtLjMgMTg3LjYuNiAxODYuNEwyMS4xIDE2MkMzMS4xIDE1MCAzNy45IDEzNy43IDQxLjMgMTI1LjNDNDMuNiAxMTYuNiA0NC42IDEwOC41IDQ0LjEgMTAxLjJDNDQuMSAxMDAuMyA0NC40IDk5LjQgNDUuMSA5OC44QzQ1LjggOTguMiA0Ni44IDk3LjkgNDcuNyA5OC4xQzY1IDEwMS42IDgzLjUgOTguMyA5OC41IDg4LjlDOTkuNiA4OC4yIDEwMS4xIDg4LjQgMTAyIDg5LjNDMTAyLjkgOTAuMiAxMDMuMSA5MS43IDEwMi40IDkyLjhDOTMgMTA3LjggODkuNyAxMjYuMyA5My4yIDE0My41QzkzLjQgMTQ0LjMgOTMuMiAxNDUuMiA5Mi42IDE0NS45QzkyIDE0Ni42IDkxIDE0Ny4yIDkwLjEgMTQ3LjFDODIuOCAxNDYuNiA3NC42IDE0Ny41IDY2IDE0OS45QzUzLjYgMTUzLjIgNDEuMiAxNjAgMjkuMyAxNzAuMUw0LjkgMTkwLjZDMy44IDE5MS41IDIuMSAxOTEuNSAxIDE5MC40SC44WiIgZmlsbD0iI0Y5MzgyMiIvPjwvc3ZnPgo=" alt="Workshops site"></a>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Jupyter-notebooks-F37626?logo=jupyter&logoColor=white" alt="Jupyter">
+  <img src="https://img.shields.io/badge/TypeScript-SDK-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/pnpm-10+-F69220?logo=pnpm&logoColor=white" alt="pnpm 10+">
+</p>
+
+<p>
+  <a href="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/validate.yml"><img src="https://github.com/rocketride-org/rocketride-workshops/actions/workflows/validate.yml/badge.svg" alt="Validate"></a>
+  <a href="https://discord.gg/PMXrtenMsY"><img src="https://img.shields.io/badge/Discord-Join-370b7a?logo=discord&logoColor=white" alt="Discord"></a>
+</p>
+
 </div>
 
-# RocketRide Workshops
-
-**Site:** <https://rocketride-org.github.io/rocketride-workshops/>
+<div align="center">
 
 RocketRide's repeatable workshop kit. Workshop content is **Jupyter notebooks** you run in VS Code. You execute cells, and the build and the deploy to RocketRide Cloud happen live from the notebook.
 
 The repo is organized as **modules**. A workshop is an ordered list of modules, so you download only the notebooks your workshop needs. Every notebook works as a single downloaded file.
 
-## Use it
+</div>
 
-1. Open the [hub](https://rocketride-org.github.io/rocketride-workshops/), or clone this repo and open `index.html` (it works offline from disk). Pick a project card to open its step-by-step guide.
-2. Do the at-home setup in [`SETUP.md`](SETUP.md), about 15 minutes.
-3. Follow each project's guide: it links the notebook to download, and walks you from setup through the build to the deploy.
+## Projects
 
-## Workshops
+<div align="center">
 
-| Workshop | Modules | Time |
-| --- | --- | --- |
-| [Zero to Agent](https://rocketride-org.github.io/rocketride-workshops/) | [Alarm clock](https://rocketride-org.github.io/rocketride-workshops/modules/alarm-clock/) → [Integrate RocketRide into an existing app](https://rocketride-org.github.io/rocketride-workshops/modules/notepad-integration/) → [Specter Mutual](https://rocketride-org.github.io/rocketride-workshops/modules/specter-mutual/) | 60 min |
+<h3>Specter Mutual: zero to a deployed app</h3>
 
-Each module's `README.md` in `modules/<id>/` links its guide and lists what it needs.
+<p>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/specter-mutual/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
+  &nbsp;
+  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/specter-mutual"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
+</p>
 
-## Layout
+<p>Build an AI claims reviewer for a fictional insurer that covers paranormal damage. A RocketRide agent reads each claim and recommends approve, deny or escalate, a policy engine of plain code holds it to the rules, and a claims portal puts it in front of people, deployed to your RocketRide workspace.</p>
 
-```
-index.html                  # hub: project cards for each workshop, built from workshops.js
-workshops.js                # manifest: window.MODULES + window.WORKSHOPS (a script, so it loads on file://)
-SETUP.md                    # at-home setup shared by every workshop
-images/
-  banner.png                # README banner
-assets/
-  brand/                    # RocketRide wordmark
-  fonts/                    # IBM Plex Sans and Mono (SIL OFL), served locally
-  tokens.css                # shared color and type tokens
-  codelab.css               # codelab layout and components (hub and guides)
-  codelab.js                # guide behaviour: step rail, pager, checkpoints, copy buttons
-scripts/
-  validate.mjs              # zero-dependency repo check (Node 20)
-  strip.mjs                 # strips notebook outputs before you commit
-modules/
-  <id>/
-    <id>.ipynb              # the notebook
-    index.html              # the project guide (codelab page)
-    README.md               # guide link, what it is, time box, requirements
-    FACILITATOR.md          # run of show, troubleshooting, skip-ahead guide
-```
+<img src="images/specter-mutual.png" alt="The Specter Mutual claims portal: a claim form on the left, the escalation queue and audit log on the right" width="75%">
+
+
+<p><sub><b>40 min</b> in four parts &nbsp;·&nbsp; project init → pipeline build → UI build → cloud deploy &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+</sub></p>
+
+</div>
 
 ## Notebook conventions
 
