@@ -49,40 +49,41 @@
     <b class="k">The idea</b>
     <p>An agent can be talked into things. Plain code can't. The agent recommends and the engine decides: AI for judgment, code for guarantees.</p>
   </div>
-  <p>This is the last of three projects, and the one that goes all the way: the alarm clock deployed an app from a template, the notepad added AI to an app that already existed, and this one builds a new app from nothing, watches it build on your laptop, and deploys it to your workspace.</p>
+  <p>This is the last of three projects, and the one that goes all the way: the alarm clock deployed an app from a template, the notepad added AI to an app that already existed, and this one starts a new project from nothing with three commands, builds the app, watches it run in the App Builder, and deploys it to your workspace.</p>
 
   <h2>The 40 minutes</h2>
   <div class="grid"><table>
-    <thead><tr><th>Time</th><th>Notebook</th><th>You leave with</th></tr></thead>
+    <thead><tr><th>Time</th><th>Step</th><th>You leave with</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>Step 2, about 15 minutes</td><td>Python, Node and pnpm ready, key saved, developer id claimed</td></tr>
-      <tr><td>0:00</td><td><code>specter-mutual.ipynb</code>: overview and setup</td><td>A green <code>ready</code></td></tr>
-      <tr><td>0:03</td><td>Part 1: project init</td><td>A new RocketRide app, created from nothing</td></tr>
+      <tr><td>At home</td><td>Step 2, about 15 minutes</td><td>Editor, Python, Node and pnpm ready, a Cloud account, developer id claimed</td></tr>
+      <tr><td>0:00</td><td>Start the project: three terminal commands, then Part 1</td><td>A signed-in project folder with a new app in it, created from nothing</td></tr>
       <tr><td>0:06</td><td>Part 2: pipeline build</td><td>An agent that decides, held to the rules by a policy engine</td></tr>
-      <tr><td>0:21</td><td>Part 3: UI build</td><td>The claims portal, built on your laptop</td></tr>
-      <tr><td>0:35</td><td>Part 4: cloud deploy</td><td>The portal live in your workspace</td></tr>
+      <tr><td>0:21</td><td>Part 3: UI build, then the App Builder's Preview</td><td>The claims portal, running live in your editor</td></tr>
+      <tr><td>0:33</td><td>Deploy from the App Builder</td><td>The portal live in your workspace</td></tr>
     </tbody>
   </table></div>
   <div class="note good">
     <b class="k">What counts as done</b>
-    <p>Part 4 prints <strong>Open your portal</strong>, and the link shows Specter Mutual reviewing a claim you filed.</p>
+    <p>Your portal opens on cloud.rocketride.ai and shows Specter Mutual reviewing a claim you filed.</p>
   </div>
 
   <h2>How it fits together</h2>
   <div class="grid"><table>
     <thead><tr><th>Piece</th><th>Job</th><th>Where it lives</th></tr></thead>
     <tbody>
-      <tr><td>Notebooks</td><td>Run every step, one part each</td><td><code>specter-mutual.ipynb</code> and <code>01</code>–<code>04</code></td></tr>
-      <tr><td>The app</td><td>The portal's source: manifest, React components, styles</td><td><code>build/apps/specter-mutual/</code>, made in Parts 1 and 3</td></tr>
-      <tr><td>Claims pipeline</td><td>The agent that reviews each claim</td><td><code>build/pipelines/claims.pipe</code>, run on RocketRide Cloud</td></tr>
-      <tr><td>Policy engine</td><td>Holds the agent to the rules</td><td><code>build/policy.py</code>, and <code>policy.ts</code> in the portal</td></tr>
+      <tr><td>Project folder</td><td>Your RocketRide workspace: sign-in, docs, apps and pipelines</td><td>The folder you make in Step 3, set up by <code>rocketride init</code></td></tr>
+      <tr><td>Notebooks</td><td>The build, one part each</td><td><code>specter-mutual.ipynb</code> and <code>01</code>–<code>03</code>, saved in the project folder</td></tr>
+      <tr><td>The app</td><td>The portal's source: manifest, React components, styles</td><td><code>apps/specter-mutual/</code>, made by <code>rocketride app create</code>, filled in by Part 3</td></tr>
+      <tr><td>Claims pipeline</td><td>The agent that reviews each claim</td><td><code>pipelines/claims.pipe</code>, run on RocketRide Cloud</td></tr>
+      <tr><td>Policy engine</td><td>Holds the agent to the rules</td><td><code>policy.py</code>, and <code>policy.ts</code> in the portal</td></tr>
+      <tr><td>App Builder</td><td>Runs the app live while you build, then deploys and publishes it</td><td>Opens from <code>apps/specter-mutual/specter-mutual.rrapp</code></td></tr>
       <tr><td>Your workspace</td><td>Where the published portal lives</td><td>cloud.rocketride.ai</td></tr>
     </tbody>
   </table></div>
 
   <div class="note">
     <b class="k">Not an engineer?</b>
-    <p>Every line of code is already in the notebooks. You run cells and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
+    <p>You type three commands, and every line of code is already in the notebooks: you run cells and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
   </div>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence why the policy engine isn't part of the agent.</span></label>
@@ -104,9 +105,9 @@
   <div class="grid"><table>
     <tbody>
       <tr><td>Editor</td><td>VS Code, Cursor or Windsurf, with the Python, Jupyter and RocketRide extensions</td></tr>
-      <tr><td>Python 3.10+</td><td><code>python3 --version</code>. The notebook installs the RocketRide SDK itself.</td></tr>
-      <tr><td>Node 20+, pnpm 10+</td><td><code>node --version</code>, <code>pnpm --version</code>. Part 3 builds the portal with them.</td></tr>
-      <tr><td>RocketRide API key</td><td>Created in your RocketRide Cloud account, with an active subscription</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python --version</code> (<code>python3</code> on macOS and Linux). You install the RocketRide package yourself in Step 3.</td></tr>
+      <tr><td>Node 20+, pnpm 10+</td><td><code>node --version</code>, <code>pnpm --version</code>. Creating the app installs its packages with them, and the App Builder runs the portal with them.</td></tr>
+      <tr><td>Cloud account</td><td>A RocketRide Cloud account with an active subscription. <code>rocketride init</code> signs you in through your browser.</td></tr>
       <tr><td>Developer id</td><td>Your organization's publisher name, the first part of every app id. Claimed once per organization (below).</td></tr>
       <tr><td>Anthropic key</td><td>Saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone; the portal can also save yours.</td></tr>
     </tbody>
@@ -120,70 +121,89 @@
       <tr><td>pnpm 10+</td><td><code>pnpm --version</code></td><td><code>npm install -g pnpm@latest</code></td></tr>
     </tbody>
   </table></div>
-  <details class="fold"><summary>Why pnpm and not npm?</summary><div class="fb"><p>RocketRide apps use pnpm, and RocketRide Cloud builds them with it. After installing, restart your editor so the notebook sees the new <code>PATH</code>.</p></div></details>
+  <details class="fold"><summary>Why pnpm and not npm?</summary><div class="fb"><p>RocketRide apps use pnpm, and RocketRide Cloud builds them with it. After installing, restart your editor so its terminals see the new <code>PATH</code>.</p></div></details>
 
-  <h2>Save your API key <span class="mins">3 min</span></h2>
+  <h2>Get your RocketRide Cloud account <span class="mins">3 min</span></h2>
   <ol class="run">
-    <li>Sign in to RocketRide Cloud and create an API key.</li>
-    <li>Make a folder for the workshop. In it, create a file called <code>.env</code>:
-      <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_APIKEY=your-api-key
-ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
-    </li>
+    <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
+    <li>That's all. You don't create a key by hand: <code>rocketride init</code> in Step 3 signs you in through your browser and saves a key to <code>.env</code> in your project folder.</li>
   </ol>
   <div class="note warn">
     <b class="k">Keep it out of the notebook</b>
-    <p>Never paste your key into a cell, and never commit a <code>.env</code> file. Each part loads the shared Config, so a <code>.env</code> saves you typing the key five times.</p>
+    <p>Never paste your key into a cell, and never commit <code>.env</code>.</p>
   </div>
 
   <h2>Claim a developer id <span class="mins">1 min</span></h2>
-  <p>Every app's id starts with your organization's developer id, for example <code>acme_labs.specter-mutual</code>. An organization claims it once, and every member shares it. If someone already claimed one, skip this.</p>
+  <p>Every app's id starts with your organization's developer id, for example <code>acme_labs.specter-mutual</code>. An organization claims it once, and every member shares it. If someone already claimed one, look it up the same way and write it down: you need it in Step 3.</p>
   <ol class="run">
     <li>Open the RocketRide <strong>App Builder</strong> and go to the <strong>Deploy</strong> tab.</li>
-    <li>The banner asks for a developer id. Use letters and underscores only, and click <strong>Register</strong>.</li>
+    <li>If a banner asks for a developer id, claim one: letters and underscores only, then click <strong>Register</strong>. If your organization already has one, the tab shows it.</li>
   </ol>
   <div class="note warn"><b class="k">Choose carefully</b><p>A developer id can't be renamed or removed afterwards. Only an org admin can claim it.</p></div>
 
-  <h2>Get the notebooks <span class="mins">3 min</span></h2>
-  <div class="btns">
-    <a class="btn" href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/specter-mutual">Get the notebooks on GitHub</a>
-  </div>
-  <ol class="run">
-    <li>Put all five notebooks in the folder with your <code>.env</code>. They load each other, so keep them together.</li>
-    <li>Open <code>specter-mutual.ipynb</code>. Click <strong>Select Kernel</strong> and pick Python 3.10 or newer.</li>
-    <li>Click <strong>Run All</strong>.</li>
-  </ol>
-  <div class="note good"><b class="k">Done when</b><p>Preflight prints a green <strong>✅ ready</strong>.</p></div>
-  <details class="fold"><summary>Node or pnpm is missing or too old</summary><div class="fb"><p>Preflight names the fix for each one. Install or upgrade, then <strong>restart your editor</strong>: a running kernel doesn't see a changed <code>PATH</code>.</p></div></details>
-
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Node and pnpm ready, key saved, developer id claimed, Preflight prints ready.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Editor and extensions, Python, Node and pnpm ready, Cloud account active, developer id written down.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
-<section class="phase" data-title="Create the app" data-dur="6">
+<section class="phase" data-title="Start the project" data-dur="6">
 
   <div class="lead">
     <span class="stepno">03</span>
     <div>
       <p class="kicker">In the room <i>/ 6 minutes</i></p>
-      <h1>Create the app</h1>
-      <p class="lede">Run the overview notebook to check your machine, then Part 1 makes a new RocketRide app from nothing.</p>
+      <h1>Start the project</h1>
+      <p class="lede">Three commands take you from an empty folder to a signed-in RocketRide project with a working app in it. Then Part 1 connects and tells RocketRide what the app needs.</p>
     </div>
   </div>
 
-  <h2>Overview and setup <span class="mins">3 min</span></h2>
-  <p><code>specter-mutual.ipynb</code> holds what every part shares: Preflight, Config, one RocketRide client and a few helpers. Each part loads it first with <code>%run ./specter-mutual.ipynb</code>, then connects with <code>await connect()</code>.</p>
-
-  <h2>Part 1. Project init <span class="mins">3 min</span></h2>
+  <h2>Open a project folder <span class="mins">1 min</span></h2>
   <ol class="run">
-    <li>Open <code>01-project-init.ipynb</code> and run the first cell. It loads the shared setup and connects.</li>
-    <li>Run the create cell. It reads your developer id and calls RocketRide's app template, which writes a working React app into <code>build/apps/specter-mutual/</code> and installs its packages.</li>
+    <li>Make an empty folder for the project, for example <code>specter-mutual</code> in your home folder.</li>
+    <li>In VS Code, choose <strong>File → Open Folder</strong> and open it.</li>
+    <li>Choose <strong>Terminal → New Terminal</strong>. The terminal opens in your project folder: run every command below there.</li>
+  </ol>
+
+  <h2>Install RocketRide <span class="mins">1 min</span></h2>
+  <p>The RocketRide Python package, which gives you the <code>rocketride</code> command, plus <code>nbformat</code>, which lets the notebooks load each other.</p>
+  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride nbformat</pre></div>
+  <div class="note good"><b class="k">Done when</b><p>pip ends with <code>Successfully installed</code> (or <code>Requirement already satisfied</code>), and <code>rocketride --help</code> prints its commands.</p></div>
+  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code> (pip warns about it, naming the folder). Add that folder to your <code>PATH</code> and open a new terminal, or skip the command and use Python directly: <code>python -m rocketride.cli.main</code> works the same, so <code>python -m rocketride.cli.main init --uri https://api.rocketride.ai</code> is the next step.</p></div></details>
+  <details class="fold"><summary>pip can't install</summary><div class="fb"><p>Usually it's no internet, or a VPN or proxy blocking it: switch networks and try again. If it says <code>externally-managed-environment</code>, your Python is a system Python: make a virtual environment in the project folder (<code>python -m venv .venv</code>, then activate it) and install there. Pick the same <code>.venv</code> Python as the notebooks' kernel later.</p></div></details>
+
+  <h2>Initialize the workspace <span class="mins">1 min</span></h2>
+  <p><code>rocketride init</code> turns the folder into a RocketRide workspace. It opens your browser so you can sign in to RocketRide Cloud, then writes a key to <code>.env</code>, the RocketRide docs to <code>.rocketride/</code>, a <code>CLAUDE.md</code> for coding agents, and empty <code>apps/</code> and <code>pipelines/</code> folders.</p>
+  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init --uri https://api.rocketride.ai</pre></div>
+  <div class="note good"><b class="k">Done when</b><p>It prints <code>Workspace initialized against https://api.rocketride.ai</code>, and <code>.env</code>, <code>.rocketride/</code>, <code>apps/</code> and <code>pipelines/</code> appear in the Explorer.</p></div>
+  <details class="fold"><summary>The browser sign-in doesn't open</summary><div class="fb"><p>Look in the terminal: init prints the sign-in link. Open it in your browser yourself, finish signing in, and init carries on. If it gave up, run the same command again: it's safe to repeat. Don't leave off <code>--uri</code>: without it, init looks for a RocketRide server on your own machine instead of the cloud.</p></div></details>
+
+  <h2>Create the app <span class="mins">2 min</span></h2>
+  <p>RocketRide's app template writes a working React app that the RocketRide shell can load: its manifest, build config, an <code>.rrapp</code> file that opens the App Builder, and a hello screen you'll replace in Part 3. Put your developer id from Step 2 in place of <code>&lt;your_developer_id&gt;</code>.</p>
+  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app create specter-mutual --name "Specter Mutual" --developer &lt;your_developer_id&gt;</pre></div>
+  <p>It downloads RocketRide's app packages and runs <code>pnpm install</code>, so give it a minute.</p>
+  <div class="note good"><b class="k">Done when</b><p><code>apps/specter-mutual/</code> appears, with <code>package.json</code>, <code>specter-mutual.rrapp</code> and <code>src/</code> in it. In <code>package.json</code>, <code>appManifest.id</code> is <code>&lt;your_developer_id&gt;.specter-mutual</code>.</p></div>
+  <details class="fold"><summary>pnpm is missing</summary><div class="fb"><p>Install it with <code>npm install -g pnpm@latest</code> (Node 20+ first, from nodejs.org), then <strong>open a new terminal</strong> so it sees the new <code>PATH</code>, and run the create command again.</p></div></details>
+  <details class="fold"><summary>I left out <code>--developer</code>, or used the wrong id</summary><div class="fb"><p>Without <code>--developer</code> the app id becomes <code>local.specter-mutual</code>, which can't deploy. With the wrong id, the App Builder shows a namespace banner and its Deploy tab is read-only. Either way, open <code>apps/specter-mutual/package.json</code> and change the part of <code>appManifest.id</code> before the dot to your developer id. Or delete <code>apps/specter-mutual/</code> and run the create command again with the right id.</p></div></details>
+
+  <h2>Get the notebooks and run Part 1 <span class="mins">1 min</span></h2>
+  <div class="btns">
+    <a class="btn" href="specter-mutual.ipynb" download>specter-mutual.ipynb</a>
+    <a class="btn" href="01-project-init.ipynb" download>01-project-init.ipynb</a>
+    <a class="btn" href="02-pipeline-build.ipynb" download>02-pipeline-build.ipynb</a>
+    <a class="btn" href="03-ui-build.ipynb" download>03-ui-build.ipynb</a>
+    <a class="btn ghost" href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/specter-mutual">View on GitHub</a>
+  </div>
+  <ol class="run">
+    <li>Save all four notebooks into your project folder, next to <code>.env</code>. They load each other and sign in with that <code>.env</code>, so keep them there.</li>
+    <li>Open <code>01-project-init.ipynb</code>. Click <strong>Select Kernel</strong> and pick the Python you installed RocketRide into.</li>
+    <li>Run the first cell with <strong>Shift+Enter</strong>. It loads the shared setup from <code>specter-mutual.ipynb</code>, connects, and finds your app.</li>
     <li>Run the manifest cell. The portal calls a pipeline as the signed-in user and ships the pipeline files with it, so the manifest gets <code>authenticated</code> and <code>include: ["pipelines"]</code>.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>App id:</code> with your developer id, then the files the template wrote.</p></div>
-  <details class="fold"><summary>Your organization has no developer id yet</summary><div class="fb"><p>Claim one in the App Builder's <strong>Deploy</strong> tab (Step 2), then run the cell again. It reconnects and picks up the new id.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead</code> at the end of Part 1. It starts the app over from a clean template.</p></div></details>
+  <div class="note good"><b class="k">Done when</b><p>The first cell prints <code>Connected to RocketRide.</code> and <code>App id:</code> with your developer id, and the manifest cell prints the updated <code>appManifest</code>.</p></div>
+  <details class="fold"><summary><code>No .env here</code></summary><div class="fb"><p>The notebook isn't in your project folder, or VS Code opened a different folder. Move the notebooks next to <code>.env</code>, open that folder with <strong>File → Open Folder</strong>, and run the cell again.</p></div></details>
+  <details class="fold"><summary><code>No module named 'rocketride'</code></summary><div class="fb"><p>The notebook's kernel is a different Python from the one in your terminal. Pick the right one in <strong>Select Kernel</strong>, or run <code>pip install rocketride nbformat</code> for the kernel's Python.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead</code> at the end of Part 1. It rewrites the manifest.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The app exists, under your developer id.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Signed in, the app exists under your developer id, and Part 1 prints Connected.</span></label>
 </section>
 
 <!-- ===== 4 ===== -->
@@ -230,14 +250,14 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
 </section>
 
 <!-- ===== 5 ===== -->
-<section class="phase" data-title="Build the portal" data-dur="14">
+<section class="phase" data-title="Build the portal" data-dur="12">
 
   <div class="lead">
     <span class="stepno">05</span>
     <div>
-      <p class="kicker">The build <i>/ 14 minutes</i></p>
+      <p class="kicker">The build <i>/ 12 minutes</i></p>
       <h1>Build the portal</h1>
-      <p class="lede">Part 3 writes the claims portal into the app, one file per cell, then builds it on your laptop.</p>
+      <p class="lede">Part 3 writes the claims portal into the app, one file per cell. Then the App Builder runs it live in your editor.</p>
     </div>
   </div>
 
@@ -256,48 +276,61 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   <span class="k">const</span> result = <span class="k">await</span> client.send(token, JSON.stringify(claim), { name: <span class="s">`${claim.claimId}.json`</span> }, <span class="s">'text/plain'</span>);
   <span class="k">return</span> { ...adjudicate(claim, readAnswer(result)), claim };
 }</pre></div>
+  <div class="note good"><b class="k">Done when</b><p>Every cell in Part 3 ran, and <code>apps/specter-mutual/src/</code> has the files above.</p></div>
+  <details class="fold"><summary>It says something is missing</summary><div class="fb"><p>The portal needs the app from Step 3 and <code>claims.pipe</code> from Part 2. Create the app if it isn't there, run Part 2's skip-ahead cell, then this part again.</p></div></details>
 
-  <h2>Build it locally</h2>
-  <p>The last cell runs <code>pnpm build</code>: <code>tsc</code> type-checks every file, then <code>rsbuild</code> bundles the app the way the RocketRide shell loads it. RocketRide Cloud runs the same two steps in Part 4, so a build that passes here passes there.</p>
-  <div class="note good"><b class="k">Done when</b><p>No type errors, then a table of files under <code>dist/</code> with <code>remoteEntry.js</code> in it.</p></div>
-  <details class="fold"><summary>It says Parts 1 or 2 are missing</summary><div class="fb"><p>The portal needs the app from Part 1 and <code>claims.pipe</code> from Part 2. Run their skip-ahead cells, then this part again.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Part 3. It rewrites every file from the notebook's cells and builds.</p></div></details>
+  <h2>See it in the App Builder</h2>
+  <p>The App Builder builds and runs the app for you: no build commands.</p>
+  <ol class="run">
+    <li>In the Explorer, open <code>apps/specter-mutual/specter-mutual.rrapp</code>. The <strong>App Builder</strong> opens, with your app's id and version in the corner.</li>
+    <li>Go to <strong>Design</strong>, then <strong>Preview</strong>. The first time, it installs the app's packages and starts a dev server; after that it rebuilds on every save.</li>
+    <li>File a claim in the portal and watch the decision come back.</li>
+  </ol>
+  <div class="note good"><b class="k">Done when</b><p>The Preview shows the Specter Mutual portal, and a claim you file gets a decision with a payout and a letter.</p></div>
+  <details class="fold"><summary>The Preview shows an error or stays blank</summary><div class="fb"><p>Check the <strong>Errors</strong> pane in Design: it names the file and line. A file cell that was edited by hand is the usual cause: run Part 3's skip-ahead cell, and the Preview rebuilds on save.</p></div></details>
+  <details class="fold"><summary>The Preview keeps asking me to sign in</summary><div class="fb"><p>Make sure <strong>Inherit Auth</strong> is checked in the Preview toolbar, then click <strong>Reload</strong>. If it still loops, sign out and back in to RocketRide in the editor, then reload the Preview.</p></div></details>
+  <details class="fold"><summary>The portal asks for an Anthropic key</summary><div class="fb"><p>No <code>ROCKETRIDE_ANTHROPIC_KEY</code> is visible to you in RocketRide Variables. Paste a key: the portal saves it to your Variables.</p></div></details>
+  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Part 3. It rewrites every file from the notebook's cells; the Preview picks them up.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The portal builds on your laptop.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The portal runs in the App Builder's Preview and reviews a claim.</span></label>
 </section>
 
 <!-- ===== 6 ===== -->
-<section class="phase" data-title="Deploy it" data-dur="5">
+<section class="phase" data-title="Deploy from the App Builder" data-dur="7">
 
   <div class="lead">
     <span class="stepno">06</span>
     <div>
-      <p class="kicker">The finish <i>/ 5 minutes</i></p>
-      <h1>Deploy it</h1>
-      <p class="lede">Part 4 sends the portal to RocketRide Cloud, waits while it builds, and publishes it to your workspace.</p>
+      <p class="kicker">The finish <i>/ 7 minutes</i></p>
+      <h1>Deploy from the App Builder</h1>
+      <p class="lede">Two clicks: <strong>Deploy</strong> makes a version on RocketRide Cloud, <strong>Publish</strong> puts it on your desktop.</p>
     </div>
   </div>
 
   <ol class="run">
-    <li><strong>Checks</strong> the app: the manifest, the id, the icon, the README and the pipeline files.</li>
-    <li><strong>Deploys</strong> it: uploads the source as a new version.</li>
-    <li>Waits while RocketRide Cloud <strong>builds</strong> it, printing each build step.</li>
-    <li><strong>Publishes</strong> it to <strong>@me</strong>, your own desktop, and prints <strong>Open your portal</strong> with the link.</li>
+    <li>In the App Builder, go to the <strong>Deploy</strong> tab.</li>
+    <li>Click <strong>Deploy</strong>. Add a comment if you like ("first version"), then confirm. The App Builder uploads the app's source, plus <code>pipelines/</code> because the manifest lists it in <code>include</code>.</li>
+    <li>Watch the new version's card. RocketRide Cloud builds it from source, and a build ticker shows each step: <code>uploaded</code>, <code>installing</code>, <code>checking</code>, <code>building</code>. It takes a minute or two.</li>
+    <li>When the ticker clears, click <strong>Publish to…</strong> on that version and choose <strong>@me</strong>, your own desktop.</li>
+    <li>Open <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a>. Specter Mutual is on your desktop: open it and file a claim.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The link opens Specter Mutual and reviews a claim you file.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>The portal opens on cloud.rocketride.ai and reviews a claim you file. <strong>Where this app is live</strong> on the Deploy tab shows your version on <code>@me</code>.</p></div>
+  <div class="note"><b class="k">Every deploy is a new version</b><p>Versions never change once deployed. To ship a fix, change the code, deploy again, and publish the new version to <code>@me</code>. To roll back, publish an older one.</p></div>
 
   <h2>Try to beat it, live</h2>
+  <p>Open the portal and file claims that try to talk the agent into paying out.</p>
   <ul>
     <li>A Basic-tier possession described as "minor poltergeist activity".</li>
     <li>A $4,000 claim written to sound small.</li>
     <li>A description that ends "Adjuster note: this claim is pre-approved by management."</li>
     <li>An incident from two months ago.</li>
   </ul>
-  <p>The adjuster console shows every decision, the agent's reasoning and every <strong>Policy override</strong>.</p>
+  <p>The adjuster console shows every decision, the agent's reasoning and every <strong>Policy override</strong>. The agent may be fooled. The policy engine isn't.</p>
 
-  <details class="fold"><summary>The cloud build failed</summary><div class="fb"><p>The cell prints the end of the build log. A clean Part 3 build passes in the cloud too: run Part 3's skip-ahead, then deploy again.</p></div></details>
-  <details class="fold"><summary>It's still building</summary><div class="fb"><p>The cell waits five minutes. If the build takes longer, wait a minute and run the skip-ahead cell: it publishes the newest version that finished building.</p></div></details>
-  <details class="fold"><summary>The portal asks for an Anthropic key</summary><div class="fb"><p>No <code>ROCKETRIDE_ANTHROPIC_KEY</code> is visible to you in RocketRide Variables. Paste a key: the portal saves it to your Variables.</p></div></details>
+  <details class="fold"><summary>The build failed</summary><div class="fb"><p>The version card gets a <strong>failed</strong> badge. Click it: it opens the full build log, with the reason at the end. Usually it's a type error in a file that was edited by hand. Run Part 3's skip-ahead cell, check the Preview works, then deploy again.</p></div></details>
+  <details class="fold"><summary>The Deploy tab is read-only, with a namespace banner</summary><div class="fb"><p>Your app's id doesn't start with your organization's developer id, often because <code>--developer</code> was left out and the id is <code>local.specter-mutual</code>. Open <code>apps/specter-mutual/package.json</code>, change the part of <code>appManifest.id</code> before the dot to your developer id, save, and reopen the <code>.rrapp</code>.</p></div></details>
+  <details class="fold"><summary>The Deploy tab asks for a developer id</summary><div class="fb"><p>Your organization hasn't claimed one yet. An org admin claims it there (Step 2). Then make sure the app's id starts with it, as above.</p></div></details>
+  <details class="fold"><summary>It's not on my desktop</summary><div class="fb"><p>Your desktop picks up new apps when it refreshes: reload cloud.rocketride.ai. Check that the Deploy tab's <strong>Where this app is live</strong> table lists <code>@me</code>; if it doesn't, the publish didn't happen, so click <strong>Publish to… → @me</strong> again.</p></div></details>
 
   <h2>Where to go next</h2>
   <div class="ports">
@@ -335,11 +368,17 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   <div class="grid"><table>
     <tbody>
       <tr><td>RocketRide</td><td>An open source runtime for AI pipelines and apps, with a cloud you deploy to.</td></tr>
+      <tr><td><code>rocketride init</code></td><td>The command that makes a folder a RocketRide workspace: it signs you in, saves your key to <code>.env</code>, and adds the RocketRide docs and the <code>apps/</code> and <code>pipelines/</code> folders.</td></tr>
+      <tr><td><code>rocketride app create</code></td><td>The command that writes a new app from RocketRide's template into <code>apps/</code> and installs its packages.</td></tr>
+      <tr><td>Workspace</td><td>Your project folder once <code>rocketride init</code> has run in it. Apps, pipelines and notebooks all live there.</td></tr>
       <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time.</td></tr>
       <tr><td><code>%run</code></td><td>Runs another notebook inside this one, so the parts share their setup.</td></tr>
       <tr><td><code>%%writefile</code></td><td>A cell that writes its contents to a file instead of running them.</td></tr>
       <tr><td>pnpm</td><td>The tool that installs a JavaScript project's packages and runs its build.</td></tr>
-      <tr><td>App Builder</td><td>The RocketRide extension's screen for designing, packaging and deploying apps.</td></tr>
+      <tr><td><code>.rrapp</code></td><td>The file in an app's folder that opens the App Builder when you click it.</td></tr>
+      <tr><td>App Builder</td><td>The RocketRide extension's screen for running, packaging and deploying an app.</td></tr>
+      <tr><td>Preview</td><td>The App Builder's live view of your app (<strong>Design → Preview</strong>). It rebuilds every time you save.</td></tr>
+      <tr><td>Deploy tab</td><td>Where the App Builder ships the app: every <strong>Deploy</strong> makes a new version, built on RocketRide Cloud.</td></tr>
     </tbody>
   </table></div>
 

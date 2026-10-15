@@ -1,0 +1,3 @@
+rocketride>=1.4.0
+ipykernel
+nbformat

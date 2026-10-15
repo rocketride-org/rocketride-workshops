@@ -8,6 +8,15 @@
 .ipynb_checkpoints/
 modules/*/build/
 modules/notepad-integration/notepad-starter/
+# What a participant's project folder gains when a workshop runs inside the repo
+modules/*/apps/
+modules/*/pipelines/
+modules/*/nodes/
+modules/*/CLAUDE.md
+modules/*/policy.py
+modules/*/package.json
+modules/*/pnpm-lock.yaml
+modules/*/pnpm-workspace.yaml
 
 # Dependencies and caches
 node_modules/

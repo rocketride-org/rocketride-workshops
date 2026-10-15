@@ -55,20 +55,19 @@ for (const d of folders) {
 // 3. Notebooks
 const SECRET = /sk-ant-[A-Za-z0-9_-]{8,}|rr_[A-Za-z0-9]{16,}|ROCKETRIDE_[A-Z_]*=\S+/;
 const ENV_ACCESS = /os\.environ|getenv/;
-const isTagged = (cell, tag) =>
-  (cell.metadata?.tags ?? []).includes(tag) ||
-  new RegExp(`^#+\\s*${tag}\\b`, "i").test(src(cell).trimStart());
+// Participants install, scaffold and deploy by hand from the guide; notebooks hold only the build.
+const SETUP_CODE =
+  /%pip|pip install|rocketride init|app create|create_app\(|verify_app\(|add_app\(|publish_app\(|"pnpm"|"git", "clone"/;
 const src = (cell) => (Array.isArray(cell.source) ? cell.source.join("") : (cell.source ?? ""));
 
-// Every notebook in a module folder is checked. A module may split into parts that load
-// <id>.ipynb with %run, so only <id>.ipynb needs the Preflight and Config cells.
+// Every notebook in a module folder is checked.
 const moduleNotebooks = folders.flatMap((d) =>
   readdirSync(join(modulesDir, d))
     .filter((f) => f.endsWith(".ipynb"))
-    .map((f) => ({ file: join(modulesDir, d, f), isMain: f === `${d}.ipynb` })),
+    .map((f) => join(modulesDir, d, f)),
 );
 
-for (const { file, isMain } of moduleNotebooks) {
+for (const file of moduleNotebooks) {
   const name = rel(file);
   const raw = readFileSync(file, "utf8");
   let nb;
@@ -89,15 +88,14 @@ for (const { file, isMain } of moduleNotebooks) {
       fail(`${name}: cell ${i} has outputs (run node scripts/strip.mjs)`);
     if (cell.execution_count != null)
       fail(`${name}: cell ${i} has an execution_count (run node scripts/strip.mjs)`);
-    if (!isTagged(cell, "config") && ENV_ACCESS.test(src(cell))) {
-      fail(`${name}: cell ${i} reads environment variables; only the Config cell may`);
+    if (ENV_ACCESS.test(src(cell))) {
+      fail(`${name}: cell ${i} reads environment variables; the SDK reads the .env that rocketride init writes`);
+    }
+    const setup = src(cell).match(SETUP_CODE);
+    if (setup) {
+      fail(`${name}: cell ${i} runs "${setup[0]}"; installs, scaffolding and deploys belong in the guide, done by hand`);
     }
   });
-  if (!isMain) continue;
-  for (const tag of ["preflight", "config"]) {
-    if (!nb.cells.some((c) => c.cell_type === "code" && isTagged(c, tag)))
-      fail(`${name}: no ${tag} cell`);
-  }
 }
 
 // 4. Relative links in every HTML and CSS file resolve

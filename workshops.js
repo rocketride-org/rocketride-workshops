@@ -1,11 +1,11 @@
 window.MODULES = {
   "alarm-clock": {
     title: "Alarm clock",
-    summary: "Build an analog alarm clock app and deploy it to RocketRide Cloud.",
-    duration: 5,
+    summary: "Start a RocketRide project in three commands, build an alarm clock app with Claude Code, and deploy it from the App Builder.",
+    duration: 15,
     notebook: "modules/alarm-clock/alarm-clock.ipynb",
     guide: "modules/alarm-clock/index.html",
-    requires: ["python"],
+    requires: ["python", "node", "pnpm"],
   },
   "notepad-integration": {
     title: "Integrate RocketRide into an existing app",

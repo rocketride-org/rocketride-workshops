@@ -39,63 +39,63 @@
       <p class="kicker">RocketRide workshop <i>/ project 1 of 3</i></p>
       <h1>Alarm clock</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In five minutes you build an analog alarm clock app, deploy it to RocketRide Cloud, and open it in your browser.</p>
+      <p class="lede">In fifteen minutes you start a RocketRide project from nothing, the way you would at work: three commands, then ask Claude Code for an alarm clock app. You watch it run in your editor, then deploy it to RocketRide Cloud from the editor and open it in your browser.</p>
     </div>
   </div>
 
   <h2>What you are building</h2>
   <p>An <strong>alarm clock app</strong>. It has a round clock face whose hands move every second, a time picker, and an alarm: when the clock reaches the time you set, the face flashes and it beeps until you press <strong>Stop</strong>.</p>
-  <p>The notebook doesn't stop at your laptop. It <strong>deploys</strong> the app to RocketRide Cloud, which builds it, and <strong>publishes</strong> it to your own RocketRide desktop. You finish with a link that opens your clock on cloud.rocketride.ai.</p>
+  <p>You do every step yourself, in a terminal and in the RocketRide extension. Nothing is scripted for you, because the point is to see how little it takes: install, initialize, create, build, deploy.</p>
 
   <h2>Where RocketRide comes in</h2>
-  <p>RocketRide runs AI pipelines and the apps built on them. An <strong>app</strong> is a small web page, written in React, that RocketRide shows inside its own window, with your theme and sign-in already in place. You drive everything from Python with the <strong>RocketRide SDK</strong>.</p>
-  <p>For today that means you install no web tooling. The SDK creates the app from RocketRide's template, and RocketRide Cloud builds and hosts it.</p>
+  <p>RocketRide runs AI pipelines and the apps built on them. An <strong>app</strong> is a small web page, written in React, that RocketRide shows inside its own window, with your theme and sign-in already in place.</p>
+  <p>The <code>rocketride</code> command sets up a project and creates apps from RocketRide's template. The RocketRide extension's <strong>App Builder</strong> shows the app live while you work, then deploys it. RocketRide Cloud builds it and hosts it.</p>
 
-  <h2>The 5 minutes</h2>
+  <h2>The 15 minutes</h2>
   <div class="grid"><table>
     <thead><tr><th>Time</th><th>What happens</th><th>You leave with</th></tr></thead>
     <tbody>
-      <tr><td>Before</td><td>Step 2, about 10 minutes</td><td>Editor and Python ready, API key saved, developer id claimed</td></tr>
-      <tr><td>0:00</td><td>Run Setup, Config and Connect</td><td>The SDK installed and a connected client</td></tr>
-      <tr><td>0:01</td><td>Stage 1: create the app</td><td>An app folder from RocketRide's template</td></tr>
-      <tr><td>0:02</td><td>Stage 2: draw the clock</td><td>The clock face and alarm in <code>src/App.tsx</code></td></tr>
-      <tr><td>0:03</td><td>Stage 3: deploy and open it</td><td>Your clock, live, and a link to it</td></tr>
+      <tr><td>Before</td><td>Step 2, about 15 minutes</td><td>Editor, Python, Node, pnpm and Claude Code ready, developer id claimed</td></tr>
+      <tr><td>0:00</td><td>Start the project: three commands</td><td>A signed-in RocketRide project and a new app in <code>apps/alarm_clock/</code></td></tr>
+      <tr><td>0:04</td><td>Build the clock with Claude</td><td>The clock face and alarm in <code>src/App.tsx</code>, live in the App Builder</td></tr>
+      <tr><td>0:09</td><td>Deploy from the App Builder</td><td>Your clock, live on cloud.rocketride.ai</td></tr>
     </tbody>
   </table></div>
   <div class="note good">
     <b class="k">What counts as done</b>
-    <p>The last cell prints <strong>Open your clock</strong>, and the link shows your clock ticking.</p>
+    <p>Your clock is ticking on cloud.rocketride.ai, published to your own desktop.</p>
   </div>
 
   <h2>How it fits together</h2>
   <div class="grid"><table>
     <thead><tr><th>Piece</th><th>Job</th><th>Where it lives</th></tr></thead>
     <tbody>
-      <tr><td>Notebook</td><td>Runs every step</td><td><code>alarm-clock.ipynb</code></td></tr>
-      <tr><td>App folder</td><td>The app's source: its manifest, icon, README and React code</td><td><code>build/apps/alarm_clock/</code>, written by Stages 1 and 2</td></tr>
-      <tr><td>RocketRide client</td><td>Creates, checks, uploads and publishes the app</td><td>The Connect cell</td></tr>
+      <tr><td>Project folder</td><td>Your RocketRide workspace: your sign-in, the RocketRide docs, and your apps</td><td>A folder you make, set up by <code>rocketride init</code></td></tr>
+      <tr><td>App folder</td><td>The app's source: its manifest, icon, README and React code</td><td><code>apps/alarm_clock/</code>, made by <code>rocketride app create</code></td></tr>
+      <tr><td>Claude Code</td><td>Writes the clock from your prompt</td><td>Your terminal</td></tr>
+      <tr><td>App Builder</td><td>Shows the app live, then deploys and publishes it</td><td>The RocketRide extension, opened from <code>alarm_clock.rrapp</code></td></tr>
       <tr><td>RocketRide Cloud</td><td>Builds the app and serves it</td><td>Your organization's account</td></tr>
-      <tr><td>Your desktop</td><td>Where the published clock shows up</td><td>cloud.rocketride.ai</td></tr>
+      <tr><td>Fallback notebook</td><td>A finished clock, for anyone stuck</td><td><code>alarm-clock.ipynb</code></td></tr>
     </tbody>
   </table></div>
 
   <div class="note">
     <b class="k">Not an engineer?</b>
-    <p>Every line of code is already in the notebook. You click <strong>Run All</strong> and watch what happens. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
+    <p>Every command is in a box with a <strong>Copy</strong> button. Paste it into the terminal and press Enter. <strong>Words you will hear</strong> in the sidebar explains every term used in these steps.</p>
   </div>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what a RocketRide app is.</span></label>
 </section>
 
 <!-- ===== 2 ===== -->
-<section class="phase" data-title="Set up at home" data-dur="10">
+<section class="phase" data-title="Set up at home" data-dur="15">
 
   <div class="lead">
     <span class="stepno">02</span>
     <div>
-      <p class="kicker">Before the event <i>/ 10 minutes</i></p>
+      <p class="kicker">Before the event <i>/ 15 minutes</i></p>
       <h1>Set up at home</h1>
-      <p class="lede">The project itself is five minutes. Setup is ten at home, and can take the whole session on conference wifi.</p>
+      <p class="lede">The project itself is fifteen minutes. Setup is fifteen at home, and can take the whole session on conference wifi.</p>
     </div>
   </div>
 
@@ -103,9 +103,11 @@
   <div class="grid"><table>
     <tbody>
       <tr><td>Editor</td><td>VS Code, Cursor or Windsurf, with admin rights on the laptop</td></tr>
-      <tr><td>Python 3.10+</td><td><code>python3 --version</code>. The notebook installs everything else it needs.</td></tr>
-      <tr><td>RocketRide API key</td><td>Created in your RocketRide Cloud account</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python3 --version</code> (Windows: <code>python --version</code>)</td></tr>
+      <tr><td>Node 20+ and pnpm 10+</td><td>The App Builder uses them to run your app in the editor. <code>node --version</code>, <code>pnpm --version</code></td></tr>
+      <tr><td>RocketRide Cloud account</td><td>With an active subscription. You sign in from the terminal; there's no key to copy.</td></tr>
       <tr><td>Developer id</td><td>Your organization's publisher name, the first part of every app id. Claimed once per organization (see below).</td></tr>
+      <tr><td>Claude Code</td><td>Writes the clock. Without it, the fallback notebook has a finished one.</td></tr>
     </tbody>
   </table></div>
 
@@ -119,159 +121,153 @@
     </div>
   </div>
 
-  <h2>Install the notebook extensions <span class="mins">4 min</span></h2>
+  <h2>Install the extensions <span class="mins">4 min</span></h2>
   <ol class="run">
-    <li>Open Extensions and search <strong>Python</strong>. Install the one from Microsoft (<code>ms-python.python</code>).</li>
-    <li>Search <strong>Jupyter</strong> and install it too (<code>ms-toolsai.jupyter</code>).</li>
-    <li>Search <strong>RocketRide</strong> and install it. You use its App Builder to claim a developer id.</li>
+    <li>Open Extensions and search <strong>RocketRide</strong>. Install it: its App Builder runs, deploys and publishes your app.</li>
+    <li>Search <strong>Python</strong> and <strong>Jupyter</strong> and install both from Microsoft (<code>ms-python.python</code>, <code>ms-toolsai.jupyter</code>). You only need them for the fallback notebook.</li>
     <li>Reload the window if it asks.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The extensions show as installed, and a new <code>.ipynb</code> file opens as a notebook with cells.</p></div>
-  <details class="fold"><summary>Using Cursor or Windsurf?</summary><div class="fb"><p>They install from Open VSX rather than the VS Code marketplace. Python and Jupyter are published there, so the same searches work.</p></div></details>
+  <div class="note good"><b class="k">Done when</b><p>The extensions show as installed, and the RocketRide icon is in the activity bar.</p></div>
+  <details class="fold"><summary>Using Cursor or Windsurf?</summary><div class="fb"><p>They install from Open VSX rather than the VS Code marketplace. The same searches work.</p></div></details>
 
-  <h2>Save your API key <span class="mins">3 min</span></h2>
-  <p>Do this now. A missing key is the most common thing that stops people in the room.</p>
-  <ol class="run">
-    <li>Sign in to RocketRide Cloud and create an API key.</li>
-    <li>Make a folder for the workshop. In it, create a file called <code>.env</code>:
-      <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_APIKEY=your-api-key
-ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
-    </li>
-  </ol>
-  <div class="note warn">
-    <b class="k">Keep it out of the notebook</b>
-    <p>Never paste your key into a cell, and never commit a <code>.env</code> file. If there is no <code>.env</code>, the notebook's Config cell asks for the key and keeps it only for the session.</p>
-  </div>
+  <h2>Install Node and pnpm <span class="mins">4 min</span></h2>
+  <p>Install Node 20 or newer from <a href="https://nodejs.org">nodejs.org</a>, then pnpm:</p>
+  <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npm install -g pnpm@latest</pre></div>
+  <div class="note good"><b class="k">Done when</b><p><code>node --version</code> prints 20 or higher and <code>pnpm --version</code> prints 10 or higher. Restart your editor afterwards so its terminals see them.</p></div>
+
+  <h2>Install Claude Code <span class="mins">3 min</span></h2>
+  <p>Install it from <a href="https://claude.com/claude-code">claude.com/claude-code</a>, then run <code>claude</code> once in a terminal and sign in.</p>
 
   <h2>Claim a developer id <span class="mins">1 min</span></h2>
-  <p>Every app's id starts with your organization's <strong>developer id</strong>, for example <code>acme_labs.alarm_clock</code>. An organization claims it once, and every member shares it. If someone in your organization already claimed one, skip this.</p>
+  <p>Every app's id starts with your organization's <strong>developer id</strong>, for example <code>acme_labs.alarm_clock</code>. An organization claims it once, and every member shares it. If someone in your organization already claimed one, write it down and skip this.</p>
   <ol class="run">
-    <li>Open the RocketRide <strong>App Builder</strong> and go to the <strong>Deploy</strong> tab.</li>
+    <li>Click the RocketRide icon, sign in to RocketRide Cloud, and open the <strong>App Builder</strong>. Go to the <strong>Deploy</strong> tab.</li>
     <li>The banner asks for a developer id. Use letters and underscores only, for example <code>acme_labs</code>, and click <strong>Register</strong>.</li>
   </ol>
   <div class="note warn"><b class="k">Choose carefully</b><p>A developer id can't be renamed or removed afterwards. Only an org admin can claim it.</p></div>
 
-  <h2>Get the notebook <span class="mins">2 min</span></h2>
-  <div class="btns">
-    <a class="btn" href="alarm-clock.ipynb" download>Download alarm-clock.ipynb</a>
-    <a class="btn ghost" href="https://github.com/rocketride-org/rocketride-workshops/blob/main/modules/alarm-clock/alarm-clock.ipynb">View on GitHub</a>
-  </div>
-  <ol class="run">
-    <li>Save the notebook into the folder with your <code>.env</code>, and open the folder with <strong>File</strong>, <strong>Open Folder</strong>.</li>
-    <li>Open the notebook. Click <strong>Select Kernel</strong> in the top right, choose <strong>Python Environments</strong>, and pick Python 3.10 or newer.</li>
-    <li>Run the <strong>Setup</strong> cell with <strong>Shift+Enter</strong>. The first time, it installs the RocketRide SDK.</li>
-  </ol>
-  <figure><div class="draw"><p style="margin:0;font-family:var(--mono);font-size:12px;color:var(--dim)">TODO(joshua): screenshot of the kernel picker with the right interpreter selected.</p></div></figure>
-  <div class="note good"><b class="k">Done when</b><p>Setup prints a green <strong>✅ ready</strong>.</p></div>
-
-  <details class="fold"><summary>It asks me to install ipykernel</summary><div class="fb"><p>Accept the prompt, or run <code>python3 -m pip install ipykernel</code> for that interpreter.</p></div></details>
-  <details class="fold"><summary>Couldn't install the RocketRide SDK</summary><div class="fb"><p>The cell prints pip's error. Usually it's no internet, or a VPN or proxy blocking it. Switch networks, then run Setup again.</p></div></details>
+  <h2>Practice the start <span class="mins">3 min</span></h2>
+  <p>Run Step 3, <strong>Start the project</strong>, once at home. The first install and the browser sign-in are the slow parts, and it's safe to do again in the room.</p>
 
   <div class="note fac">
     <b class="k">Stuck on any of this?</b>
     <p>Come 10 minutes early. A facilitator runs a help desk before the start, and that is the only setup help there is time for. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route, and the docs are at <a href="https://docs.rocketride.org">docs.rocketride.org</a>.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Extensions installed, key saved, developer id claimed, Setup prints ready.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Extensions installed, Node, pnpm and Claude Code ready, developer id written down.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
-<section class="phase" data-title="Open the notebook" data-dur="1">
+<section class="phase" data-title="Start the project" data-dur="4">
 
   <div class="lead">
     <span class="stepno">03</span>
     <div>
-      <p class="kicker">In the room <i>/ 1 minute</i></p>
-      <h1>Open the notebook</h1>
-      <p class="lede">Three cells, top to bottom. They install the SDK, load your key, and connect to RocketRide Cloud. <strong>Run All</strong> runs them for you.</p>
+      <p class="kicker">In the room <i>/ 4 minutes</i></p>
+      <h1>Start the project</h1>
+      <p class="lede">Three commands take you from an empty folder to a signed-in RocketRide project with a new app in it. This is how every RocketRide project starts.</p>
     </div>
   </div>
 
-  <div class="grid"><table>
-    <thead><tr><th>Cell</th><th>What it does</th><th>You see</th></tr></thead>
-    <tbody>
-      <tr><td>Setup</td><td>Installs the RocketRide SDK into this notebook's Python, if it isn't there yet.</td><td><code>✅ ready</code></td></tr>
-      <tr><td>Config</td><td>The only cell that reads your environment. Loads <code>ROCKETRIDE_*</code> from the environment or <code>.env</code>, and asks for the key if it's missing.</td><td><code>API key: set</code></td></tr>
-      <tr><td>Connect</td><td>Opens one shared RocketRide client for every later cell.</td><td><code>Connected to https://api.rocketride.ai</code></td></tr>
-    </tbody>
-  </table></div>
-  <div class="note"><b class="k">Every cell is safe to run again</b><p>Files are overwritten, and each deploy publishes the next version. When in doubt, run it again.</p></div>
-  <div class="note good"><b class="k">Done when</b><p>All three cells ran without a red error and the last one says <strong>Connected</strong>.</p></div>
+  <ol class="run">
+    <li>Make an empty folder for the project, for example <code>alarm-clock</code>. In your editor, choose <strong>File</strong>, <strong>Open Folder</strong> and open it. Then open a terminal: <strong>Terminal</strong>, <strong>New Terminal</strong>.</li>
+    <li><b>Install RocketRide.</b> This installs the Python package, which brings the <code>rocketride</code> command:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride</pre></div>
+    </li>
+    <li><b>Initialize the project.</b> Your browser opens so you can sign in to RocketRide Cloud. Come back to the editor when it says you're signed in.
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init --uri https://api.rocketride.ai</pre></div>
+      It saves your sign-in to <code>.env</code>, downloads RocketRide's docs into <code>.rocketride/</code>, and writes a <code>CLAUDE.md</code> so Claude Code knows the platform.
+    </li>
+    <li><b>Create the app.</b> Put your developer id in place of <code>your_developer_id</code>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app create alarm_clock --name "Alarm Clock" --developer your_developer_id</pre></div>
+      It writes the app from RocketRide's template into <code>apps/alarm_clock/</code>, then installs its packages with pnpm. That takes a minute the first time.
+    </li>
+  </ol>
 
-  <details class="fold"><summary>The Config cell keeps asking for my key</summary><div class="fb"><p>There is no <code>ROCKETRIDE_APIKEY</code> in your environment or in a <code>.env</code> next to the notebook. Paste the key when asked: it's kept for the session. To skip the prompt next time, create the <code>.env</code> from Step 2.</p></div></details>
-  <details class="fold"><summary>Connect fails with Invalid or expired access_token</summary><div class="fb"><p>The key is wrong or was revoked. Create a new one in RocketRide Cloud, update your <code>.env</code>, restart the kernel and run the three cells again.</p></div></details>
-
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>SDK ready, key set, client connected.</span></label>
-</section>
-
-<!-- ===== 4 ===== -->
-<section class="phase" data-title="Build the clock" data-dur="2">
-
-  <div class="lead">
-    <span class="stepno">04</span>
-    <div>
-      <p class="kicker">The build <i>/ 2 minutes, two stages</i></p>
-      <h1>Build the clock</h1>
-      <p class="lede">Create the app from RocketRide's template. Then draw the clock into it.</p>
-    </div>
-  </div>
-
-  <p>Each stage ends with something you can see in the notebook. If a stage doesn't work, the last cell of that stage is a <strong>skip-ahead</strong> cell that puts you exactly where the stage should have ended.</p>
-
-  <h2>Stage 1. Create the app <span class="mins">1 min</span></h2>
-  <p>Run the Stage 1 cell. It reads your organization's developer id, then creates the app under <code>build/apps/alarm_clock/</code> from RocketRide's app template:</p>
   <div class="grid"><table>
     <thead><tr><th>File</th><th>What it is</th></tr></thead>
     <tbody>
       <tr><td><code>package.json</code></td><td>The app's manifest: its id, name, icon and the packages it uses</td></tr>
-      <tr><td><code>src/App.tsx</code></td><td>The screen. Stage 2 replaces it with the clock.</td></tr>
-      <tr><td><code>src/AppDescriptor.ts</code></td><td>How RocketRide finds and shows the app</td></tr>
+      <tr><td><code>alarm_clock.rrapp</code></td><td>Opens the app in the App Builder</td></tr>
+      <tr><td><code>src/App.tsx</code></td><td>The screen. Claude replaces it with the clock.</td></tr>
       <tr><td><code>icon.svg</code>, <code>README.md</code></td><td>The app's icon and store listing</td></tr>
     </tbody>
   </table></div>
-  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>App id:</code> with your developer id, then the list of files.</p></div>
-  <details class="fold"><summary>Your organization has no developer id yet</summary><div class="fb"><p>Claim one in the App Builder's <strong>Deploy</strong> tab (Step 2), then run Stage 1 again. It reconnects and picks up the new id.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the cell headed <code># Skip ahead: run this only if the stage above didn't work</code> at the end of Stage 1. It reconnects and creates the app again from a clean template.</p></div></details>
+  <div class="note good"><b class="k">Done when</b><p>Init printed <strong>Workspace initialized against https://api.rocketride.ai</strong>, and <code>apps/alarm_clock/</code> is in the Explorer.</p></div>
 
-  <h2>Stage 2. Draw the clock <span class="mins">1 min</span></h2>
-  <p>Run the Stage 2 cell. It writes the clock into <code>src/App.tsx</code>:</p>
-  <ul>
-    <li>A round <strong>face</strong> with 60 ticks and 12 numerals, and hour, minute and second hands that move every second.</li>
-    <li>A <strong>digital readout</strong> under it.</li>
-    <li>An <strong>alarm</strong>: pick a time and press <strong>Set alarm</strong>. When the clock gets there, the face flashes and it beeps until you press <strong>Stop</strong>.</li>
-  </ul>
-  <div class="note good"><b class="k">Done when</b><p>The cell prints <code>Wrote src/App.tsx</code> and <code>Wrote README.md</code>.</p></div>
-  <details class="fold"><summary>Want to change it?</summary><div class="fb"><p>The clock is the text in <code>APP_TSX</code>. Change a color or the beep's pitch (<code>880</code>), run Stage 2, then run Stage 3 to publish the new version.</p></div></details>
-  <details class="fold"><summary>Stuck? Skip ahead</summary><div class="fb"><p>Run the skip-ahead cell at the end of Stage 2. It writes the finished clock.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code>. Run it through Python instead, with the same arguments: <code>python -m rocketride.cli.main init --uri https://api.rocketride.ai</code>.</p></div></details>
+  <details class="fold"><summary>pip won't install</summary><div class="fb"><p>No internet, or a VPN or proxy blocking it: switch networks. <code>externally-managed-environment</code> means a system Python: make a virtual environment first with <code>python3 -m venv .venv</code>, activate it, and run the install again.</p></div></details>
+  <details class="fold"><summary>The browser doesn't open</summary><div class="fb"><p>Init prints the sign-in link. Open it yourself, sign in, and the command carries on.</p></div></details>
+  <details class="fold"><summary>It says it's probing localhost</summary><div class="fb"><p>You left out <code>--uri https://api.rocketride.ai</code>. Press <strong>Ctrl+C</strong> and run the init command again exactly as shown.</p></div></details>
+  <details class="fold"><summary><code>pnpm</code> not found during app create</summary><div class="fb"><p>Install it (<code>npm install -g pnpm@latest</code>), restart your editor, then run <code>pnpm install</code> in the project folder.</p></div></details>
+  <details class="fold"><summary>I don't know my developer id</summary><div class="fb"><p>Open the App Builder's <strong>Deploy</strong> tab: it shows your organization's id, or asks you to claim one. If you created the app with the wrong id, delete <code>apps/alarm_clock</code> and run the create command again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The app exists and the clock is written into it.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Signed in, and <code>apps/alarm_clock/</code> exists.</span></label>
+</section>
+
+<!-- ===== 4 ===== -->
+<section class="phase" data-title="Build the clock" data-dur="5">
+
+  <div class="lead">
+    <span class="stepno">04</span>
+    <div>
+      <p class="kicker">The build <i>/ 5 minutes</i></p>
+      <h1>Build the clock</h1>
+      <p class="lede">Ask Claude Code for the clock, then watch it run in the App Builder.</p>
+    </div>
+  </div>
+
+  <h2>Ask Claude for the clock <span class="mins">3 min</span></h2>
+  <ol class="run">
+    <li>In the same terminal, in your project folder, start Claude Code:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>claude</pre></div>
+    </li>
+    <li>Ask for the clock:
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Build a basic analog alarm clock in apps/alarm_clock: a ticking clock face with hour, minute and second hands, the digital time under it, a time picker and a Set alarm button. When the alarm time comes, flash the face and beep until I press Stop. Replace the template README with a short description of the clock. Don't deploy it.</pre></div>
+    </li>
+  </ol>
+  <p>Claude reads the <code>CLAUDE.md</code> and RocketRide docs that init put in the folder, so it knows how a RocketRide app is put together. Let it edit the files it asks about.</p>
+  <div class="note good"><b class="k">Done when</b><p>Claude says it has rewritten <code>apps/alarm_clock/src/App.tsx</code>.</p></div>
+
+  <h2>See it in the App Builder <span class="mins">2 min</span></h2>
+  <ol class="run">
+    <li>In the Explorer, open <code>apps/alarm_clock/alarm_clock.rrapp</code>. The App Builder opens.</li>
+    <li>Go to the <strong>Design</strong> tab and pick <strong>Preview</strong>. The App Builder installs, builds and shows the app. The first build takes a moment.</li>
+    <li>Set an alarm one minute ahead and wait for it to ring.</li>
+  </ol>
+  <div class="note good"><b class="k">Done when</b><p>The preview shows your clock with the second hand moving.</p></div>
+  <details class="fold"><summary>Want to change it?</summary><div class="fb"><p>Ask Claude: a different color, a louder beep, a snooze button. The preview rebuilds every time a file is saved.</p></div></details>
+  <details class="fold"><summary>The preview shows an error, or stays blank</summary><div class="fb"><p>Open the <strong>Errors</strong> pane next to Preview, copy the error into Claude and ask it to fix it.</p></div></details>
+  <details class="fold"><summary>No Claude Code, or still stuck? Use the fallback</summary><div class="fb"><p>Download <a href="alarm-clock.ipynb" download>alarm-clock.ipynb</a> into your project folder, open it, pick a Python 3.10+ kernel, and run its one code cell. It writes a finished clock into <code>apps/alarm_clock</code>, and the preview picks it up.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Your clock ticks in the App Builder's preview.</span></label>
 </section>
 
 <!-- ===== 5 ===== -->
-<section class="phase" data-title="Deploy and open it" data-dur="2">
+<section class="phase" data-title="Deploy from the App Builder" data-dur="6">
 
   <div class="lead">
     <span class="stepno">05</span>
     <div>
-      <p class="kicker">The finish <i>/ 2 minutes</i></p>
-      <h1>Deploy and open it</h1>
-      <p class="lede">One cell sends the app to RocketRide Cloud, waits while it builds, publishes it to your desktop, and prints the link.</p>
+      <p class="kicker">The finish <i>/ 6 minutes</i></p>
+      <h1>Deploy from the App Builder</h1>
+      <p class="lede">Two clicks: <strong>Deploy</strong> sends the app to RocketRide Cloud, which builds it, and <strong>Publish</strong> puts that version on your desktop.</p>
     </div>
   </div>
 
-  <h2>What the cell does</h2>
   <ol class="run">
-    <li><strong>Checks</strong> the app on your laptop: the manifest, the id, the icon and the README.</li>
-    <li><strong>Deploys</strong> it: uploads the app's source as a new version.</li>
-    <li>Waits while RocketRide Cloud <strong>builds</strong> it, and prints each build step. This takes a minute or two.</li>
-    <li><strong>Publishes</strong> it to <strong>@me</strong>, your own desktop, and prints <strong>Open your clock</strong> with the link.</li>
+    <li>In the App Builder, go to the <strong>Deploy</strong> tab.</li>
+    <li>Click <strong>Deploy</strong>. Add a comment if you like, for example <code>first clock</code>. The App Builder uploads the app's source as a new version, <strong>v1</strong>.</li>
+    <li>Watch the version card while RocketRide Cloud builds it: <code>uploaded</code>, <code>installing</code>, <code>checking</code>, <code>building</code>. This takes a minute or two.</li>
+    <li>When the build is done, click <strong>Publish to…</strong> on the version card and choose <strong>@me</strong>, your own desktop.</li>
+    <li>Open <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a>. Your clock is on your desktop.</li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The link opens your clock and the second hand is moving. Set an alarm one minute ahead and wait for it to ring.</p></div>
-  <details class="fold"><summary>The cloud build failed</summary><div class="fb"><p>The cell prints the end of the build log. If you edited the clock, the log points at the line. Run the Stage 2 skip-ahead cell to restore the finished clock, then run Stage 3 again.</p></div></details>
-  <details class="fold"><summary>It's still building</summary><div class="fb"><p>The cell waits five minutes. If the build takes longer, wait a minute and run the skip-ahead cell: it publishes the newest version that finished building.</p></div></details>
+  <div class="note good"><b class="k">Done when</b><p>Your clock opens on cloud.rocketride.ai and the second hand is moving.</p></div>
+  <details class="fold"><summary>The build failed</summary><div class="fb"><p>Click the <strong>failed</strong> badge on the version card to open the build log. The failure reason is at the end. Paste it into Claude and ask for a fix, check the preview, then click <strong>Deploy</strong> again.</p></div></details>
+  <details class="fold"><summary>The Deploy tab is read-only with a namespace banner</summary><div class="fb"><p>The app id's prefix isn't your organization's developer id. Delete <code>apps/alarm_clock</code>, run the create command again with the right <code>--developer</code>, and run the fallback cell or ask Claude again.</p></div></details>
   <details class="fold"><summary>The alarm flashes but doesn't beep</summary><div class="fb"><p>Browsers only play sound after you click on the page. Press <strong>Set alarm</strong> to turn sound on, and check the tab isn't muted.</p></div></details>
-  <details class="fold"><summary>The clock isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it refreshes. Reload cloud.rocketride.ai, or use the link the cell printed.</p></div></details>
-  <p>Running it again is safe: it publishes the next version, and the same link opens it.</p>
+  <details class="fold"><summary>The clock isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it refreshes. Reload cloud.rocketride.ai.</p></div></details>
+  <p>To ship a change: ask Claude, check the preview, <strong>Deploy</strong> again, and publish the new version to <strong>@me</strong>. Versions never change, so each deploy makes the next one.</p>
 
   <h2>Next project</h2>
   <div class="ports">
@@ -308,22 +304,25 @@ ROCKETRIDE_URI=https://api.rocketride.ai</pre></div>
   <div class="grid"><table>
     <tbody>
       <tr><td>RocketRide</td><td>An open source runtime for AI pipelines and apps, with a cloud you deploy to.</td></tr>
-      <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time. Text cells explain, code cells do the work.</td></tr>
-      <tr><td>Cell</td><td>One block in a notebook. Run it with <strong>Shift+Enter</strong>.</td></tr>
-      <tr><td>Kernel</td><td>The Python that runs a notebook's cells. Pick it with <strong>Select Kernel</strong>.</td></tr>
+      <tr><td>Terminal</td><td>The text window where you type commands. In your editor: <strong>Terminal</strong>, <strong>New Terminal</strong>.</td></tr>
+      <tr><td>Notebook</td><td>A file of cells (<code>.ipynb</code>) you run one at a time. Here it only holds the fallback clock.</td></tr>
       <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide Python SDK.</td></tr>
-      <tr><td>API key</td><td>The password a service gives you so your code can call it.</td></tr>
-      <tr><td>App Builder</td><td>The RocketRide extension's screen for designing, packaging and deploying apps.</td></tr>
+      <tr><td><code>rocketride</code> command</td><td>Installed with the SDK. <code>init</code> sets up a workspace, <code>app create</code> makes an app.</td></tr>
+      <tr><td>Claude Code</td><td>A coding agent you talk to in the terminal. It reads the workspace's <code>CLAUDE.md</code> to learn the platform.</td></tr>
+      <tr><td>API key</td><td>The password a service gives you so your code can call it. <code>rocketride init</code> makes one when you sign in.</td></tr>
+      <tr><td>App Builder</td><td>The RocketRide extension's screen for an app: <strong>Design</strong> shows it live, <strong>Deploy</strong> ships it.</td></tr>
+      <tr><td>Preview</td><td>The App Builder's live view of your app. It rebuilds every time a file is saved.</td></tr>
     </tbody>
   </table></div>
 
   <h2>The pieces of this project</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>Setup</td><td>The first code cell. Installs the RocketRide SDK and prints <code>ready</code>.</td></tr>
-      <tr><td>Config</td><td>The only cell that reads your environment. Every later cell uses its <code>CONFIG</code>.</td></tr>
-      <tr><td>Connect</td><td>Opens the shared RocketRide client.</td></tr>
-      <tr><td>Skip ahead</td><td>The last cell of each stage. Puts you where the stage should have ended.</td></tr>
+      <tr><td><code>rocketride init</code></td><td>Turns a folder into a RocketRide project: signs you in, saves the key to <code>.env</code>, adds the docs and <code>CLAUDE.md</code>.</td></tr>
+      <tr><td><code>rocketride app create</code></td><td>Makes a new app from RocketRide's template under <code>apps/</code>.</td></tr>
+      <tr><td>Workspace</td><td>Your project folder after <code>rocketride init</code>: your sign-in, the RocketRide docs, and the <code>apps/</code> folder.</td></tr>
+      <tr><td><code>.rrapp</code></td><td>The file in an app folder that opens it in the App Builder.</td></tr>
+      <tr><td>Fallback</td><td>The notebook's one cell. Writes a finished clock if Claude's doesn't work.</td></tr>
       <tr><td>Template</td><td>The starter app RocketRide creates for you, so every app has the same shape.</td></tr>
       <tr><td>Developer id</td><td>Your organization's publisher name. Every app id starts with it, like <code>acme_labs.alarm_clock</code>.</td></tr>
       <tr><td>Manifest</td><td>The <code>appManifest</code> block in <code>package.json</code>: the app's id, name, icon and README.</td></tr>

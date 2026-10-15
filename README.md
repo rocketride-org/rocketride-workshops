@@ -47,12 +47,31 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
   <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/alarm-clock"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>Build an analog alarm clock app: a ticking clock face with a time picker and an alarm that flashes and beeps. The notebook creates the app from RocketRide's app template, writes the clock, deploys it to RocketRide Cloud and publishes it to your desktop on cloud.rocketride.ai.</p>
+<p>Start a RocketRide project from an empty folder in three commands (<code>pip install rocketride</code>, <code>rocketride init</code>, <code>rocketride app create</code>), then ask Claude Code for an analog alarm clock: a ticking face, a time picker and an alarm that flashes and beeps. Watch it live in the App Builder, then deploy and publish it from the App Builder to your desktop on cloud.rocketride.ai.</p>
 
 <img src="images/alarm-clock.png" alt="The alarm clock app: an analog clock face above the digital time, a time picker with a Set alarm button, and the alarm status" width="75%">
 
 
-<p><sub><b>5 min</b> &nbsp;·&nbsp; app template → clock UI → cloud deploy → publish &nbsp;·&nbsp; needs Python 3.10+</sub></p>
+<p><sub><b>15 min</b> &nbsp;·&nbsp; rocketride init → app create → Claude builds the clock → deploy from the App Builder &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, Claude Code</sub></p>
+
+</div>
+
+<div align="center">
+
+<h3>Notepad: RocketRide in an existing app</h3>
+
+<p>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/notepad-integration/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
+  &nbsp;
+  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/notepad-integration"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
+</p>
+
+<p>Wire a RocketRide pipeline into a small TypeScript notepad you didn't write. Clone it, run it, add the RocketRide TypeScript SDK, and give it an <b>✨ Assist</b> button that summarizes the open note in a few bullets with Claude.</p>
+
+<img src="images/notepad-integration.png" alt="The notepad app: a note list on the left, the open note in the editor, and the Assist and Delete buttons under it" width="75%">
+
+
+<p><sub><b>15 min</b> &nbsp;·&nbsp; rocketride init → clone and run the app → add the SDK → pipeline-backed Assist button &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, git</sub></p>
 
 </div>
 
@@ -75,34 +94,47 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 </div>
 
+## How a module runs
+
+Participants do every deterministic step **by hand, from the guide**, so they feel how little it takes to start and ship a RocketRide project. Notebooks hold only the build: pipelines, prompts, UI code and fallbacks. No exceptions.
+
+| By hand, from the guide (`index.html`) | In the notebook |
+| --- | --- |
+| `pip install rocketride` (plus anything else the module needs) | Writing pipelines, app code and policy files |
+| `rocketride init --uri https://api.rocketride.ai`: sign-in, `.env`, docs, `CLAUDE.md` | Running and trying pipelines with the SDK client |
+| `rocketride app create <slug> --developer <id>`: the app scaffold | Skip-ahead cells that restore a stage's files |
+| `git clone`, `pnpm install`, `pnpm add`, `pnpm dev` | |
+| Viewing the app: open `apps/<slug>/<slug>.rrapp`, App Builder **Design → Preview** | |
+| Deploying: App Builder **Deploy** tab → **Deploy** → **Publish to… @me** | |
+
+`node scripts/validate.mjs` enforces the split. It fails any code cell that runs `%pip` or `pip install`, `rocketride init`, `app create`, `create_app(`, `verify_app(`, `add_app(`, `publish_app(`, `"pnpm"` or `"git", "clone"`, or that reads `os.environ`.
+
 ## Notebook conventions
 
-Every module notebook uses the same Python 3.10+ kernel and the same cell order:
+Every module notebook uses the same Python 3.10+ kernel and lives in the participant's project folder, next to the `.env` that `rocketride init` wrote. The SDK reads that `.env` on its own: `client = RocketRideClient()`.
 
-1. **Title and overview** (markdown): what you build, time box, what "done" looks like.
-2. **Preflight** (code, tagged `preflight` or starting with a `# Preflight` comment): checks Python and installs the `rocketride` package, plus Node, pnpm and git when the module needs them. Every problem it finds comes with the exact fix. It prints one green "ready" line when everything passes.
-3. **Config** (code, tagged `config` or starting with a `# Config` comment): the **only** cell that reads environment variables. It loads `ROCKETRIDE_*` from the environment or a local `.env`, prompts with `getpass` if the key is missing, and exposes a `CONFIG` dict.
-4. **Connect** (code, tagged `connect`): one shared `client`, plus `start(pipe_path)`, which attaches to a running pipeline instead of failing with "Pipeline is already running". A module split into parts puts its client and helpers in a **Shared** cell instead (see below).
-5. **Stages**: a markdown cell (goal, what to watch for), then short code cells. Each stage ends with a cell headed `# Skip ahead: run this only if the stage above didn't work`, which writes the finished artifact so a stuck attendee can continue.
-6. **Deploy** (where it applies): deploys to Cloud and prints the live URL.
-7. **What's next** (markdown): docs, Discord and the next module.
+1. **Title and overview** (markdown): what you build, time box, what "done" looks like, and a link to the guide for the hand-run steps.
+2. **Connect** (code): checks `.env` exists (else points to the guide), then opens one shared `client`.
+3. **Stages**: a markdown cell (goal, what to watch for), then short code cells. Each stage ends with a cell headed `# Skip ahead: run this only if the stage above didn't work`, which writes the finished files so a stuck attendee can continue.
+4. **What's next** (markdown): the guide's next step (preview, deploy), docs, Discord and the next module.
 
 Rules:
 
-- **Every cell is safe to re-run.** Writes overwrite, clones skip if the folder exists, and pipelines attach to an existing task.
-- **Self-contained.** No imports from sibling files. Anything the notebook needs, it writes itself or fetches in a cell. Generated files go in `build/` next to the notebook.
+- **Every cell is safe to re-run.** Writes overwrite, and pipelines attach to an existing task.
+- **Self-contained.** No imports from sibling files. Anything the notebook needs, it writes itself. Files go in the project folder (`Path.cwd()`), under `apps/` and `pipelines/` like any RocketRide workspace.
+- **No setup, no environment variables.** See the table above.
 - **No secrets, no outputs in git.** Run `node scripts/strip.mjs` before you commit.
 - Keep code cells short enough to read on a projector.
 
-TypeScript work runs from the same Python kernel, through `%%writefile` cells and shell commands (no TypeScript kernel).
+TypeScript work runs from the same Python kernel, through `%%writefile` cells (no TypeScript kernel).
 
-A long module can split into parts. `<id>.ipynb` holds the overview, Preflight, Config and the shared helpers, and each part (`01-….ipynb`, `02-….ipynb`, …) starts with `%run ./<id>.ipynb` followed by `await connect()`. Keep `<id>.ipynb` free of top-level `await`: `%run` can't run it. Parts hand work to each other through files in `build/`, and a part's skip-ahead cell can rewrite its files with the shared `replay()` helper. `specter-mutual` is the example.
+A long module can split into parts. `<id>.ipynb` holds the overview and the shared helpers, and each part (`01-….ipynb`, `02-….ipynb`, …) starts with `%run ./<id>.ipynb` followed by `await connect()`. Keep `<id>.ipynb` free of top-level `await`: `%run` can't run it. Parts hand work to each other through files in the project folder, and a part's skip-ahead cell can rewrite its files with the shared `replay()` helper. `specter-mutual` is the example.
 
 ## Add a module
 
-1. Create `modules/<id>/` with `<id>.ipynb`, `index.html`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Keep its Preflight, Config and Connect cells as they are. Start `README.md` with a `**Guide:**` link to `https://rocketride-org.github.io/rocketride-workshops/modules/<id>/`.
+1. Create `modules/<id>/` with `<id>.ipynb`, `index.html`, `README.md` and `FACILITATOR.md`. The easiest start is a copy of an existing module. Start `README.md` with a `**Guide:**` link to `https://rocketride-org.github.io/rocketride-workshops/modules/<id>/`.
 
-   The guide (`index.html`) keeps the same phases as every other project: **Start here**, **Set up at home**, **Open the notebook**, the build, the finish (deploy or clean up), and **Words you will hear** as reference. Each phase is a `<section class="phase" data-title="..." data-dur="<minutes>">`. The rail, pager and progress are built by `assets/codelab.js`; give `<body>` a unique `data-key` so progress is saved per guide.
+   The guide (`index.html`) keeps the same phases as every other project: **Start here**, **Set up at home**, **Start the project** (the hand-run commands, each in a copyable block), the build, the finish (**Deploy from the App Builder**, or clean up), and **Words you will hear** as reference. Each phase is a `<section class="phase" data-title="..." data-dur="<minutes>">`. The rail, pager and progress are built by `assets/codelab.js`; give `<body>` a unique `data-key` so progress is saved per guide.
 2. Add an entry to `window.MODULES` in `workshops.js`:
 
    ```js
