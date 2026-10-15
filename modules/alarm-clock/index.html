@@ -172,7 +172,16 @@
   <ol class="run">
     <li>Make an empty folder for the project, for example <code>alarm-clock</code>. In your editor, choose <strong>File</strong>, <strong>Open Folder</strong> and open it. Then open a terminal: <strong>Terminal</strong>, <strong>New Terminal</strong>.</li>
     <li><b>Install RocketRide.</b> This installs the Python package, which brings the <code>rocketride</code> command:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride</pre></div>
+      <div class="tabs">
+        <div class="tl"><button class="on">Mac and Linux</button><button>Windows</button></div>
+        <div class="tp on">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride</pre></div>
+        </div>
+        <div class="tp">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python -m pip install rocketride</pre></div>
+        </div>
+      </div>
+      Going through Python installs it into the same Python you checked in Step 2. A Mac has no plain <code>pip</code> command.
     </li>
     <li><b>Save your RocketRide key.</b> Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Then, in the editor's Explorer, click <strong>New File</strong>, name it <code>.env</code> (in the project folder itself), paste these two lines, put your key in place of <code>your-api-key</code>, and save:
       <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_URI=https://api.rocketride.ai
@@ -200,8 +209,8 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
   </table></div>
   <div class="note good"><b class="k">Done when</b><p>Init printed <strong>Workspace initialized against https://api.rocketride.ai</strong>, and <code>apps/alarm_clock/</code> is in the Explorer.</p></div>
 
-  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code>. Run it through Python instead, with the same arguments: <code>python -m rocketride.cli.main init</code>.</p></div></details>
-  <details class="fold"><summary>pip won't install</summary><div class="fb"><p>No internet, or a VPN or proxy blocking it: switch networks. <code>externally-managed-environment</code> means a system Python: make a virtual environment first with <code>python3 -m venv .venv</code>, activate it, and run the install again.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code>. Run it through Python instead, with the same arguments: <code>python3 -m rocketride.cli.main init</code> (Windows: <code>python -m rocketride.cli.main init</code>).</p></div></details>
+  <details class="fold"><summary>pip won't install</summary><div class="fb"><p>No internet, or a VPN or proxy blocking it: switch networks. <code>externally-managed-environment</code> means a system Python: make a virtual environment first with <code>python3 -m venv .venv</code>, activate it, and run the install again.</p><p><code>zsh: command not found: pip</code> means you typed <code>pip</code> on its own: use <code>python3 -m pip</code> as shown.</p></div></details>
   <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p>Init didn't find your key. Check that <code>.env</code> sits in the folder the terminal is in (not in a subfolder), that it has both lines spelled exactly as shown, and that it's saved. This version of <code>rocketride</code> can't sign in through the browser, so the key in <code>.env</code> is required.</p></div></details>
   <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was saved as UTF-16. Open it in the editor, click <strong>UTF-16 LE</strong> in the status bar at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Or delete it and make it again with <strong>New File</strong>.</p></div></details>
   <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one at cloud.rocketride.ai, paste it into <code>.env</code>, save, and run <code>rocketride init</code> again.</p></div></details>
