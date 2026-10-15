@@ -51,9 +51,9 @@ Then `rocketride init` reads it. (rocketride 1.4.0 can't sign in through the bro
 
 Never commit a `.env` file or paste a key into a notebook cell.
 
-## 6. Claude Code (alarm clock)
+## 6. Claude Code (alarm clock, Specter Mutual)
 
-The alarm clock asks [Claude Code](https://claude.com/claude-code) to build the clock. Install it and run `claude` once to sign in. Without it, the module's fallback notebook writes the clock for you.
+The alarm clock asks [Claude Code](https://claude.com/claude-code) to build the clock, and Specter Mutual uses it to run its pipelines and build the portal. Install it and run `claude` once to sign in. Without it, each module's fallback notebooks do the same work; Specter Mutual's also need `python3 -m pip install nbformat`.
 
 ## 7. Select the right kernel
 

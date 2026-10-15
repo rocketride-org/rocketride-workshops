@@ -90,7 +90,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 <img src="images/specter-mutual.png" alt="The Specter Mutual claims portal: a claim form on the left, the escalation queue and audit log on the right" width="75%">
 
 
-<p><sub><b>40 min</b> in four parts &nbsp;·&nbsp; project init → pipeline build → UI build → cloud deploy &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+</sub></p>
+<p><sub><b>40 min</b> &nbsp;·&nbsp; rocketride init → paste the pipelines, run them with Claude → paste the logic, Claude builds the UI → deploy from the App Builder &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, Claude Code</sub></p>
 
 </div>
 
@@ -101,7 +101,7 @@ Participants do every deterministic step **by hand, from the guide**, so they fe
 | By hand, from the guide (`index.html`) | In the notebook |
 | --- | --- |
 | `pip install rocketride` (plus anything else the module needs) | Writing pipelines, app code and policy files |
-| `rocketride init --uri https://api.rocketride.ai`: sign-in, `.env`, docs, `CLAUDE.md` | Running and trying pipelines with the SDK client |
+| `.env` with your API key, then `rocketride init`: docs, `CLAUDE.md` | Running and trying pipelines with the SDK client |
 | `rocketride app create <slug> --developer <id>`: the app scaffold | Skip-ahead cells that restore a stage's files |
 | `git clone`, `pnpm install`, `pnpm add`, `pnpm dev` | |
 | Viewing the app: open `apps/<slug>/<slug>.rrapp`, App Builder **Design → Preview** | |
