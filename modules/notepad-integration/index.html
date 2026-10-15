@@ -91,7 +91,7 @@
     <thead><tr><th>Tool</th><th>Check it's there</th><th>Install</th></tr></thead>
     <tbody>
       <tr><td>An editor</td><td></td><td><a href="https://code.visualstudio.com">VS Code</a>, Cursor or Windsurf</td></tr>
-      <tr><td>Python 3.10+</td><td><code>python --version</code></td><td><a href="https://www.python.org/downloads/">python.org</a>. On Windows, tick <strong>Add python.exe to PATH</strong>.</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python3 --version</code> (Windows: <code>python --version</code>)</td><td><a href="https://www.python.org/downloads/">python.org</a>. On Windows, tick <strong>Add python.exe to PATH</strong>.</td></tr>
       <tr><td>Node 20+</td><td><code>node --version</code></td><td><a href="https://nodejs.org">nodejs.org</a></td></tr>
       <tr><td>pnpm 10+</td><td><code>pnpm --version</code></td><td><code>npm install -g pnpm@latest</code></td></tr>
       <tr><td>git</td><td><code>git --version</code></td><td><a href="https://git-scm.com">git-scm.com</a></td></tr>
@@ -104,7 +104,7 @@
     <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
     <li>Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Keep it where you can copy it from. Treat it like a password.</li>
   </ol>
-  <div class="note"><b class="k">The model key</b><p>The pipeline uses Claude through an Anthropic key saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your organization's RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone.</p></div>
+  <div class="note"><b class="k">The model key</b><p>The pipeline uses Claude through an Anthropic key saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your organization's RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone. On your own, add it there yourself, with your Anthropic API key as the value.</p></div>
 
   <div class="note fac">
     <b class="k">Stuck?</b>
@@ -160,17 +160,28 @@ VITE_ROCKETRIDE_APIKEY=your-api-key</pre></div>
       The first two lines are for the <code>rocketride</code> command, the <code>VITE_</code> lines for the app. git ignores <code>.env</code>, so your key never gets committed.
     </li>
     <li><b>Run these three commands</b> in the terminal. They install RocketRide's command-line tool, make the folder a RocketRide project, and add the RocketRide SDK to the app (installing its other packages too):
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride
+      <div class="tabs">
+        <div class="tl"><button class="on">Mac and Linux</button><button>Windows</button></div>
+        <div class="tp on">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride
 rocketride init
 pnpm add rocketride@1.4.0</pre></div>
+        </div>
+        <div class="tp">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python -m pip install rocketride
+rocketride init
+pnpm add rocketride@1.4.0</pre></div>
+        </div>
+      </div>
+      A Mac has no plain <code>pip</code> command, so this runs pip through Python.
     </li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p><code>rocketride init</code> printed <code>Workspace initialized against https://api.rocketride.ai</code> and <code>pnpm add</code> finished without an error.</p></div>
+  <div class="note good"><b class="k">Done when</b><p><code>rocketride init</code> printed <code>Workspace initialized against https://api.rocketride.ai</code> and <code>pnpm add</code> finished without an error. A yellow <code>Ignored build scripts: esbuild</code> box is fine.</p></div>
 
   <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p><code>rocketride init</code> didn't find your key. Check <code>.env</code> is next to <code>package.json</code> (not inside <code>src</code>), has your key on the <code>ROCKETRIDE_APIKEY</code> line, and is saved.</p></div></details>
   <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was made in PowerShell and saved in the wrong encoding. Open it, click <strong>UTF-16 LE</strong> at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Always make <code>.env</code> with the editor's <strong>New File</strong>.</p></div></details>
   <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one, paste it into both key lines, save, and run <code>rocketride init</code> again.</p></div></details>
-  <details class="fold"><summary><code>rocketride</code>, <code>pip</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>For <code>rocketride</code>, use <code>python -m rocketride.cli.main init</code> instead. For <code>pip</code>, use <code>python -m pip install rocketride</code>. Otherwise install the tool (Step 2), then close and reopen your terminal and <code>cd notepad-starter</code> again.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>For <code>rocketride</code>, use <code>python3 -m rocketride.cli.main init</code> instead (Windows: <code>python -m rocketride.cli.main init</code>). Otherwise install the tool (Step 2), then close and reopen your terminal and <code>cd notepad-starter</code> again.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Key saved, three commands done.</span></label>
 </section>
@@ -396,8 +407,8 @@ render();</pre></div>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>Bullets summarizing your note appear under the editor.</p></div>
 
-  <details class="fold"><summary>The box says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check both <code>VITE_</code> lines in <code>.env</code> have your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>pnpm dev</code> again: the app only reads <code>.env</code> when it starts.</p></div></details>
-  <details class="fold"><summary>The answer mentions an Anthropic key, or is empty</summary><div class="fb"><p><code>ROCKETRIDE_ANTHROPIC_KEY</code> is missing from your organization's RocketRide Variables. At a workshop, tell the facilitator.</p></div></details>
+  <details class="fold"><summary>The box says <code>Invalid Anthropic API key format</code>, or the answer is empty</summary><div class="fb"><p><code>ROCKETRIDE_ANTHROPIC_KEY</code> is missing from your organization's RocketRide Variables. At a workshop, tell the facilitator. On your own, add it there with your Anthropic API key, then press Assist again.</p></div></details>
+  <details class="fold"><summary>The box says <code>RocketRide error: ...</code> about anything else</summary><div class="fb"><p>Check both <code>VITE_</code> lines in <code>.env</code> have your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>pnpm dev</code> again: the app only reads <code>.env</code> when it starts.</p></div></details>
   <details class="fold"><summary>No Assist button, or a blank page</summary><div class="fb"><p>A file wasn't pasted or saved. Stop the app and run <code>pnpm build</code>: it names the file and line with the problem. Re-copy that file's box, then <code>pnpm dev</code> again.</p></div></details>
   <details class="fold"><summary>Port 5173 is already in use</summary><div class="fb"><p>The terminal prints the port it used instead, for example <code>localhost:5174</code>. Open that.</p></div></details>
 

@@ -15,7 +15,7 @@ git clone https://github.com/rocketride-org/notepad-starter
 cd notepad-starter
 # .env (the editor's New File): ROCKETRIDE_URI, ROCKETRIDE_APIKEY,
 # VITE_ROCKETRIDE_URI, VITE_ROCKETRIDE_APIKEY
-pip install rocketride
+python3 -m pip install rocketride   # Windows: python -m pip install rocketride
 rocketride init
 pnpm add rocketride@1.4.0   # also installs the app's other packages
 # paste three files from the guide
