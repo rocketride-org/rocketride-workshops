@@ -35,7 +35,7 @@
     <div>
       <p class="kicker">RocketRide workshops</p>
       <h1>Pick your project</h1>
-      <p class="lede">Every workshop is a set of projects. Each project has its own step-by-step guide and one notebook you run in VS Code, from a first pipeline to a deployed app.</p>
+      <p class="lede">Every workshop is a set of projects. Each project has its own step-by-step guide you follow in VS Code, from a first pipeline to a deployed app.</p>
     </div>
   </div>
 
@@ -114,8 +114,10 @@
         card.appendChild(reqs);
         var btns = el('div', 'btns');
         if (m.guide) btns.appendChild(link(m.guide, 'Open the guide →', 'btn'));
-        btns.appendChild(link(m.notebook, 'Download notebook', 'btn ghost', true));
-        btns.appendChild(link(REPO + m.notebook, 'View on GitHub', 'btn ghost'));
+        if (m.notebook){
+          btns.appendChild(link(m.notebook, 'Download notebook', 'btn ghost', true));
+          btns.appendChild(link(REPO + m.notebook, 'View on GitHub', 'btn ghost'));
+        }
         card.appendChild(btns);
       }
       grid.appendChild(card);

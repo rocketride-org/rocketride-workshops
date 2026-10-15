@@ -66,7 +66,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
   <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/notepad-integration"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>Wire a RocketRide pipeline into a small TypeScript notepad you didn't write. Clone it, run it, add the RocketRide TypeScript SDK, and give it an <b>✨ Assist</b> button that summarizes the open note in a few bullets with Claude.</p>
+<p>Wire a RocketRide pipeline into a small TypeScript notepad you didn't write. Clone it, run it, add the RocketRide TypeScript SDK, and copy and paste in an <b>✨ Assist</b> button that summarizes the open note in a few bullets with Claude.</p>
 
 <img src="images/notepad-integration.png" alt="The notepad app: a note list on the left, the open note in the editor, and the Assist and Delete buttons under it" width="75%">
 
@@ -96,7 +96,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 ## How a module runs
 
-Participants do every deterministic step **by hand, from the guide**, so they feel how little it takes to start and ship a RocketRide project. Notebooks hold only the build: pipelines, prompts, UI code and fallbacks. No exceptions.
+Participants do every deterministic step **by hand, from the guide**, so they feel how little it takes to start and ship a RocketRide project. Notebooks hold only the build: pipelines, prompts, UI code and fallbacks. No exceptions. A module can also be guide-only: `notepad-integration` has no notebook, and participants paste every file from the guide.
 
 | By hand, from the guide (`index.html`) | In the notebook |
 | --- | --- |

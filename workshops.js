@@ -9,9 +9,8 @@ window.MODULES = {
   },
   "notepad-integration": {
     title: "Integrate RocketRide into an existing app",
-    summary: "Add a pipeline to a TypeScript notepad app with the TS SDK.",
+    summary: "Clone a TypeScript notepad app and paste in an AI Assist button backed by a RocketRide pipeline.",
     duration: 15,
-    notebook: "modules/notepad-integration/notepad-integration.ipynb",
     guide: "modules/notepad-integration/index.html",
     requires: ["python", "node", "pnpm", "git"],
   },

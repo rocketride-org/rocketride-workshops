@@ -26,10 +26,11 @@ try {
   fail(`workshops.js: ${e.message}`);
 }
 for (const [id, m] of Object.entries(MODULES)) {
-  if (!m.notebook) fail(`workshops.js: module "${id}" has no notebook`);
-  else if (!existsSync(join(root, m.notebook)))
+  // A module may be guide-only (notepad-integration): its notebook is optional.
+  if (m.notebook && !existsSync(join(root, m.notebook)))
     fail(`workshops.js: module "${id}" notebook does not exist: ${m.notebook}`);
-  if (m.guide && !existsSync(join(root, m.guide)))
+  if (!m.guide) fail(`workshops.js: module "${id}" has no guide`);
+  else if (!existsSync(join(root, m.guide)))
     fail(`workshops.js: module "${id}" guide does not exist: ${m.guide}`);
   if (typeof m.duration !== "number")
     fail(`workshops.js: module "${id}" duration must be a number of minutes`);
@@ -47,9 +48,12 @@ const folders = existsSync(modulesDir)
   : [];
 for (const d of folders) {
   if (!MODULES[d]) fail(`modules/${d}: not listed in window.MODULES`);
-  for (const f of ["README.md", "FACILITATOR.md", "index.html", `${d}.ipynb`]) {
+  for (const f of ["README.md", "FACILITATOR.md", "index.html"]) {
     if (!existsSync(join(modulesDir, d, f))) fail(`modules/${d}: missing ${f}`);
   }
+  // A module with a notebook names it <id>.ipynb; guide-only modules have none.
+  if (MODULES[d]?.notebook && !existsSync(join(modulesDir, d, `${d}.ipynb`)))
+    fail(`modules/${d}: missing ${d}.ipynb`);
 }
 
 // 3. Notebooks
@@ -100,7 +104,7 @@ for (const file of moduleNotebooks) {
 
 // 4. Relative links in every HTML and CSS file resolve
 if (!existsSync(join(root, "index.html"))) fail("index.html: missing");
-// notepad-starter is the app notepad-integration clones next to its notebook (gitignored).
+// notepad-starter is the app the notepad-integration guide clones; a local copy is gitignored.
 const skip = new Set(["node_modules", ".git", ".internal", "build", "notepad-starter"]);
 function walk(dir, ext, out = []) {
   for (const name of readdirSync(dir)) {
