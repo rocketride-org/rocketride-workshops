@@ -6,7 +6,7 @@ Attendees add one pipeline-backed feature to a small TypeScript notepad app ([`n
 
 **Time:** 15 minutes
 
-**Requires:** Python 3.10+ (for the `rocketride` command), Node 20+, pnpm 10+, git, a RocketRide Cloud account with an API key, and `ROCKETRIDE_ANTHROPIC_KEY` in the organization's RocketRide Variables.
+**Requires:** Python 3.10+ (for the `rocketride` command), Node 20+, pnpm 10+, git, a RocketRide Cloud account with an API key, and an Anthropic API key (saved in `.env` as `VITE_ROCKETRIDE_ANTHROPIC_KEY`).
 
 ## The flow
 
