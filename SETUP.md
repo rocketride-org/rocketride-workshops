@@ -20,7 +20,7 @@ Then install these extensions from the Extensions view (`Cmd+Shift+X` on Mac, `C
 python3 --version    # Windows: python --version
 ```
 
-If it's older than 3.10, install a current version from [python.org](https://www.python.org/downloads/). You install the `rocketride` package yourself as the first step of each project (`pip install rocketride`). From a clone of this repo, `python3 -m pip install -r requirements.txt` installs everything the notebooks use in one go.
+If it's older than 3.10, install a current version from [python.org](https://www.python.org/downloads/). You install the `rocketride` package yourself as the first step of each project (`python3 -m pip install rocketride`, or `python -m pip` on Windows). From a clone of this repo, `python3 -m pip install -r requirements.txt` installs everything the notebooks use in one go.
 
 ## 3. Node, pnpm and git
 
@@ -68,7 +68,7 @@ If the notebook says `No module named 'rocketride'`, the kernel is pointing at a
 In an empty folder, save the `.env` from step 5, then run:
 
 ```sh
-pip install rocketride
+python3 -m pip install rocketride   # Windows: python -m pip install rocketride
 rocketride init
 ```
 

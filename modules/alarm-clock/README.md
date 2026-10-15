@@ -5,7 +5,7 @@
 The first and fastest module. Attendees start a RocketRide project by hand, the way they would at work, and ask Claude Code for an analog alarm clock app: a ticking face, a time picker and an alarm that flashes and beeps. They watch it in the App Builder's preview, then deploy and publish it from the App Builder to their own desktop on cloud.rocketride.ai.
 
 ```sh
-pip install rocketride
+python3 -m pip install rocketride   # Windows: python -m pip install rocketride
 # .env (made with the editor's New File, UTF-8): ROCKETRIDE_URI=https://api.rocketride.ai and ROCKETRIDE_APIKEY=<key>
 rocketride init
 rocketride app create alarm_clock --name "Alarm Clock" --developer <your developer id>

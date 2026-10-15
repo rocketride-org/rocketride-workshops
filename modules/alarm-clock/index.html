@@ -172,11 +172,21 @@
   <ol class="run">
     <li>Make an empty folder for the project, for example <code>alarm-clock</code>. In your editor, choose <strong>File</strong>, <strong>Open Folder</strong> and open it. Then open a terminal: <strong>Terminal</strong>, <strong>New Terminal</strong>.</li>
     <li><b>Install RocketRide.</b> This installs the Python package, which brings the <code>rocketride</code> command:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride</pre></div>
+      <div class="tabs">
+        <div class="tl"><button class="on">Mac and Linux</button><button>Windows</button></div>
+        <div class="tp on">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride</pre></div>
+        </div>
+        <div class="tp">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python -m pip install rocketride</pre></div>
+        </div>
+      </div>
+      A Mac has no plain <code>pip</code> command, so this runs pip through Python.
     </li>
     <li><b>Save your RocketRide key.</b> Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Then, in the editor's Explorer, click <strong>New File</strong>, name it <code>.env</code> (in the project folder itself), paste these two lines, put your key in place of <code>your-api-key</code>, and save:
       <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_URI=https://api.rocketride.ai
 ROCKETRIDE_APIKEY=your-api-key</pre></div>
+      To check, run <code>ls -a</code> in the terminal: it should list <code>.env</code>.
       <div class="note warn"><b class="k">Make .env in the editor, not the terminal</b><p>On Windows, <code>echo ... &gt; .env</code> in PowerShell saves the file as UTF-16, and every <code>rocketride</code> command then stops with <code>UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff</code>. A file made with the editor's <strong>New File</strong> button is saved correctly. Never commit <code>.env</code> or paste your key into a notebook.</p></div>
     </li>
     <li><b>Initialize the project.</b> Init reads your key from <code>.env</code>:
@@ -200,13 +210,14 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
   </table></div>
   <div class="note good"><b class="k">Done when</b><p>Init printed <strong>Workspace initialized against https://api.rocketride.ai</strong>, and <code>apps/alarm_clock/</code> is in the Explorer.</p></div>
 
-  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code>. Run it through Python instead, with the same arguments: <code>python -m rocketride.cli.main init</code>.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code>: command not found</summary><div class="fb"><p>pip put the command in a folder that isn't on your <code>PATH</code>. Run it through Python instead, with the same arguments: <code>python3 -m rocketride.cli.main init</code> (Windows: <code>python -m rocketride.cli.main init</code>).</p></div></details>
   <details class="fold"><summary>pip won't install</summary><div class="fb"><p>No internet, or a VPN or proxy blocking it: switch networks. <code>externally-managed-environment</code> means a system Python: make a virtual environment first with <code>python3 -m venv .venv</code>, activate it, and run the install again.</p></div></details>
+  <details class="fold"><summary><code>Probing http://localhost:5565</code> ... <code>Connect call failed</code></summary><div class="fb"><p>Init didn't find <code>.env</code>, so it looked for a RocketRide server on your laptop. Either <code>.env</code> isn't saved, or it went into another folder because the editor has a different folder open. Open your project folder with <strong>File</strong>, <strong>Open Folder</strong>, make <code>.env</code> there, save it, and run <code>rocketride init</code> again.</p></div></details>
   <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p>Init didn't find your key. Check that <code>.env</code> sits in the folder the terminal is in (not in a subfolder), that it has both lines spelled exactly as shown, and that it's saved. This version of <code>rocketride</code> can't sign in through the browser, so the key in <code>.env</code> is required.</p></div></details>
   <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was saved as UTF-16. Open it in the editor, click <strong>UTF-16 LE</strong> in the status bar at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Or delete it and make it again with <strong>New File</strong>.</p></div></details>
   <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one at cloud.rocketride.ai, paste it into <code>.env</code>, save, and run <code>rocketride init</code> again.</p></div></details>
   <details class="fold"><summary><code>pnpm</code> not found during app create</summary><div class="fb"><p>Install it (<code>npm install -g pnpm@latest</code>), restart your editor, then run <code>pnpm install</code> in the project folder.</p></div></details>
-  <details class="fold"><summary>I don't know my developer id</summary><div class="fb"><p>Open the App Builder's <strong>Deploy</strong> tab: it shows your organization's id, or asks you to claim one. If you created the app with the wrong id, delete <code>apps/alarm_clock</code> and run the create command again.</p></div></details>
+  <details class="fold"><summary>I don't know my developer id</summary><div class="fb"><p>Open the App Builder's <strong>Deploy</strong> tab: it shows your organization's id, or asks you to claim one. If you created the app with the wrong id, see <strong>The Deploy tab is read-only</strong> in Step 5.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Signed in, and <code>apps/alarm_clock/</code> exists.</span></label>
 </section>
@@ -229,7 +240,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>claude</pre></div>
     </li>
     <li>Ask for the clock:
-      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Build a basic analog alarm clock in apps/alarm_clock: a ticking clock face with hour, minute and second hands, the digital time under it, a time picker and a Set alarm button. When the alarm time comes, flash the face and beep until I press Stop. Replace the template README with a short description of the clock. Don't deploy it.</pre></div>
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Build a basic analog alarm clock in apps/alarm_clock: a ticking clock face with hour, minute and second hands, the digital time under it, a time picker and a Set alarm button. When the alarm time comes, flash the face and beep until I press Stop. Replace the template README and the description in package.json with a short description of the clock. Don't deploy it.</pre></div>
     </li>
   </ol>
   <p>Claude reads the <code>CLAUDE.md</code> and RocketRide docs that init put in the folder, so it knows how a RocketRide app is put together. Let it edit the files it asks about.</p>
@@ -242,8 +253,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
     <li>Set an alarm one minute ahead and wait for it to ring.</li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The preview shows your clock with the second hand moving.</p></div>
-  <details class="fold"><summary>The App Builder doesn't open, or <code>.rrapp</code> opens as text</summary><div class="fb"><p>The editor opened your project folder in <strong>Restricted Mode</strong>, which turns off the RocketRide extension (and most others). Open the Command Palette (<strong>Ctrl+Shift+P</strong>, or <strong>Cmd+Shift+P</strong> on a Mac), run <strong>Workspaces: Manage Workspace Trust</strong> and click <strong>Trust</strong>. Then open <code>alarm_clock.rrapp</code> again.</p></div></details>
-  <details class="fold"><summary>The App Builder won't open, or the preview never loads</summary><div class="fb"><p>Your editor hasn't trusted the project folder yet, so it runs in <strong>Restricted Mode</strong> and the RocketRide extension stays switched off. Click <strong>Restricted Mode</strong> in the status bar (or the banner at the top), then <strong>Trust</strong>, and confirm <strong>Trust Folder and Continue</strong>. You can also run <strong>Workspaces: Manage Workspace Trust</strong> from the command palette. Then open the <code>.rrapp</code> file again.</p></div></details>
+  <details class="fold"><summary>The App Builder won't open, <code>.rrapp</code> opens as text, or the preview never loads</summary><div class="fb"><p>Your editor hasn't trusted the project folder yet, so it runs in <strong>Restricted Mode</strong> and the RocketRide extension stays switched off. Click <strong>Restricted Mode</strong> in the status bar (or the banner at the top), then <strong>Trust</strong>, and confirm <strong>Trust Folder and Continue</strong>. You can also run <strong>Workspaces: Manage Workspace Trust</strong> from the command palette. Then open the <code>.rrapp</code> file again.</p></div></details>
   <details class="fold"><summary>Want to change it?</summary><div class="fb"><p>Ask Claude: a different color, a louder beep, a snooze button. The preview rebuilds every time a file is saved.</p></div></details>
   <details class="fold"><summary>The preview shows an error, or stays blank</summary><div class="fb"><p>Open the <strong>Errors</strong> pane next to Preview, copy the error into Claude and ask it to fix it.</p></div></details>
   <details class="fold"><summary>No Claude Code, or still stuck? Use the fallback</summary><div class="fb"><p>Download <a href="alarm-clock.ipynb" download>alarm-clock.ipynb</a> into your project folder, open it, pick a Python 3.10+ kernel, and run its one code cell. It writes a finished clock into <code>apps/alarm_clock</code>, and the preview picks it up.</p></div></details>
@@ -272,7 +282,9 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>Your clock opens on cloud.rocketride.ai and the second hand is moving.</p></div>
   <details class="fold"><summary>The build failed</summary><div class="fb"><p>Click the <strong>failed</strong> badge on the version card to open the build log. The failure reason is at the end. Paste it into Claude and ask for a fix, check the preview, then click <strong>Deploy</strong> again.</p></div></details>
-  <details class="fold"><summary>The Deploy tab is read-only with a namespace banner</summary><div class="fb"><p>The app id's prefix isn't your organization's developer id. Delete <code>apps/alarm_clock</code>, run the create command again with the right <code>--developer</code>, and run the fallback cell or ask Claude again.</p></div></details>
+  <details class="fold"><summary>The Deploy tab is read-only with a namespace banner</summary><div class="fb"><p>The app id doesn't start with your organization's developer id. The banner names the right one. The id is in three files, so ask Claude to change it, putting the banner's id in place of <code>your_developer_id</code>:</p>
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Change the developer id of apps/alarm_clock to your_developer_id in package.json, alarm_clock.rrapp and src/AppDescriptor.ts.</pre></div>
+      <p>Close the App Builder, open <code>alarm_clock.rrapp</code> again, and deploy.</p></div></details>
   <details class="fold"><summary>The alarm flashes but doesn't beep</summary><div class="fb"><p>Browsers only play sound after you click on the page. Press <strong>Set alarm</strong> to turn sound on, and check the tab isn't muted.</p></div></details>
   <details class="fold"><summary>The clock isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it refreshes. Reload cloud.rocketride.ai.</p></div></details>
   <p>To ship a change: ask Claude, check the preview, <strong>Deploy</strong> again, and publish the new version to <strong>@me</strong>. Versions never change, so each deploy makes the next one.</p>
@@ -317,7 +329,7 @@ ROCKETRIDE_APIKEY=your-api-key</pre></div>
       <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide Python SDK.</td></tr>
       <tr><td><code>rocketride</code> command</td><td>Installed with the SDK. <code>init</code> sets up a workspace, <code>app create</code> makes an app.</td></tr>
       <tr><td>Claude Code</td><td>A coding agent you talk to in the terminal. It reads the workspace's <code>CLAUDE.md</code> to learn the platform.</td></tr>
-      <tr><td>API key</td><td>The password a service gives you so your code can call it. <code>rocketride init</code> makes one when you sign in.</td></tr>
+      <tr><td>API key</td><td>The password a service gives you so your code can call it. You create one at cloud.rocketride.ai and save it in <code>.env</code>.</td></tr>
       <tr><td>App Builder</td><td>The RocketRide extension's screen for an app: <strong>Design</strong> shows it live, <strong>Deploy</strong> ships it.</td></tr>
       <tr><td>Preview</td><td>The App Builder's live view of your app. It rebuilds every time a file is saved.</td></tr>
     </tbody>
