@@ -91,7 +91,7 @@
     <thead><tr><th>Tool</th><th>Check it's there</th><th>Install</th></tr></thead>
     <tbody>
       <tr><td>An editor</td><td></td><td><a href="https://code.visualstudio.com">VS Code</a>, Cursor or Windsurf</td></tr>
-      <tr><td>Python 3.10+</td><td><code>python --version</code></td><td><a href="https://www.python.org/downloads/">python.org</a>. On Windows, tick <strong>Add python.exe to PATH</strong>.</td></tr>
+      <tr><td>Python 3.10+</td><td><code>python3 --version</code> (Windows: <code>python --version</code>)</td><td><a href="https://www.python.org/downloads/">python.org</a>. On Windows, tick <strong>Add python.exe to PATH</strong>.</td></tr>
       <tr><td>Node 20+</td><td><code>node --version</code></td><td><a href="https://nodejs.org">nodejs.org</a></td></tr>
       <tr><td>pnpm 10+</td><td><code>pnpm --version</code></td><td><code>npm install -g pnpm@latest</code></td></tr>
       <tr><td>git</td><td><code>git --version</code></td><td><a href="https://git-scm.com">git-scm.com</a></td></tr>
@@ -99,19 +99,19 @@
   </table></div>
   <p>Close and reopen your terminal after installing anything, so it sees the new tool.</p>
 
-  <h2>Create your RocketRide key</h2>
+  <h2>Create your keys</h2>
   <ol class="run">
     <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
     <li>Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Keep it where you can copy it from. Treat it like a password.</li>
+    <li>Create an Anthropic API key at <a href="https://console.anthropic.com">console.anthropic.com</a>. The pipeline uses it to call Claude. It starts with <code>sk-ant-api03-</code>.</li>
   </ol>
-  <div class="note"><b class="k">The model key</b><p>The pipeline uses Claude through an Anthropic key saved as <code>ROCKETRIDE_ANTHROPIC_KEY</code> in your organization's RocketRide <strong>Variables</strong>. At a workshop the facilitator sets it for everyone.</p></div>
 
   <div class="note fac">
     <b class="k">Stuck?</b>
     <p>Come 10 minutes early for the help desk. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, API key created.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, RocketRide and Anthropic keys created.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -147,30 +147,42 @@ cd notepad-starter</pre></div>
     <div>
       <p class="kicker">In the room <i>/ 3 minutes</i></p>
       <h1>Connect RocketRide</h1>
-      <p class="lede">Save your key, then three commands.</p>
+      <p class="lede">Save your keys, then three commands.</p>
     </div>
   </div>
 
   <ol class="run">
-    <li><b>Save your key.</b> Open <code>notepad-starter</code> in your editor (<strong>File</strong>, <strong>Open Folder</strong>) so you can edit its files. In the Explorer on the left, click <strong>New File</strong> and name it <code>.env</code> (at the top, next to <code>package.json</code>). Paste this, put your API key in place of <strong>both</strong> <code>your-api-key</code>s, and save:
+    <li><b>Save your keys.</b> Open <code>notepad-starter</code> in your editor (<strong>File</strong>, <strong>Open Folder</strong>) so you can edit its files. In the Explorer on the left, click <strong>New File</strong> and name it <code>.env</code> (at the top, next to <code>package.json</code>). Paste this, put your RocketRide API key in place of <strong>both</strong> <code>your-api-key</code>s and your Anthropic key in place of <code>your-anthropic-key</code>, and save:
       <div class="src"><div class="bar2"><span>.env</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_URI=https://api.rocketride.ai
 ROCKETRIDE_APIKEY=your-api-key
 VITE_ROCKETRIDE_URI=https://api.rocketride.ai
-VITE_ROCKETRIDE_APIKEY=your-api-key</pre></div>
-      The first two lines are for the <code>rocketride</code> command, the <code>VITE_</code> lines for the app. git ignores <code>.env</code>, so your key never gets committed.
+VITE_ROCKETRIDE_APIKEY=your-api-key
+VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
+      The first two lines are for the <code>rocketride</code> command, the <code>VITE_</code> lines for the app. git ignores <code>.env</code>, so your keys never get committed.
     </li>
     <li><b>Run these three commands</b> in the terminal. They install RocketRide's command-line tool, make the folder a RocketRide project, and add the RocketRide SDK to the app (installing its other packages too):
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>pip install rocketride
+      <div class="tabs">
+        <div class="tl"><button class="on">Mac and Linux</button><button>Windows</button></div>
+        <div class="tp on">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python3 -m pip install rocketride
 rocketride init
 pnpm add rocketride@1.4.0</pre></div>
+        </div>
+        <div class="tp">
+          <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>python -m pip install rocketride
+rocketride init
+pnpm add rocketride@1.4.0</pre></div>
+        </div>
+      </div>
+      A Mac has no plain <code>pip</code> command, so this runs pip through Python.
     </li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p><code>rocketride init</code> printed <code>Workspace initialized against https://api.rocketride.ai</code> and <code>pnpm add</code> finished without an error.</p></div>
+  <div class="note good"><b class="k">Done when</b><p><code>rocketride init</code> printed <code>Workspace initialized against https://api.rocketride.ai</code> and <code>pnpm add</code> finished without an error. A yellow <code>Ignored build scripts: esbuild</code> box is fine.</p></div>
 
   <details class="fold"><summary><code>Error: No authorization provided</code></summary><div class="fb"><p><code>rocketride init</code> didn't find your key. Check <code>.env</code> is next to <code>package.json</code> (not inside <code>src</code>), has your key on the <code>ROCKETRIDE_APIKEY</code> line, and is saved.</p></div></details>
   <details class="fold"><summary><code>UnicodeDecodeError</code> ... <code>byte 0xff</code></summary><div class="fb"><p><code>.env</code> was made in PowerShell and saved in the wrong encoding. Open it, click <strong>UTF-16 LE</strong> at the bottom right, choose <strong>Save with Encoding</strong>, then <strong>UTF-8</strong>. Always make <code>.env</code> with the editor's <strong>New File</strong>.</p></div></details>
   <details class="fold"><summary><code>Stored credentials ... were rejected</code></summary><div class="fb"><p>The key is wrong or was revoked. Create a new one, paste it into both key lines, save, and run <code>rocketride init</code> again.</p></div></details>
-  <details class="fold"><summary><code>rocketride</code>, <code>pip</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>For <code>rocketride</code>, use <code>python -m rocketride.cli.main init</code> instead. For <code>pip</code>, use <code>python -m pip install rocketride</code>. Otherwise install the tool (Step 2), then close and reopen your terminal and <code>cd notepad-starter</code> again.</p></div></details>
+  <details class="fold"><summary><code>rocketride</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>For <code>rocketride</code>, use <code>python3 -m rocketride.cli.main init</code> instead (Windows: <code>python -m rocketride.cli.main init</code>). Otherwise install the tool (Step 2), then close and reopen your terminal and <code>cd notepad-starter</code> again.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Key saved, three commands done.</span></label>
 </section>
@@ -193,16 +205,17 @@ pnpm add rocketride@1.4.0</pre></div>
 import { RocketRideClient, type PipelineConfig } from &#x27;rocketride&#x27;;
 import type { Note } from &#x27;./notes&#x27;;
 
-// Your RocketRide address and key, from .env. Vite only passes VITE_* settings to the browser:
+// Your RocketRide address and keys, from .env. Vite only passes VITE_* settings to the browser:
 // fine on your laptop, but never ship a real key in a deployed app.
 const env = {
   ROCKETRIDE_URI: import.meta.env.VITE_ROCKETRIDE_URI ?? &#x27;https://api.rocketride.ai&#x27;,
   ROCKETRIDE_APIKEY: import.meta.env.VITE_ROCKETRIDE_APIKEY ?? &#x27;&#x27;,
+  ROCKETRIDE_ANTHROPIC_KEY: import.meta.env.VITE_ROCKETRIDE_ANTHROPIC_KEY ?? &#x27;&#x27;,
 };
 
 // The Summarize pipeline: the note arrives through a webhook, becomes a question, gets the
-// instructions, and goes to Claude. ${ROCKETRIDE_ANTHROPIC_KEY} is filled in on the server
-// from your organization&#x27;s Variables, so the model key never reaches the browser.
+// instructions, and goes to Claude. ${ROCKETRIDE_ANTHROPIC_KEY} is filled in with your
+// Anthropic key from the env above when the pipeline starts.
 const PIPELINE: PipelineConfig = {
   name: &#x27;Notepad assist&#x27;,
   source: &#x27;webhook_1&#x27;,
@@ -264,8 +277,15 @@ export async function runAssist(note: Note): Promise&lt;string&gt; {
   // useExisting reuses the pipeline if it&#x27;s already running.
   const { token } = await client.use({ pipeline: PIPELINE, useExisting: true });
   const result = await client.send(token, note.body, {}, &#x27;text/plain&#x27;);
-  const answers = result?.answers as unknown[] | undefined;
-  return String(answers?.[0] ?? &#x27;No answer came back.&#x27;);
+  // The prompt step also passes the note through unchanged, so the summary is the last answer.
+  const answers = (result?.answers as unknown[] | undefined) ?? [];
+  const answer = String(answers[answers.length - 1] ?? &#x27;No answer came back.&#x27;);
+  // A wrong Anthropic key fails inside the running pipeline. Stop it, so the next press
+  // starts fresh with the key from .env.
+  if (answer.startsWith(&#x27;**LLM error**&#x27;)) {
+    await client.terminate(token);
+  }
+  return answer;
 }</pre></div>
 
   <h2>2. Replace: <code>src/main.ts</code></h2>
@@ -396,8 +416,8 @@ render();</pre></div>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>Bullets summarizing your note appear under the editor.</p></div>
 
-  <details class="fold"><summary>The box says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check both <code>VITE_</code> lines in <code>.env</code> have your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>pnpm dev</code> again: the app only reads <code>.env</code> when it starts.</p></div></details>
-  <details class="fold"><summary>The answer mentions an Anthropic key, or is empty</summary><div class="fb"><p><code>ROCKETRIDE_ANTHROPIC_KEY</code> is missing from your organization's RocketRide Variables. At a workshop, tell the facilitator.</p></div></details>
+  <details class="fold"><summary>The box says <code>Invalid Anthropic API key format</code> or <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>VITE_ROCKETRIDE_ANTHROPIC_KEY</code> line in <code>.env</code> is empty or has the wrong key. Paste your Anthropic key there, save, stop the app (<strong>Ctrl+C</strong>), run <code>pnpm dev</code> again, and press Assist. If the first press still shows the old error, press it once more.</p></div></details>
+  <details class="fold"><summary>The box says <code>RocketRide error: ...</code> about anything else</summary><div class="fb"><p>Check both <code>VITE_</code> lines in <code>.env</code> have your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>pnpm dev</code> again: the app only reads <code>.env</code> when it starts.</p></div></details>
   <details class="fold"><summary>No Assist button, or a blank page</summary><div class="fb"><p>A file wasn't pasted or saved. Stop the app and run <code>pnpm build</code>: it names the file and line with the problem. Re-copy that file's box, then <code>pnpm dev</code> again.</p></div></details>
   <details class="fold"><summary>Port 5173 is already in use</summary><div class="fb"><p>The terminal prints the port it used instead, for example <code>localhost:5174</code>. Open that.</p></div></details>
 
@@ -462,12 +482,11 @@ render();</pre></div>
   <div class="grid"><table>
     <tbody>
       <tr><td><code>rocketride init</code></td><td>The command that makes a folder a RocketRide project. It checks the key in <code>.env</code> and adds the RocketRide docs.</td></tr>
-      <tr><td><code>.env</code></td><td>The project's settings file: your RocketRide address and key. git ignores it, so it never gets committed.</td></tr>
+      <tr><td><code>.env</code></td><td>The project's settings file: your RocketRide address and your keys. git ignores it, so it never gets committed.</td></tr>
       <tr><td><code>VITE_</code></td><td>The prefix Vite needs before it passes a setting from <code>.env</code> to the app in the browser.</td></tr>
       <tr><td>RocketRide client</td><td>The SDK object in <code>src/assist.ts</code> that connects to RocketRide and runs the pipeline.</td></tr>
       <tr><td>Dev server</td><td>What <code>pnpm dev</code> starts: the app at <code>localhost:5173</code> while you work.</td></tr>
       <tr><td>Webhook</td><td>The pipeline step that receives data sent to it, here the note's text.</td></tr>
-      <tr><td>Variables</td><td>Settings stored in your RocketRide organization, like the model key. Pipelines read them on the server.</td></tr>
     </tbody>
   </table></div>
 
