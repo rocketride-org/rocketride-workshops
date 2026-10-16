@@ -9,7 +9,7 @@ The last Zero to Agent module: a fresh RocketRide app, built from nothing on the
 | Step | What attendees do | Time |
 | --- | --- | --- |
 | Start the project | All in VS Code: make and open a `specter-mutual` folder, sign in with the RocketRide extension, create the app with the App Builder's New App wizard (`specter-mutual`, "Specter Mutual", Blank), then two find/replace edits in `appManifest` (the `description` line, and `"authenticated": false,` → `"authenticated": true,` + `"include": ["pipelines"],`) | 6 min |
-| Build the brain | Paste `pipelines/claims.pipe`. In the pipeline editor, add a **Chat** source wired to the agent's `questions` input, run the pipeline, and paste the six test claims and the SM-1007 fraud claim into the chat one by one. Then delete the Chat source and save | 15 min |
+| Build the brain | **New Pipeline** in the RocketRide panel with a **Webhook** source (this creates `pipelines/`), paste `claims.pipe` over it. In the pipeline editor, add a **Chat** source wired to the agent's `questions` input, run the pipeline, and paste the six test claims and the SM-1007 fraud claim into the chat one by one. Then delete the Chat source and save | 15 min |
 | Build the portal | Paste `src/policy.ts`, `src/claims.ts`, `src/apiKey.ts`, `src/theme.ts`, `src/useSpecterTheme.ts`. One prompt builds the components and `App.tsx` and type-checks them. Then App Builder Design → Preview | 13 min |
 | Deploy | App Builder Deploy tab → Deploy → Publish to… → @me | 6 min |
 

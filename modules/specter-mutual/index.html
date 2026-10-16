@@ -257,7 +257,11 @@ Validate it with rocketride validate pipelines/claims.pipe. Don&#x27;t run it.</
   </div></details>
 
   <h2>1. Paste the agent's pipeline <span class="mins">2 min</span></h2>
-  <p>In the Explorer, right-click the <code>pipelines</code> folder, choose <strong>New File</strong>, name it <code>claims.pipe</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+  <ol class="run">
+    <li>In the RocketRide panel, click <strong>New Pipeline</strong>, and when it asks for a source node, choose <strong>Webhook</strong>. The extension creates the <code>pipelines</code> folder with the new pipeline in it and opens it in the pipeline editor.</li>
+    <li>Name the file <code>claims.pipe</code>: if it was created under another name, right-click it in the Explorer and choose <strong>Rename</strong>.</li>
+    <li>Now paste this page's pipeline over it: right-click <code>pipelines/claims.pipe</code>, choose <strong>Open With…</strong>, pick the text editor, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste the box, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</li>
+  </ol>
   <p>The claim arrives through a <strong>webhook</strong>, becomes a <strong>question</strong>, and goes to a RocketRide <strong>agent</strong>, with <strong>Claude</strong> and a <strong>memory</strong> as its tools. The agent's instructions walk it through four steps: classify the claim, check the policy, recommend approve, deny or escalate, and write a letter. It answers with JSON. <code>${ROCKETRIDE_ANTHROPIC_KEY}</code> is filled in on the server from your organization's Variables, so the model key never sits in the file. The portal uses this same file.</p>
   <div class="src"><div class="bar2"><span>pipelines/claims.pipe</span><button class="cp-btn">Copy</button></div><pre>{
   &quot;name&quot;: &quot;Specter Mutual claims&quot;,
