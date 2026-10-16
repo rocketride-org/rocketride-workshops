@@ -258,9 +258,9 @@ Validate it with rocketride validate pipelines/claims.pipe. Don&#x27;t run it.</
 
   <h2>1. Paste the agent's pipeline <span class="mins">2 min</span></h2>
   <ol class="run">
-    <li>In the RocketRide panel, click <strong>New Pipeline</strong>, and when it asks for a source node, choose <strong>Webhook</strong>. The extension creates the <code>pipelines</code> folder with the new pipeline in it and opens it in the pipeline editor.</li>
-    <li>Name the file <code>claims.pipe</code>: if it was created under another name, right-click it in the Explorer and choose <strong>Rename</strong>.</li>
-    <li>Now paste this page's pipeline over it: right-click <code>pipelines/claims.pipe</code>, choose <strong>Open With…</strong>, pick the text editor, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste the box, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</li>
+    <li>In the RocketRide panel, click <strong>New Pipeline</strong>, name it <code>claims</code>, and choose <strong>Webhook</strong> as the source node. The extension creates the <code>pipelines</code> folder with <code>claims.pipe</code> in it and opens it in the <strong>Pipeline Grid Editor</strong>.</li>
+    <li>Switch the file to text: click the <strong>Pipeline Grid Editor</strong> dropdown in the editor's top-right corner and choose <strong>Text Editor</strong>.</li>
+    <li>Select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste the box below over it, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>). To see the boxes again, switch back to <strong>Pipeline Grid Editor</strong> from the same dropdown.</li>
   </ol>
   <p>The claim arrives through a <strong>webhook</strong>, becomes a <strong>question</strong>, and goes to a RocketRide <strong>agent</strong>, with <strong>Claude</strong> and a <strong>memory</strong> as its tools. The agent's instructions walk it through four steps: classify the claim, check the policy, recommend approve, deny or escalate, and write a letter. It answers with JSON. <code>${ROCKETRIDE_ANTHROPIC_KEY}</code> is filled in on the server from your organization's Variables, so the model key never sits in the file. The portal uses this same file.</p>
   <div class="src"><div class="bar2"><span>pipelines/claims.pipe</span><button class="cp-btn">Copy</button></div><pre>{

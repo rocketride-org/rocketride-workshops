@@ -39,3 +39,6 @@ Desktop.ini
 *~
 *.log
 .rocketride/
+
+# Dependencies and build output (machine-generated)
+**/dist/
