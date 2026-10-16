@@ -602,9 +602,9 @@ Check every client call against the TypeScript API doc. Then run pnpm exec tsc -
   <h2>1. <code>src/policy.ts</code>: the rules</h2>
   <p>The policy from Step 4, as plain code: no AI. The portal runs every agent answer through it before anyone sees a decision, so the agent recommends and the rules decide, in the app too.</p>
   <div class="src"><div class="bar2"><span>apps/specter-mutual/src/policy.ts</span><button class="cp-btn">Copy</button></div><pre>/**
- * Policy engine — a 1:1 port of policy.py at the workspace root. Same rule
- * order, same output fields, same wording. Both are checked against
- * policy-cases.json so they cannot drift apart.
+ * Policy engine — plain code, no AI. The same rules the agent was given in
+ * pipelines/claims.pipe, applied in a fixed order, so the portal can hold
+ * the agent to them.
  */
 
 // =============================================================================
