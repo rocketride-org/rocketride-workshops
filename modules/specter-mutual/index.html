@@ -188,7 +188,7 @@
 
   <h2>4. Tell RocketRide what the app needs <span class="mins">2 min</span></h2>
   <p>Open <code>apps/specter-mutual/package.json</code> and scroll to the <code>"appManifest"</code> block. Two lines change: the portal needs a real description, and because it runs a pipeline as the signed-in user and ships the <code>pipelines</code> folder, it needs <code>authenticated</code> and <code>include</code>.</p>
-  <p>For each pair: find the first line in the file, select the whole line, and paste the second box over it. Then save.</p>
+  <p>For each pair: find the first line, select the whole line, and paste the second box over it. Then save. The description text appears twice in the file, once at the top and once inside <code>appManifest</code>: change the <code>appManifest</code> one.</p>
 
   <h3>The description</h3>
   <p>Find:</p>
@@ -257,7 +257,11 @@ Validate it with rocketride validate pipelines/claims.pipe. Don&#x27;t run it.</
   </div></details>
 
   <h2>1. Paste the agent's pipeline <span class="mins">2 min</span></h2>
-  <p>In the Explorer, right-click the <code>pipelines</code> folder, choose <strong>New File</strong>, name it <code>claims.pipe</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+  <ol class="run">
+    <li>In the RocketRide panel, click <strong>New Pipeline</strong>, name it <code>claims</code>, and choose <strong>Webhook</strong> as the source node. The extension creates the <code>pipelines</code> folder with <code>claims.pipe</code> in it and opens it in the <strong>Pipeline Grid Editor</strong>.</li>
+    <li>Switch the file to text: click the <strong>Pipeline Grid Editor</strong> dropdown in the editor's top-right corner and choose <strong>Text Editor</strong>.</li>
+    <li>Select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste the box below over it, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>). To see the boxes again, switch back to <strong>Pipeline Grid Editor</strong> from the same dropdown.</li>
+  </ol>
   <p>The claim arrives through a <strong>webhook</strong>, becomes a <strong>question</strong>, and goes to a RocketRide <strong>agent</strong>, with <strong>Claude</strong> and a <strong>memory</strong> as its tools. The agent's instructions walk it through four steps: classify the claim, check the policy, recommend approve, deny or escalate, and write a letter. It answers with JSON. <code>${ROCKETRIDE_ANTHROPIC_KEY}</code> is filled in on the server from your organization's Variables, so the model key never sits in the file. The portal uses this same file.</p>
   <div class="src"><div class="bar2"><span>pipelines/claims.pipe</span><button class="cp-btn">Copy</button></div><pre>{
   &quot;name&quot;: &quot;Specter Mutual claims&quot;,
@@ -580,7 +584,7 @@ Validate it with rocketride validate pipelines/claims.pipe. Don&#x27;t run it.</
     <p>Paste this into Claude Code (or any coding agent) in your project folder. It writes this page's files from a description instead of you pasting them, so you can see what it comes up with. Your version will differ from the one below. If a later step breaks, paste the boxes on this page over its files.</p>
     <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>Write three TypeScript files in apps/specter-mutual/src/ for the Specter Mutual claims portal. First read .rocketride/docs/ROCKETRIDE_APPS.md and .rocketride/docs/ROCKETRIDE_typescript_API.md. The screens built later import exactly the names below, so keep every export name and signature.
 
-1. src/policy.ts: the policy engine, plain code with no AI, that holds the agent in pipelines/claims.pipe to the rules. POLICY maps each category to {basic, premium} coverage limits (null = not covered): poltergeist_damage 1000/5000, cold_spots_hvac null/2000, ectoplasm_cleanup 500/1500, possession null/null. adjudicate() applies, in order: filed more than 30 days late -&gt; deny; category not in POLICY -&gt; escalate; not covered on the tier -&gt; deny; over $3,000 -&gt; escalate; otherwise the agent&#x27;s recommendation stands (it may be stricter, never more generous). Payout is min(amount, limit) when approved, else 0. When the decision differs from the agent&#x27;s, policyNote says &quot;Policy override: agent recommended &lt;x&gt;. &lt;rule&gt;&quot;; when the payout is capped, it says so; and if anything changed, the letter is replaced with a short compliant one. Export: type Decision = &#x27;approve&#x27; | &#x27;deny&#x27; | &#x27;escalate&#x27;; interface Claim {claimId, policyholder, tier, incidentDate, filedDate, amount, description}; interface AgentDecision {category, recommendation, reasoning, letter}; interface Adjudication {claimId, category, decision, payout, letter, reasoning, policyNote: string | null}; POLICY, FILING_WINDOW_DAYS, HUMAN_REVIEW_OVER, parseDecision(raw: unknown) and adjudicate(claim, rawDecision).
+1. src/policy.ts: the policy engine, plain code with no AI, that holds the agent in pipelines/claims.pipe to the rules. POLICY maps each category to {basic, premium} coverage limits (null = not covered): poltergeist_damage 1000/5000, cold_spots_hvac null/2000, ectoplasm_cleanup 500/1500, possession null/null. adjudicate() applies, matching the tier case-insensitively, in order: filed more than 30 days late -&gt; deny; category not in POLICY -&gt; escalate; not covered on the tier -&gt; deny; over $3,000 -&gt; escalate; otherwise the agent&#x27;s recommendation stands (it may be stricter, never more generous). Payout is min(amount, limit) when approved, else 0. When the decision differs from the agent&#x27;s, policyNote says &quot;Policy override: agent recommended &lt;x&gt;. &lt;rule&gt;&quot;; when the payout is capped, it says so; and if anything changed, the letter is replaced with a short compliant one. Export: type Decision = &#x27;approve&#x27; | &#x27;deny&#x27; | &#x27;escalate&#x27;; interface Claim {claimId, policyholder, tier, incidentDate, filedDate, amount, description}; interface AgentDecision {category, recommendation, reasoning, letter}; interface Adjudication {claimId, category, decision, payout, letter, reasoning, policyNote: string | null}; POLICY, FILING_WINDOW_DAYS, HUMAN_REVIEW_OVER, parseDecision(raw: unknown) and adjudicate(claim, rawDecision).
 
 2. src/claims.ts: the portal&#x27;s only route to RocketRide. Import ../../../pipelines/claims.pipe (src/global.d.ts already declares *.pipe imports). Export:
    - interface ClaimForm {policyholder, tier, incidentDate, amount, description}, and interface ClaimResult extends Adjudication { claim: Claim }.
@@ -602,9 +606,9 @@ Check every client call against the TypeScript API doc. Then run pnpm exec tsc -
   <h2>1. <code>src/policy.ts</code>: the rules</h2>
   <p>The policy from Step 4, as plain code: no AI. The portal runs every agent answer through it before anyone sees a decision, so the agent recommends and the rules decide, in the app too.</p>
   <div class="src"><div class="bar2"><span>apps/specter-mutual/src/policy.ts</span><button class="cp-btn">Copy</button></div><pre>/**
- * Policy engine — a 1:1 port of policy.py at the workspace root. Same rule
- * order, same output fields, same wording. Both are checked against
- * policy-cases.json so they cannot drift apart.
+ * Policy engine — plain code, no AI. The same rules the agent was given in
+ * pipelines/claims.pipe, applied in a fixed order, so the portal can hold
+ * the agent to them.
  */
 
 // =============================================================================
