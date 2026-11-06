@@ -14,6 +14,14 @@ window.MODULES = {
     guide: "modules/notepad-integration/index.html",
     requires: ["python", "node", "pnpm", "git"],
   },
+  "excalidraw-integration": {
+    title: "Give Excalidraw a diagram agent",
+    summary:
+      "Clone Excalidraw and paste in a RocketRide agent that reads a GitHub repo and draws its architecture through Text to diagram.",
+    duration: 15,
+    guide: "modules/excalidraw-integration/index.html",
+    requires: ["node", "yarn", "git"],
+  },
   "specter-mutual": {
     title: "Specter Mutual: zero to a deployed app",
     summary:
@@ -33,6 +41,6 @@ window.WORKSHOPS = [
       "Ship your first RocketRide pipeline, integrate one into a real app, then build and deploy your own.",
     funnel: "cloud", // cloud | local
     status: "live", // live | draft
-    modules: ["alarm-clock", "notepad-integration", "specter-mutual"],
+    modules: ["alarm-clock", "excalidraw-integration", "specter-mutual"],
   },
 ];

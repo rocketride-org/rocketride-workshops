@@ -68,7 +68,7 @@
   var showDrafts = new URLSearchParams(location.search).get('drafts') === '1';
   var list = (window.WORKSHOPS || []).filter(function(w){ return showDrafts || w.status !== 'draft'; });
   var root = document.getElementById('workshops');
-  var LABELS = { python: 'Python 3.10+', node: 'Node 20+', pnpm: 'pnpm 10+', git: 'git' };
+  var LABELS = { python: 'Python 3.10+', node: 'Node 20+', pnpm: 'pnpm 10+', yarn: 'Yarn 1', git: 'git' };
 
   function el(tag, cls, text){
     var n = document.createElement(tag);
