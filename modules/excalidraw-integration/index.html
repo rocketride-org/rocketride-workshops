@@ -215,9 +215,9 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
 
   <h2>Write the files</h2>
   <div class="tabs">
-    <div class="tl"><button class="on">Prompt</button><button>diagramAgent.ts</button><button>AI.tsx</button></div>
+    <div class="tl"><button class="on">Prompt</button><button>Files</button></div>
     <div class="tp on">
-      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the other two tabs. If Step 6 doesn't work, paste those tabs over its files.</p>
+      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the <strong>Files</strong> tab. If Step 6 doesn't work, paste those files over its files.</p>
       <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. Change only the three files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
 
 1. Create excalidraw-app/components/diagramAgent.ts.
@@ -254,7 +254,7 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
 Then run npx prettier --write on the three files, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on the three files, and fix anything they report.</pre></div>
     </div>
     <div class="tp">
-      <p><b>New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+      <p><b>1. New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
       <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
 import { RocketRideClient, type PipelineConfig } from &quot;rocketride&quot;;
 import { RequestError } from &quot;@excalidraw/excalidraw/errors&quot;;
@@ -459,9 +459,7 @@ function toFailure(error: unknown): DiagramResult {
     }),
   };
 }</pre></div>
-    </div>
-    <div class="tp">
-      <p><b>Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
+      <p><b>2. Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
       <div class="src"><div class="bar2"><span>excalidraw-app/components/AI.tsx</span><button class="cp-btn">Copy</button></div><pre>import {
   DiagramToCodePlugin,
   exportScene,
@@ -648,7 +646,7 @@ export const AIComponents = ({
     </div>
   </div>
 
-  <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If the coding agent wrote the file, paste the file's tab over it instead. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
+  <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If the coding agent wrote the file, paste that file from the <strong>Files</strong> tab over it instead. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Both files written and saved.</span></label>
 </section>

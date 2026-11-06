@@ -26,7 +26,7 @@ yarn start                  # localhost:3001: More tools > Text to diagram > Ins
 | `excalidraw-app/components/diagramAgent.ts` | New: the RocketRide client, the agent pipeline (webhook → question → agent with Claude, memory and a GitHub tool → answers) and `askDiagramAgent()` |
 | `excalidraw-app/components/AI.tsx` | Replace: Excalidraw's file at `701b901`, with the `TTDDialog` handler calling `askDiagramAgent()` instead of `TTDStreamFetch` |
 
-Step 5 has three tabs: **Prompt** (first, open by default) asks a coding agent to write both files from a description, and **diagramAgent.ts** and **AI.tsx** hold the reference files to paste. The two file boxes are generated from these files, HTML-escaped. If you change either file, regenerate its box rather than editing the HTML by hand, and update the prompt to match. A coding agent's version differs a little from the reference; the guide tells attendees to paste the file tabs over it if Step 6 fails.
+Step 5 has two tabs: **Prompt** (first, open by default) asks a coding agent to do the integration from a description, and **Files** holds the reference `diagramAgent.ts` and `AI.tsx` to paste. The two file boxes are generated from these files, HTML-escaped. If you change either file, regenerate its box rather than editing the HTML by hand, and update the prompt to match. A coding agent's version differs a little from the reference; the guide tells attendees to paste the file tabs over it if Step 6 fails.
 
 ## Why it's built this way
 
