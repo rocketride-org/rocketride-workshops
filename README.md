@@ -58,20 +58,18 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 <div align="center">
 
-<h3>Notepad: RocketRide in an existing app</h3>
+<h3>Excalidraw: a diagram agent in an existing app</h3>
 
 <p>
-  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/notepad-integration/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/excalidraw-integration/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
   &nbsp;
-  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/notepad-integration"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
+  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/excalidraw-integration"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>Wire a RocketRide pipeline into a small TypeScript notepad you didn't write. Clone it, run it, add the RocketRide TypeScript SDK, and copy and paste in an <b>✨ Assist</b> button that summarizes the open note in a few bullets with Claude.</p>
-
-<img src="images/notepad-integration.png" alt="The notepad app: a note list on the left, the open note in the editor, and the Assist and Delete buttons under it" width="75%">
+<p>Put a RocketRide agent behind Excalidraw's <b>Text to diagram</b> dialog. Clone Excalidraw, add the RocketRide TypeScript SDK, and paste two files. Ask about a public GitHub repo and the agent reads it with a read-only GitHub tool, then answers with a Mermaid diagram that Excalidraw draws on the canvas.</p>
 
 
-<p><sub><b>15 min</b> &nbsp;·&nbsp; rocketride init → clone and run the app → add the SDK → pipeline-backed Assist button &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, git</sub></p>
+<p><sub><b>15 min</b> &nbsp;·&nbsp; clone Excalidraw → add the SDK → paste the agent → ask Text to diagram about a repo &nbsp;·&nbsp; needs Node 20+, Yarn 1, git</sub></p>
 
 </div>
 
@@ -96,7 +94,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 ## How a module runs
 
-Participants do every deterministic step **by hand, from the guide**, so they feel how little it takes to start and ship a RocketRide project. Notebooks hold only the build: pipelines, prompts, UI code and fallbacks. No exceptions. A module can also be guide-only: `notepad-integration` has no notebook, and participants paste every file from the guide.
+Participants do every deterministic step **by hand, from the guide**, so they feel how little it takes to start and ship a RocketRide project. Notebooks hold only the build: pipelines, prompts, UI code and fallbacks. No exceptions. A module can also be guide-only: `excalidraw-integration` has no notebook, and participants paste every file from the guide.
 
 | By hand, from the guide (`index.html`) | In the notebook |
 | --- | --- |

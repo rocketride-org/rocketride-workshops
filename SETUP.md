@@ -22,13 +22,14 @@ python3 --version    # Windows: python --version
 
 If it's older than 3.10, install a current version from [python.org](https://www.python.org/downloads/). You install the `rocketride` package yourself as the first step of each project (`python3 -m pip install rocketride`, or `python -m pip` on Windows). From a clone of this repo, `python3 -m pip install -r requirements.txt` installs everything the notebooks use in one go.
 
-## 3. Node, pnpm and git
+## 3. Node, pnpm, Yarn and git
 
 | Tool     | Check            | Install                            | Needed for                                              |
 | -------- | ---------------- | ---------------------------------- | ------------------------------------------------------- |
-| Node 20+ | `node --version` | [nodejs.org](https://nodejs.org)   | Every module: the App Builder runs apps with it          |
-| pnpm 10+ | `pnpm --version` | `npm install -g pnpm@latest`       | Every module: `rocketride app create` and the preview    |
-| git      | `git --version`  | [git-scm.com](https://git-scm.com) | `notepad-integration`, which clones an existing app      |
+| Node 20+ | `node --version` | [nodejs.org](https://nodejs.org)   | Every module: the App Builder and Excalidraw run on it   |
+| pnpm 10+ | `pnpm --version` | `npm install -g pnpm@latest`       | `alarm-clock` and `specter-mutual`: `rocketride app create` and the preview |
+| Yarn 1   | `yarn --version` | `npm install -g yarn`              | `excalidraw-integration`: Excalidraw installs and runs with Yarn 1 |
+| git      | `git --version`  | [git-scm.com](https://git-scm.com) | `excalidraw-integration`, which clones Excalidraw      |
 
 Restart your editor after installing them, so its terminals see them. The hub lists what each module requires.
 

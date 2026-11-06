@@ -41,6 +41,6 @@ window.WORKSHOPS = [
       "Ship your first RocketRide pipeline, integrate one into a real app, then build and deploy your own.",
     funnel: "cloud", // cloud | local
     status: "live", // live | draft
-    modules: ["alarm-clock", "notepad-integration", "specter-mutual"],
+    modules: ["alarm-clock", "excalidraw-integration", "specter-mutual"],
   },
 ];
