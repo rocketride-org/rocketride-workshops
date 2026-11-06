@@ -39,7 +39,7 @@
       <p class="kicker">RocketRide workshop <i>/ project 2 of 3</i></p>
       <h1>Give Excalidraw a diagram agent</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app. Clone the app, run one command, add two files.</p>
+      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app. Clone the app, run one command, add three files, and deploy the agent to RocketRide Cloud.</p>
     </div>
   </div>
 
@@ -51,7 +51,7 @@
   <p>A plain pipeline runs the same steps every time. An agent decides what to do. Given your message, it decides whether to read files from GitHub, which ones, and when it has read enough. Then it answers with <strong>Mermaid</strong>, a short text format for diagrams, and Excalidraw turns that into shapes.</p>
 
   <h2>Where RocketRide comes in</h2>
-  <p>The agent runs on RocketRide Cloud. Excalidraw talks to it through the <strong>RocketRide TypeScript SDK</strong>: one client, one call.</p>
+  <p>The agent runs on RocketRide Cloud. You deploy it there from your terminal, and Excalidraw connects to it through the <strong>RocketRide TypeScript SDK</strong>: one client, one call.</p>
 
   <h2>The 15 minutes</h2>
   <div class="grid"><table>
@@ -61,7 +61,7 @@
       <tr><td>0:00</td><td>Get the app</td></tr>
       <tr><td>0:02</td><td>Connect RocketRide: your keys, then one command</td></tr>
       <tr><td>0:05</td><td>Add the diagram agent: a prompt, or paste two files</td></tr>
-      <tr><td>0:10</td><td>Run it</td></tr>
+      <tr><td>0:10</td><td>Run it: deploy the agent to RocketRide Cloud, then start the app</td></tr>
     </tbody>
   </table></div>
   <div class="note good">
@@ -107,6 +107,7 @@
     <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
     <li>Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Keep it where you can copy it from. Treat it like a password.</li>
     <li>Create an Anthropic API key at <a href="https://console.anthropic.com">console.anthropic.com</a>. The agent uses it to call Claude. It starts with <code>sk-ant-api03-</code>.</li>
+    <li>In RocketRide Cloud, add a <strong>Variable</strong> named <code>ROCKETRIDE_ANTHROPIC_KEY</code> with your Anthropic key as its value. The agent runs on RocketRide Cloud and reads the key from there, so it never goes in a file on your laptop.</li>
   </ol>
 
   <div class="note warn">
@@ -119,7 +120,7 @@
     <p>Come 10 minutes early for the help desk. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, RocketRide and Anthropic keys created.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, keys created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -163,11 +164,12 @@ git checkout 701b901</pre></div>
   </div>
 
   <ol class="run">
-    <li><b>Save your keys.</b> Open <code>excalidraw</code> in your editor (<strong>File</strong>, <strong>Open Folder</strong>) so you can edit its files. In the Explorer on the left, click <strong>New File</strong> and name it <code>.env.local</code> (at the top, next to <code>package.json</code>). Paste this, put your RocketRide API key in place of <code>your-api-key</code> and your Anthropic key in place of <code>your-anthropic-key</code>, and save:
+    <li><b>Save your keys.</b> Open <code>excalidraw</code> in your editor (<strong>File</strong>, <strong>Open Folder</strong>) so you can edit its files. In the Explorer on the left, click <strong>New File</strong> and name it <code>.env.local</code> (at the top, next to <code>package.json</code>). Paste this, put your RocketRide API key in place of <code>your-api-key</code> on both lines, and save:
       <div class="src"><div class="bar2"><span>.env.local</span><button class="cp-btn">Copy</button></div><pre>VITE_ROCKETRIDE_URI=https://api.rocketride.ai
 VITE_ROCKETRIDE_APIKEY=your-api-key
-VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
-      The name matters. Excalidraw tells git to ignore <code>.env.local</code>, so your keys never get committed. It doesn't do that for a file named <code>.env</code>.
+ROCKETRIDE_DEPLOY_URI=https://api.rocketride.ai
+ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
+      The <code>VITE_</code> lines are for the app. The <code>ROCKETRIDE_DEPLOY_</code> lines are for the deploy commands in Step 6, and Vite never sends them to the browser. The name matters. Excalidraw tells git to ignore <code>.env.local</code>, so your keys never get committed. It doesn't do that for a file named <code>.env</code>.
     </li>
     <li><b>Run this command</b> in the terminal. It adds the RocketRide SDK to the Excalidraw app and installs all of Excalidraw's other packages too. It takes about a minute:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn workspace excalidraw-app add rocketride@1.4.0</pre></div>
@@ -188,18 +190,19 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
   <div class="lead">
     <span class="stepno">05</span>
     <div>
-      <p class="kicker">The build <i>/ 5 minutes, two files</i></p>
+      <p class="kicker">The build <i>/ 5 minutes</i></p>
       <h1>Add the diagram agent</h1>
-      <p class="lede">Ask a coding agent to write two files, or paste them yourself. Pick a tab below.</p>
+      <p class="lede">Ask a coding agent to write the files, or paste them yourself. Pick a tab below.</p>
     </div>
   </div>
 
-  <h2>The two files</h2>
+  <h2>The files</h2>
   <ul>
-    <li><code>excalidraw-app/components/diagramAgent.ts</code> is new. It is the whole integration. It connects to RocketRide with the keys from <code>.env.local</code>, describes the agent's pipeline, and exports <code>askDiagramAgent()</code>, which sends the chat and returns the diagram.</li>
+    <li><code>diagram-agent.pipe</code> is new. It is the agent's pipeline, the file you deploy to RocketRide Cloud in Step 6.</li>
+    <li><code>excalidraw-app/components/diagramAgent.ts</code> is new. It connects to RocketRide with the key from <code>.env.local</code>, finds the agent you deployed, and exports <code>askDiagramAgent()</code>, which sends it the chat and returns the diagram.</li>
     <li><code>excalidraw-app/components/AI.tsx</code> is Excalidraw's own file. One part of it changes: the <code>TTDDialog</code> part near the end calls <code>askDiagramAgent()</code> instead of Excalidraw's AI service.</li>
   </ul>
-  <p>The pipeline has seven parts. The three in bold are what make it an agent: it decides, uses a tool, then answers.</p>
+  <p>The pipeline in <code>diagram-agent.pipe</code> has seven parts. The three in bold are what make it an agent: it decides, uses a tool, then answers.</p>
   <div class="grid"><table>
     <thead><tr><th>Part</th><th>What it does</th></tr></thead>
     <tbody>
@@ -218,26 +221,27 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
     <div class="tl"><button class="on">Prompt</button><button>Files</button></div>
     <div class="tp on">
       <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the <strong>Files</strong> tab. If Step 6 doesn't work, paste those files over its files.</p>
-      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. Change only the three files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. The agent itself runs on RocketRide Cloud: this repo holds its pipeline file, which gets deployed later, and the app connects to the deployed run. Change only the four files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
 
-1. Create excalidraw-app/components/diagramAgent.ts.
-   - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_ROCKETRIDE_URI (default https://api.rocketride.ai), VITE_ROCKETRIDE_APIKEY and VITE_ROCKETRIDE_ANTHROPIC_KEY from import.meta.env. They are in .env.local.
-   - Create one RocketRideClient with uri and auth from the first two, and env set to { ROCKETRIDE_URI, ROCKETRIDE_APIKEY, ROCKETRIDE_ANTHROPIC_KEY } with those three values.
-   - Describe this pipeline as a PipelineConfig: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, any fixed project_id UUID, version 1. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
+1. Create diagram-agent.pipe at the top of the repo, next to package.json. It is the agent&#x27;s pipeline as JSON, indented with 2 spaces: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, project_id &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;, version 1, and components. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
      webhook_1: provider webhook, config { hideForm: true, mode: &quot;Source&quot;, parameters: {}, type: &quot;webhook&quot; }.
      question_1: provider question, config {}, input [{ lane: &quot;text&quot;, from: &quot;webhook_1&quot; }].
      agent_rocketride_1: provider agent_rocketride, config { instructions: [...], max_waves: 6, parameters: {} }, where instructions is an array of strings, one per rule below. input [{ lane: &quot;questions&quot;, from: &quot;question_1&quot; }].
-     llm_anthropic_1: provider llm_anthropic, config { profile: &quot;claude-sonnet-4-6&quot;, &quot;claude-sonnet-4-6&quot;: { apikey: &quot;${ROCKETRIDE_ANTHROPIC_KEY}&quot; }, parameters: {} }. The apikey is that literal string: RocketRide fills it in from env. control [{ classType: &quot;llm&quot;, from: &quot;agent_rocketride_1&quot; }].
+     llm_anthropic_1: provider llm_anthropic, config { profile: &quot;claude-sonnet-4-6&quot;, &quot;claude-sonnet-4-6&quot;: { apikey: &quot;${ROCKETRIDE_ANTHROPIC_KEY}&quot; }, parameters: {} }. The apikey is that literal string: RocketRide Cloud fills it in from the ROCKETRIDE_ANTHROPIC_KEY Variable. control [{ classType: &quot;llm&quot;, from: &quot;agent_rocketride_1&quot; }].
      memory_internal_1: provider memory_internal, config { type: &quot;memory_internal&quot; }, control [{ classType: &quot;memory&quot;, from: &quot;agent_rocketride_1&quot; }].
      tool_http_request_1: provider tool_http_request, config { type: &quot;tool_http_request&quot;, serverName: &quot;github&quot;, allowPOST: false, allowPUT: false, allowPATCH: false, allowDELETE: false, urlWhitelist: [{ whitelistPattern: &quot;^https://raw[.]githubusercontent[.]com/&quot; }] }, control [{ classType: &quot;tool&quot;, from: &quot;agent_rocketride_1&quot; }].
      response_answers_1: provider response_answers, config { laneName: &quot;answers&quot; }, input [{ lane: &quot;answers&quot;, from: &quot;agent_rocketride_1&quot; }].
      The control entries go on the llm, memory and tool components and point at the agent. The agent itself has no control field.
      Write whitelistPattern exactly as shown, including both [.] parts. [.] matches only a real dot, so the tool can reach raw.githubusercontent.com and no lookalike address.
    - The agent&#x27;s instructions, as separate strings: turn the request into one Mermaid diagram that Excalidraw will draw. If the request names a public GitHub repository (owner/repo or a github.com link), first GET https://raw.githubusercontent.com/OWNER/REPO/HEAD/README.md with the github.http_request tool, read at most three more files the README points to, and draw only what it read. Otherwise draw from the request. Use flowchart LR or flowchart TD unless asked for a sequence diagram, under 20 nodes, short labels, no quotes, parentheses or brackets inside labels. If the conversation already has a diagram and the user asks for a change, return the whole updated diagram. Reply with only the Mermaid code, no explanation and no code fences.
-   - Export async function askDiagramAgent(messages), where messages is the chat so far: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected, start the pipeline with client.use({ pipeline, useExisting: true }), and send the chat as plain text with client.send(token, text, {}, &quot;text/plain&quot;). One message: send its content. More: send each turn as &quot;role: content&quot;, oldest first, then &quot;Answer the last user message.&quot;. The diagram is the last entry of result.answers. Strip a ``` fence if the agent added one.
-   - askDiagramAgent never throws. It returns { generatedResponse: mermaid, error: null } on success and { error } on failure, where error is a RequestError from &quot;@excalidraw/excalidraw/errors&quot;. A failure to connect or send gets a message starting &quot;RocketRide error: &quot;. If the answer starts with &quot;**LLM error**&quot;, call client.terminate(token) and return that answer as the error. An empty answer is an error too.
 
-2. Create excalidraw-app/components/DiagramAgentPanel.tsx, the chat panel. To blend in, reuse Excalidraw&#x27;s own chat UI instead of writing new markup or CSS. Read ChatInterface.tsx and ChatMessage.tsx in packages/excalidraw/components/TTDDialog/Chat before you use them.
+2. Create excalidraw-app/components/diagramAgent.ts. It holds no pipeline: it talks to the deployed one.
+   - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_ROCKETRIDE_URI (default https://api.rocketride.ai) and VITE_ROCKETRIDE_APIKEY from import.meta.env. They are in .env.local. Create one RocketRideClient with them as uri and auth.
+   - Export async function askDiagramAgent(messages), where messages is the chat so far: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected. Find the deployed run: teamId is client.getAccountInfo()?.devTeam, and the token comes from client.getTaskToken({ projectId: the project_id from diagram-agent.pipe, source: &quot;webhook_1&quot;, teamId }). A stopped run can keep its token, so also check client.getTaskStatus(token) is not completed. No token, a completed run, or an error whose text includes &quot;not running&quot; all mean the same thing: return the error &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy commands in Step 6.&quot;.
+   - Send the chat as plain text with client.send(token, text, {}, &quot;text/plain&quot;). One message: send its content. More: send each turn as &quot;role: content&quot;, oldest first, then &quot;Answer the last user message.&quot;. The diagram is the last entry of result.answers. Strip a ``` fence if the agent added one.
+   - askDiagramAgent never throws. It returns { generatedResponse: mermaid, error: null } on success and { error } on failure, where error is a RequestError from &quot;@excalidraw/excalidraw/errors&quot;. A failure to connect or send gets a message starting &quot;RocketRide error: &quot;. If the answer starts with &quot;LLM error&quot;, with or without ** around it, return that answer as the error. Never call client.terminate: the run is the deployed agent. An empty answer is an error too.
+
+3. Create excalidraw-app/components/DiagramAgentPanel.tsx, the chat panel. To blend in, reuse Excalidraw&#x27;s own chat UI instead of writing new markup or CSS. Read ChatInterface.tsx and ChatMessage.tsx in packages/excalidraw/components/TTDDialog/Chat before you use them.
    - Export a DiagramAgentPanel component that renders ChatInterface from &quot;@excalidraw/excalidraw/components/TTDDialog/Chat&quot; with chatId &quot;diagram-agent&quot;. Use the TChat and LLMMessage types from &quot;@excalidraw/excalidraw/components/TTDDialog/types&quot;.
    - Keep the messages, the current prompt and an isGenerating flag in atoms from &quot;../app-jotai&quot;, so the chat survives switching sidebar tabs and closing the sidebar.
    - onGenerate: add the user message, then an assistant message with isGenerating true. Send askDiagramAgent the user and assistant messages so far that have content. Skip assistant messages with errorType &quot;other&quot; (their request failed), but keep ones with errorType &quot;parse&quot;: auto-fix needs the agent to see the broken diagram. On an error, set the assistant message&#x27;s error to the error&#x27;s message and errorType to &quot;other&quot;. On success, check the Mermaid parses: import parseMermaidToExcalidraw dynamically from &quot;@excalidraw/mermaid-to-excalidraw&quot; and pass it MERMAID_TO_EXCALIDRAW_CONFIG from &quot;@excalidraw/excalidraw/mermaid&quot;. If it parses, set content to the Mermaid. If not, set content to the Mermaid, error to the parse error&#x27;s message and errorType to &quot;parse&quot;.
@@ -245,122 +249,155 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
    - onDeleteMessage: remove that assistant message and the user message before it. onAiRepairClick: send &quot;That diagram has a syntax error, fix it.&quot;
    - renderWelcomeScreen: a div with class chat-interface__welcome-screen__welcome-message holding an h3 &quot;Diagram agent&quot; and two short p lines: describe a diagram or name a public GitHub repo, and use the insert button on an answer to add it to the canvas.
 
-3. In excalidraw-app/components/AppSidebar.tsx, add the agent to the sidebar&#x27;s row of tab buttons:
+4. In excalidraw-app/components/AppSidebar.tsx, add the agent to the sidebar&#x27;s row of tab buttons:
    - Import brainIcon with the other icons from &quot;@excalidraw/excalidraw/components/icons&quot;, and import DiagramAgentPanel.
    - In DefaultSidebar.TabTriggers, after the presentation trigger, add &lt;Sidebar.TabTrigger tab=&quot;diagram-agent&quot; title=&quot;Diagram agent&quot;&gt;{brainIcon}&lt;/Sidebar.TabTrigger&gt;. Don&#x27;t copy the opacity style from the comments and presentation triggers: those two are faded because they advertise Excalidraw+.
    - After the presentation Sidebar.Tab, add &lt;Sidebar.Tab tab=&quot;diagram-agent&quot; style={{ padding: &quot;0 0.75rem&quot;, minHeight: 0 }}&gt; with &lt;DiagramAgentPanel /&gt; inside.
    - Change nothing else in the file.
 
-Then run npx prettier --write on the three files, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on the three files, and fix anything they report.</pre></div>
+Then run npx prettier --write on the three code files, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on the three code files, and fix anything they report.</pre></div>
     </div>
     <div class="tp">
-      <p><b>1. New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
-      <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
-import { RocketRideClient, type PipelineConfig } from &quot;rocketride&quot;;
-import { RequestError } from &quot;@excalidraw/excalidraw/errors&quot;;
-
-// Your RocketRide address and keys, from .env.local. Vite only passes VITE_* settings to the
-// browser: fine on your laptop, but never ship a real key in a deployed app.
-const env = {
-  ROCKETRIDE_URI:
-    import.meta.env.VITE_ROCKETRIDE_URI ?? &quot;https://api.rocketride.ai&quot;,
-  ROCKETRIDE_APIKEY: import.meta.env.VITE_ROCKETRIDE_APIKEY ?? &quot;&quot;,
-  ROCKETRIDE_ANTHROPIC_KEY: import.meta.env.VITE_ROCKETRIDE_ANTHROPIC_KEY ?? &quot;&quot;,
-};
-
-// The diagram agent. The chat arrives through a webhook and becomes a question for the agent.
-// The agent thinks with Claude, keeps notes in memory, and can read public GitHub files with
-// one tool that only allows GET requests to raw.githubusercontent.com. It answers with Mermaid,
-// which Excalidraw turns into shapes. ${ROCKETRIDE_ANTHROPIC_KEY} is filled in with your
-// Anthropic key from the env above when the pipeline starts.
-const PIPELINE: PipelineConfig = {
-  name: &quot;Excalidraw diagram agent&quot;,
-  source: &quot;webhook_1&quot;,
-  project_id: &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;,
-  version: 1,
-  components: [
+      <p><b>1. New file.</b> In the Explorer, click <strong>New File</strong> at the top level, next to <code>package.json</code>, name it <code>diagram-agent.pipe</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+      <div class="src"><div class="bar2"><span>diagram-agent.pipe</span><button class="cp-btn">Copy</button></div><pre>{
+  &quot;name&quot;: &quot;Excalidraw diagram agent&quot;,
+  &quot;source&quot;: &quot;webhook_1&quot;,
+  &quot;project_id&quot;: &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;,
+  &quot;version&quot;: 1,
+  &quot;components&quot;: [
     {
-      id: &quot;webhook_1&quot;,
-      provider: &quot;webhook&quot;,
-      config: {
-        hideForm: true,
-        mode: &quot;Source&quot;,
-        parameters: {},
-        type: &quot;webhook&quot;,
-      },
+      &quot;id&quot;: &quot;webhook_1&quot;,
+      &quot;provider&quot;: &quot;webhook&quot;,
+      &quot;config&quot;: {
+        &quot;hideForm&quot;: true,
+        &quot;mode&quot;: &quot;Source&quot;,
+        &quot;parameters&quot;: {},
+        &quot;type&quot;: &quot;webhook&quot;
+      }
     },
     {
-      id: &quot;question_1&quot;,
-      provider: &quot;question&quot;,
-      config: {},
-      input: [{ lane: &quot;text&quot;, from: &quot;webhook_1&quot; }],
+      &quot;id&quot;: &quot;question_1&quot;,
+      &quot;provider&quot;: &quot;question&quot;,
+      &quot;config&quot;: {},
+      &quot;input&quot;: [
+        {
+          &quot;lane&quot;: &quot;text&quot;,
+          &quot;from&quot;: &quot;webhook_1&quot;
+        }
+      ]
     },
     {
-      id: &quot;agent_rocketride_1&quot;,
-      provider: &quot;agent_rocketride&quot;,
-      config: {
-        instructions: [
+      &quot;id&quot;: &quot;agent_rocketride_1&quot;,
+      &quot;provider&quot;: &quot;agent_rocketride&quot;,
+      &quot;config&quot;: {
+        &quot;instructions&quot;: [
           &quot;You turn a request into one Mermaid diagram that Excalidraw will draw.&quot;,
           &quot;If the request names a public GitHub repository (owner/repo or a github.com link), read it before drawing: GET https://raw.githubusercontent.com/OWNER/REPO/HEAD/README.md with the github.http_request tool. Read at most three more files the README points to, such as package.json or a docs page. Draw only what you read.&quot;,
           &quot;If no repository is named, draw from the request itself.&quot;,
           &quot;Use a flowchart (flowchart LR or flowchart TD) unless the user asks for a sequence diagram. Keep it under 20 nodes with short labels. Do not put quotes, parentheses or brackets inside labels.&quot;,
           &quot;If the conversation already has a diagram and the user asks for a change, return the whole updated diagram.&quot;,
-          &quot;Reply with only the Mermaid code: no explanation and no code fences.&quot;,
+          &quot;Reply with only the Mermaid code: no explanation and no code fences.&quot;
         ],
-        max_waves: 6,
-        parameters: {},
+        &quot;max_waves&quot;: 6,
+        &quot;parameters&quot;: {}
       },
-      input: [{ lane: &quot;questions&quot;, from: &quot;question_1&quot; }],
+      &quot;input&quot;: [
+        {
+          &quot;lane&quot;: &quot;questions&quot;,
+          &quot;from&quot;: &quot;question_1&quot;
+        }
+      ]
     },
     {
-      id: &quot;llm_anthropic_1&quot;,
-      provider: &quot;llm_anthropic&quot;,
-      config: {
-        profile: &quot;claude-sonnet-4-6&quot;,
-        // eslint-disable-next-line no-template-curly-in-string
-        &quot;claude-sonnet-4-6&quot;: { apikey: &quot;${ROCKETRIDE_ANTHROPIC_KEY}&quot; },
-        parameters: {},
+      &quot;id&quot;: &quot;llm_anthropic_1&quot;,
+      &quot;provider&quot;: &quot;llm_anthropic&quot;,
+      &quot;config&quot;: {
+        &quot;profile&quot;: &quot;claude-sonnet-4-6&quot;,
+        &quot;claude-sonnet-4-6&quot;: {
+          &quot;apikey&quot;: &quot;${ROCKETRIDE_ANTHROPIC_KEY}&quot;
+        },
+        &quot;parameters&quot;: {}
       },
-      control: [{ classType: &quot;llm&quot;, from: &quot;agent_rocketride_1&quot; }],
+      &quot;control&quot;: [
+        {
+          &quot;classType&quot;: &quot;llm&quot;,
+          &quot;from&quot;: &quot;agent_rocketride_1&quot;
+        }
+      ]
     },
     {
-      id: &quot;memory_internal_1&quot;,
-      provider: &quot;memory_internal&quot;,
-      config: { type: &quot;memory_internal&quot; },
-      control: [{ classType: &quot;memory&quot;, from: &quot;agent_rocketride_1&quot; }],
-    },
-    {
-      id: &quot;tool_http_request_1&quot;,
-      provider: &quot;tool_http_request&quot;,
-      config: {
-        type: &quot;tool_http_request&quot;,
-        serverName: &quot;github&quot;,
-        allowPOST: false,
-        allowPUT: false,
-        allowPATCH: false,
-        allowDELETE: false,
-        urlWhitelist: [
-          { whitelistPattern: &quot;^https://raw\\.githubusercontent\\.com/&quot; },
-        ],
+      &quot;id&quot;: &quot;memory_internal_1&quot;,
+      &quot;provider&quot;: &quot;memory_internal&quot;,
+      &quot;config&quot;: {
+        &quot;type&quot;: &quot;memory_internal&quot;
       },
-      control: [{ classType: &quot;tool&quot;, from: &quot;agent_rocketride_1&quot; }],
+      &quot;control&quot;: [
+        {
+          &quot;classType&quot;: &quot;memory&quot;,
+          &quot;from&quot;: &quot;agent_rocketride_1&quot;
+        }
+      ]
     },
     {
-      id: &quot;response_answers_1&quot;,
-      provider: &quot;response_answers&quot;,
-      config: { laneName: &quot;answers&quot; },
-      input: [{ lane: &quot;answers&quot;, from: &quot;agent_rocketride_1&quot; }],
+      &quot;id&quot;: &quot;tool_http_request_1&quot;,
+      &quot;provider&quot;: &quot;tool_http_request&quot;,
+      &quot;config&quot;: {
+        &quot;type&quot;: &quot;tool_http_request&quot;,
+        &quot;serverName&quot;: &quot;github&quot;,
+        &quot;allowPOST&quot;: false,
+        &quot;allowPUT&quot;: false,
+        &quot;allowPATCH&quot;: false,
+        &quot;allowDELETE&quot;: false,
+        &quot;urlWhitelist&quot;: [
+          {
+            &quot;whitelistPattern&quot;: &quot;^https://raw\\.githubusercontent\\.com/&quot;
+          }
+        ]
+      },
+      &quot;control&quot;: [
+        {
+          &quot;classType&quot;: &quot;tool&quot;,
+          &quot;from&quot;: &quot;agent_rocketride_1&quot;
+        }
+      ]
     },
-  ],
-};
+    {
+      &quot;id&quot;: &quot;response_answers_1&quot;,
+      &quot;provider&quot;: &quot;response_answers&quot;,
+      &quot;config&quot;: {
+        &quot;laneName&quot;: &quot;answers&quot;
+      },
+      &quot;input&quot;: [
+        {
+          &quot;lane&quot;: &quot;answers&quot;,
+          &quot;from&quot;: &quot;agent_rocketride_1&quot;
+        }
+      ]
+    }
+  ]
+}</pre></div>
+      <p><b>2. New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save.</p>
+      <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
+import { RocketRideClient } from &quot;rocketride&quot;;
+import { RequestError } from &quot;@excalidraw/excalidraw/errors&quot;;
 
-/** One turn of the text-to-diagram chat, as Excalidraw sends it. */
+// Your RocketRide address and key, from .env.local. Vite only passes VITE_* settings to the
+// browser: fine on your laptop, but never ship a real key in a deployed app.
+const URI = import.meta.env.VITE_ROCKETRIDE_URI ?? &quot;https://api.rocketride.ai&quot;;
+const APIKEY = import.meta.env.VITE_ROCKETRIDE_APIKEY ?? &quot;&quot;;
+
+// The diagram agent runs on RocketRide Cloud. You deploy diagram-agent.pipe to your team in
+// Step 6; these two values must match that file&#x27;s project_id and source.
+const PROJECT_ID = &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;;
+const SOURCE = &quot;webhook_1&quot;;
+
+/** One turn of the chat. */
 export type ChatMessage = {
   role: &quot;user&quot; | &quot;assistant&quot;;
   content: string;
 };
 
-/** What Excalidraw&#x27;s text-to-diagram dialog expects back. */
+/** A diagram on success, or an error the chat shows. */
 export type DiagramResult =
   | { generatedResponse: string; error: null }
   | { generatedResponse?: null; error: RequestError };
@@ -368,8 +405,8 @@ export type DiagramResult =
 let client: RocketRideClient | null = null;
 
 /**
- * Sends the chat to the diagram agent and returns its Mermaid diagram.
- * Never throws: a failure comes back as an error the dialog shows under the chat.
+ * Sends the chat to the deployed diagram agent and returns its Mermaid diagram.
+ * Never throws: a failure comes back as an error the chat shows.
  */
 export async function askDiagramAgent(
   messages: readonly ChatMessage[],
@@ -379,18 +416,13 @@ export async function askDiagramAgent(
 
 async function runAgent(messages: readonly ChatMessage[]): Promise&lt;string&gt; {
   if (!client) {
-    client = new RocketRideClient({
-      uri: env.ROCKETRIDE_URI,
-      auth: env.ROCKETRIDE_APIKEY,
-      env,
-    });
+    client = new RocketRideClient({ uri: URI, auth: APIKEY });
   }
   if (!client.isConnected()) {
     await client.connect();
   }
 
-  // useExisting reuses the pipeline if it&#x27;s already running.
-  const { token } = await client.use({ pipeline: PIPELINE, useExisting: true });
+  const token = await findRun(client);
   const result = await client.send(
     token,
     toTranscript(messages),
@@ -400,10 +432,8 @@ async function runAgent(messages: readonly ChatMessage[]): Promise&lt;string&gt;
   const answers = (result?.answers as unknown[] | undefined) ?? [];
   const answer = String(answers[answers.length - 1] ?? &quot;&quot;);
 
-  // A wrong Anthropic key fails inside the running pipeline. Stop it, so the next try
-  // starts fresh with the key from .env.local.
-  if (answer.startsWith(&quot;**LLM error**&quot;)) {
-    await client.terminate(token);
+  // A wrong Anthropic key fails inside the agent and comes back as the answer.
+  if (/^\**LLM error/.test(answer)) {
     throw new RequestError({ message: answer, status: 502 });
   }
   if (!answer.trim()) {
@@ -414,6 +444,33 @@ async function runAgent(messages: readonly ChatMessage[]): Promise&lt;string&gt;
   }
 
   return toMermaid(answer);
+}
+
+/** Finds the agent&#x27;s deployed run on your team, or explains how to start it. */
+async function findRun(client: RocketRideClient): Promise&lt;string&gt; {
+  const teamId = client.getAccountInfo()?.devTeam;
+  try {
+    const token = teamId
+      ? await client.getTaskToken({
+          projectId: PROJECT_ID,
+          source: SOURCE,
+          teamId,
+        })
+      : undefined;
+    // A stopped run can keep its token, so check that it&#x27;s still running.
+    if (token &amp;&amp; !(await client.getTaskStatus(token)).completed) {
+      return token;
+    }
+  } catch (error) {
+    if (!String(error).includes(&quot;not running&quot;)) {
+      throw error;
+    }
+  }
+  throw new RequestError({
+    message:
+      &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy commands in Step 6.&quot;,
+    status: 503,
+  });
 }
 
 /** Writes the chat as plain text: earlier turns first, the newest request last. */
@@ -459,7 +516,7 @@ function toFailure(error: unknown): DiagramResult {
     }),
   };
 }</pre></div>
-      <p><b>2. Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
+      <p><b>3. Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
       <div class="src"><div class="bar2"><span>excalidraw-app/components/AI.tsx</span><button class="cp-btn">Copy</button></div><pre>import {
   DiagramToCodePlugin,
   exportScene,
@@ -648,7 +705,7 @@ export const AIComponents = ({
 
   <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If the coding agent wrote the file, paste that file from the <strong>Files</strong> tab over it instead. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Both files written and saved.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The files written and saved, including <code>diagram-agent.pipe</code>.</span></label>
 </section>
 
 <!-- ===== 6 ===== -->
@@ -659,32 +716,42 @@ export const AIComponents = ({
     <div>
       <p class="kicker">The finish <i>/ 5 minutes</i></p>
       <h1>Run it</h1>
-      <p class="lede">Start Excalidraw and ask the agent for a diagram.</p>
+      <p class="lede">Deploy the agent to RocketRide Cloud, start Excalidraw, and ask the agent for a diagram.</p>
     </div>
   </div>
 
   <ol class="run">
+    <li><b>Find your team id.</b> Your RocketRide account has teams, and the agent deploys to one of them. Run this in the terminal. It prints your team's id, a long string of letters, numbers and dashes:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local -e "const {RocketRideClient}=require('rocketride');const c=new RocketRideClient({uri:process.env.ROCKETRIDE_DEPLOY_URI,auth:process.env.ROCKETRIDE_DEPLOY_APIKEY});c.connect().then(()=&gt;{console.log(c.getAccountInfo().devTeam);process.exit(0)})"</pre></div>
+    </li>
+    <li><b>Deploy the agent.</b> Copy these two lines into your editor, put your team id in place of <code>your-team-id</code> in both, then paste them into the terminal. The first line copies <code>diagram-agent.pipe</code> to RocketRide Cloud and points your team at it. The second starts it.
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-typescript/src/cli/rocketride.js deploy add diagram-agent.pipe --deploy-to your-team-id
+node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-typescript/src/cli/rocketride.js deploy run dafb1567-0f6e-4b87-a00e-74ce8bef1db7 webhook_1 --team your-team-id</pre></div>
+      The terminal prints <code>Deployed pipe version v1</code>, then <code>Run started</code>. The agent now runs on RocketRide Cloud, not on your laptop.</li>
     <li>Start the app:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn start</pre></div>
       It opens <a href="http://localhost:3001">http://localhost:3001</a> in your browser. If it doesn't, open that address yourself.</li>
     <li>Click <strong>More tools</strong> (the last button on the toolbar), then <strong>Text to diagram</strong>.</li>
     <li>Paste this message into the chat and send it:
       <div class="src"><div class="bar2"><span>message</span><button class="cp-btn">Copy</button></div><pre>Diagram the architecture of rocketride-org/rocketride-server</pre></div>
-      The agent reads the repo on GitHub, then answers. The first answer can take up to a minute while the agent starts. A preview of the diagram appears next to the chat.</li>
+      The agent reads the repo on GitHub, then answers. The first answer can take up to a minute. A preview of the diagram appears next to the chat.</li>
     <li>Ask for a change, for example <strong>Make it top to bottom</strong>. The agent sends the whole diagram again with the change.</li>
     <li>Click <strong>Insert</strong>. The diagram lands on the canvas as shapes you can move and edit.</li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The architecture of the repo is on your canvas.</p></div>
 
-  <details class="fold"><summary>The chat says <code>Invalid Anthropic API key format</code> or <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>VITE_ROCKETRIDE_ANTHROPIC_KEY</code> line in <code>.env.local</code> is empty or has the wrong key. Paste your Anthropic key there, save, stop the app (<strong>Ctrl+C</strong>), run <code>yarn start</code> again, and send the message again. If the first try still shows the old error, send it once more.</p></div></details>
-  <details class="fold"><summary>The chat says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check both key lines in <code>.env.local</code> have your keys and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>yarn start</code> again: Vite only reads <code>.env.local</code> when it starts.</p></div></details>
+  <details class="fold"><summary><code>node: bad option: --env-file</code></summary><div class="fb"><p>Your Node is older than 20.6. Install the current Node from <a href="https://nodejs.org">nodejs.org</a>, close and reopen the terminal, and run the line again.</p></div></details>
+  <details class="fold"><summary><code>Error: teamId is required</code></summary><div class="fb"><p>The line still says <code>your-team-id</code>, or the id is missing. Put in the id the first command printed and run the line again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>The diagram agent isn't running on RocketRide Cloud</code></summary><div class="fb"><p>The agent was never started, or it stopped. Run the second deploy line (<code>deploy run</code>) again, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>LLM error</code> and <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>ROCKETRIDE_ANTHROPIC_KEY</code> Variable in RocketRide Cloud is missing or has the wrong key. Fix it there, run the second deploy line again so the agent starts with the new key, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check the <code>VITE_ROCKETRIDE_APIKEY</code> line in <code>.env.local</code> has your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>yarn start</code> again: Vite only reads <code>.env.local</code> when it starts.</p></div></details>
   <details class="fold"><summary>The preview says <code>Generated an invalid diagram</code> or <code>Mermaid syntax error</code></summary><div class="fb"><p>The agent wrote Mermaid that Excalidraw can't draw. Reply in the chat: <strong>That diagram has a syntax error, fix it</strong>.</p></div></details>
   <details class="fold"><summary>A red error box covers the page, or the page is blank</summary><div class="fb"><p>A file wasn't pasted fully or wasn't saved. The red box, or the terminal, names the file. Copy that file's box in Step 5 again, paste over everything, and save. The page reloads by itself.</p></div></details>
   <details class="fold"><summary>The app opened on a different port</summary><div class="fb"><p>Something else is using port 3001, so Vite took the next free one and printed it, for example <code>localhost:3002</code>. Open that.</p></div></details>
 
   <h2>Take it further</h2>
   <ul>
-    <li>Change how the agent draws: edit the instructions in <code>diagramAgent.ts</code> (for example "Group the parts into subgraphs"), save, and send a new message. The running agent keeps its old instructions until it stops, so if nothing changes, give it a few minutes and try again.</li>
+    <li>Change how the agent draws: edit the instructions in <code>diagram-agent.pipe</code> (for example "Group the parts into subgraphs"), save, and run both deploy lines again. Each deploy is a new version, v2, v3 and so on, and your team moves to it.</li>
     <li>Let the agent read more of GitHub: add a second <code>whitelistPattern</code> to the GitHub tool, such as <code>"^https://api\\.github\\.com/repos/"</code>, and tell it in the instructions what it can find there.</li>
   </ul>
   <div class="note warn">
@@ -741,6 +808,9 @@ export const AIComponents = ({
       <tr><td>Vite</td><td>The tool that runs Excalidraw on your laptop and reloads it when a file changes. It reads <code>.env.local</code> when it starts.</td></tr>
       <tr><td>TypeScript</td><td>JavaScript with types. Your editor uses them to put red squiggles under mistakes.</td></tr>
       <tr><td>API key</td><td>The password a service gives you so your code can call it.</td></tr>
+      <tr><td>Deploy</td><td>Copy a pipeline to RocketRide Cloud as a new version, so it runs there instead of on your laptop.</td></tr>
+      <tr><td>Team</td><td>A group in your RocketRide account that a deployed pipeline belongs to. You deploy the agent to your team.</td></tr>
+      <tr><td>Variable</td><td>A setting saved in RocketRide Cloud, such as your Anthropic key. Deployed pipelines read it from there.</td></tr>
     </tbody>
   </table></div>
 
