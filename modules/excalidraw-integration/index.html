@@ -39,7 +39,7 @@
       <p class="kicker">RocketRide workshop <i>/ project 2 of 3</i></p>
       <h1>Give Excalidraw a diagram agent</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app. Clone the app, run one command, paste two files.</p>
+      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app. Clone the app, run one command, add two files.</p>
     </div>
   </div>
 
@@ -60,7 +60,7 @@
       <tr><td>At home</td><td>Step 2: install the tools, create your keys</td></tr>
       <tr><td>0:00</td><td>Get the app</td></tr>
       <tr><td>0:02</td><td>Connect RocketRide: your keys, then one command</td></tr>
-      <tr><td>0:05</td><td>Add the diagram agent: paste two files</td></tr>
+      <tr><td>0:05</td><td>Add the diagram agent: a prompt, or paste two files</td></tr>
       <tr><td>0:10</td><td>Run it</td></tr>
     </tbody>
   </table></div>
@@ -71,7 +71,7 @@
 
   <div class="note">
     <b class="k">New to all of this?</b>
-    <p>That's who this page is for. Every command and every file is in a box with a <strong>Copy</strong> button. <strong>Words you will hear</strong> in the sidebar explains the terms.</p>
+    <p>That's who this page is for. Every command, file and prompt is in a box with a <strong>Copy</strong> button. <strong>Words you will hear</strong> in the sidebar explains the terms.</p>
   </div>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what the diagram agent will do.</span></label>
@@ -97,6 +97,7 @@
       <tr><td>Node 20+</td><td><code>node --version</code></td><td><a href="https://nodejs.org">nodejs.org</a></td></tr>
       <tr><td>Yarn 1</td><td><code>yarn --version</code> (shows <code>1.</code> something)</td><td><code>npm install -g yarn</code></td></tr>
       <tr><td>git</td><td><code>git --version</code></td><td><a href="https://git-scm.com">git-scm.com</a></td></tr>
+      <tr><td>A coding agent (optional)</td><td></td><td><a href="https://claude.com/claude-code">Claude Code</a>, or the chat built into your editor. Step 5 can use one.</td></tr>
     </tbody>
   </table></div>
   <p>Close and reopen your terminal after installing anything, so it sees the new tool. You don't need Python for this project.</p>
@@ -189,12 +190,15 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
     <div>
       <p class="kicker">The build <i>/ 5 minutes, two files</i></p>
       <h1>Add the diagram agent</h1>
-      <p class="lede">For each file: copy the box, paste, save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+      <p class="lede">Ask a coding agent to write two files, or paste them yourself. Pick a tab below.</p>
     </div>
   </div>
 
-  <h2>1. New file: <code>excalidraw-app/components/diagramAgent.ts</code></h2>
-  <p>In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, and paste. This is the whole integration. It connects to RocketRide with the keys from <code>.env.local</code>, describes the agent's pipeline, and exports <code>askDiagramAgent()</code>, which sends the chat and returns the diagram.</p>
+  <h2>The two files</h2>
+  <ul>
+    <li><code>excalidraw-app/components/diagramAgent.ts</code> is new. It is the whole integration. It connects to RocketRide with the keys from <code>.env.local</code>, describes the agent's pipeline, and exports <code>askDiagramAgent()</code>, which sends the chat and returns the diagram.</li>
+    <li><code>excalidraw-app/components/AI.tsx</code> is Excalidraw's own file. One part of it changes: the <code>TTDDialog</code> part near the end calls <code>askDiagramAgent()</code> instead of Excalidraw's AI service.</li>
+  </ul>
   <p>The pipeline has seven parts. The three in bold are what make it an agent: it decides, uses a tool, then answers.</p>
   <div class="grid"><table>
     <thead><tr><th>Part</th><th>What it does</th></tr></thead>
@@ -208,7 +212,38 @@ VITE_ROCKETRIDE_ANTHROPIC_KEY=your-anthropic-key</pre></div>
       <tr><td>Answers</td><td>Sends the diagram back to Excalidraw.</td></tr>
     </tbody>
   </table></div>
-  <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
+
+  <h2>Write the files</h2>
+  <div class="tabs">
+    <div class="tl"><button class="on">Prompt</button><button>diagramAgent.ts</button><button>AI.tsx</button></div>
+    <div class="tp on">
+      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the other two tabs. If Step 6 doesn't work, paste those tabs over its files.</p>
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, make the Text to diagram dialog use a RocketRide agent instead of Excalidraw&#x27;s AI backend. Change only the two files below. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
+
+1. Create excalidraw-app/components/diagramAgent.ts.
+   - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_ROCKETRIDE_URI (default https://api.rocketride.ai), VITE_ROCKETRIDE_APIKEY and VITE_ROCKETRIDE_ANTHROPIC_KEY from import.meta.env. They are in .env.local.
+   - Create one RocketRideClient with uri and auth from the first two, and env set to { ROCKETRIDE_URI, ROCKETRIDE_APIKEY, ROCKETRIDE_ANTHROPIC_KEY } with those three values.
+   - Describe this pipeline as a PipelineConfig: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, any fixed project_id UUID, version 1. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
+     webhook_1: provider webhook, config { hideForm: true, mode: &quot;Source&quot;, parameters: {}, type: &quot;webhook&quot; }.
+     question_1: provider question, config {}, input [{ lane: &quot;text&quot;, from: &quot;webhook_1&quot; }].
+     agent_rocketride_1: provider agent_rocketride, config { instructions: [...], max_waves: 6, parameters: {} }, where instructions is an array of strings, one per rule below. input [{ lane: &quot;questions&quot;, from: &quot;question_1&quot; }].
+     llm_anthropic_1: provider llm_anthropic, config { profile: &quot;claude-sonnet-4-6&quot;, &quot;claude-sonnet-4-6&quot;: { apikey: &quot;${ROCKETRIDE_ANTHROPIC_KEY}&quot; }, parameters: {} }. The apikey is that literal string: RocketRide fills it in from env. control [{ classType: &quot;llm&quot;, from: &quot;agent_rocketride_1&quot; }].
+     memory_internal_1: provider memory_internal, config { type: &quot;memory_internal&quot; }, control [{ classType: &quot;memory&quot;, from: &quot;agent_rocketride_1&quot; }].
+     tool_http_request_1: provider tool_http_request, config { type: &quot;tool_http_request&quot;, serverName: &quot;github&quot;, allowPOST: false, allowPUT: false, allowPATCH: false, allowDELETE: false, urlWhitelist: [{ whitelistPattern: &quot;^https://raw[.]githubusercontent[.]com/&quot; }] }, control [{ classType: &quot;tool&quot;, from: &quot;agent_rocketride_1&quot; }].
+     response_answers_1: provider response_answers, config { laneName: &quot;answers&quot; }, input [{ lane: &quot;answers&quot;, from: &quot;agent_rocketride_1&quot; }].
+     The control entries go on the llm, memory and tool components and point at the agent. The agent itself has no control field.
+     Write whitelistPattern exactly as shown, including both [.] parts. [.] matches only a real dot, so the tool can reach raw.githubusercontent.com and no lookalike address.
+   - The agent&#x27;s instructions, as separate strings: turn the request into one Mermaid diagram that Excalidraw will draw. If the request names a public GitHub repository (owner/repo or a github.com link), first GET https://raw.githubusercontent.com/OWNER/REPO/HEAD/README.md with the github.http_request tool, read at most three more files the README points to, and draw only what it read. Otherwise draw from the request. Use flowchart LR or flowchart TD unless asked for a sequence diagram, under 20 nodes, short labels, no quotes, parentheses or brackets inside labels. If the conversation already has a diagram and the user asks for a change, return the whole updated diagram. Reply with only the Mermaid code, no explanation and no code fences.
+   - Export async function askDiagramAgent(messages), where messages is the dialog&#x27;s chat: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected, start the pipeline with client.use({ pipeline, useExisting: true }), and send the chat as plain text with client.send(token, text, {}, &quot;text/plain&quot;). One message: send its content. More: send each turn as &quot;role: content&quot;, oldest first, then &quot;Answer the last user message.&quot;. The diagram is the last entry of result.answers. Strip a ``` fence if the agent added one.
+   - askDiagramAgent never throws. It returns { generatedResponse: mermaid, error: null } on success and { error } on failure, where error is a RequestError from &quot;@excalidraw/excalidraw/errors&quot;. A failure to connect or send gets a message starting &quot;RocketRide error: &quot;. If the answer starts with &quot;**LLM error**&quot;, call client.terminate(token) and return that answer as the error. An empty answer is an error too.
+
+2. In excalidraw-app/components/AI.tsx, change only the onTextSubmit handler of TTDDialog: call onStreamCreated, await askDiagramAgent(messages), pass the diagram to onChunk if there is one, and return the result. Remove the TTDStreamFetch import and the unused signal. Leave the rest of the file as it is.
+
+Then run npx prettier --write on both files, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on both files, and fix anything they report.</pre></div>
+    </div>
+    <div class="tp">
+      <p><b>New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
+      <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
 import { RocketRideClient, type PipelineConfig } from &quot;rocketride&quot;;
 import { RequestError } from &quot;@excalidraw/excalidraw/errors&quot;;
 
@@ -412,10 +447,10 @@ function toFailure(error: unknown): DiagramResult {
     }),
   };
 }</pre></div>
-
-  <h2>2. Replace: <code>excalidraw-app/components/AI.tsx</code></h2>
-  <p>Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), and paste over it. Only two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it instead of Excalidraw's AI service. The rest is Excalidraw's own code, unchanged.</p>
-  <div class="src"><div class="bar2"><span>excalidraw-app/components/AI.tsx</span><button class="cp-btn">Copy</button></div><pre>import {
+    </div>
+    <div class="tp">
+      <p><b>Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
+      <div class="src"><div class="bar2"><span>excalidraw-app/components/AI.tsx</span><button class="cp-btn">Copy</button></div><pre>import {
   DiagramToCodePlugin,
   exportScene,
   getNonDeletedElements,
@@ -598,10 +633,12 @@ export const AIComponents = ({
     &lt;/&gt;
   );
 };</pre></div>
+    </div>
+  </div>
 
-  <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
+  <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If the coding agent wrote the file, paste the file's tab over it instead. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Two files pasted and saved.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Both files written and saved.</span></label>
 </section>
 
 <!-- ===== 6 ===== -->
@@ -674,7 +711,8 @@ export const AIComponents = ({
       <tr><td>Agent</td><td>An AI that decides what to do, uses tools to find things out, and then answers.</td></tr>
       <tr><td>Tool</td><td>Something an agent can use while it works. Here, a tool that reads public files from GitHub.</td></tr>
       <tr><td>LLM</td><td>Large language model. The AI that reads and writes text. Here, Claude.</td></tr>
-      <tr><td>Prompt</td><td>The written instructions you give a model or an agent.</td></tr>
+      <tr><td>Prompt</td><td>The written instructions you give a model, an agent, or a coding agent.</td></tr>
+      <tr><td>Coding agent</td><td>An AI that writes and checks code in your project, such as Claude Code. Step 5 can use one.</td></tr>
       <tr><td>Integration</td><td>Adding a new capability to an app that already exists, instead of building one from scratch.</td></tr>
       <tr><td>SDK</td><td>A library that lets your code talk to a service. Here, the RocketRide TypeScript SDK.</td></tr>
     </tbody>

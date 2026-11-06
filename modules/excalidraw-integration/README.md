@@ -2,7 +2,7 @@
 
 **Guide:** <https://rocketride-org.github.io/rocketride-workshops/modules/excalidraw-integration/>
 
-Attendees clone [Excalidraw](https://github.com/excalidraw/excalidraw), add the RocketRide TypeScript SDK, and paste two files. After that, Excalidraw's built-in **Text to diagram** dialog is answered by a RocketRide agent instead of Excalidraw's own AI backend. Asked about a public GitHub repo, the agent reads it with a GET-only tool locked to `raw.githubusercontent.com`, then answers with Mermaid that Excalidraw draws. Follow-up messages revise the diagram. The whole module is the guide. There is no notebook: attendees run every command and paste every file themselves.
+Attendees clone [Excalidraw](https://github.com/excalidraw/excalidraw), add the RocketRide TypeScript SDK, and add two files, by pasting a prompt into a coding agent or pasting the files themselves. After that, Excalidraw's built-in **Text to diagram** dialog is answered by a RocketRide agent instead of Excalidraw's own AI backend. Asked about a public GitHub repo, the agent reads it with a GET-only tool locked to `raw.githubusercontent.com`, then answers with Mermaid that Excalidraw draws. Follow-up messages revise the diagram. The whole module is the guide. There is no notebook: attendees run every command themselves, and write the two files with the guide's prompt or paste them.
 
 **Time:** 15 minutes
 
@@ -17,7 +17,7 @@ git checkout 701b901        # git prints a detached HEAD note; expected
 # .env.local at the repo root (the editor's New File): VITE_ROCKETRIDE_URI,
 # VITE_ROCKETRIDE_APIKEY, VITE_ROCKETRIDE_ANTHROPIC_KEY
 yarn workspace excalidraw-app add rocketride@1.4.0   # also installs all of Excalidraw (~900 MB)
-# paste two files from the guide
+# Step 5: paste the prompt into a coding agent, or paste the two files
 yarn start                  # localhost:3001: More tools > Text to diagram > Insert
 ```
 
@@ -26,7 +26,7 @@ yarn start                  # localhost:3001: More tools > Text to diagram > Ins
 | `excalidraw-app/components/diagramAgent.ts` | New: the RocketRide client, the agent pipeline (webhook → question → agent with Claude, memory and a GitHub tool → answers) and `askDiagramAgent()` |
 | `excalidraw-app/components/AI.tsx` | Replace: Excalidraw's file at `701b901`, with the `TTDDialog` handler calling `askDiagramAgent()` instead of `TTDStreamFetch` |
 
-The guide's two code boxes are generated from these files, HTML-escaped. If you change either file, regenerate its box rather than editing the HTML by hand.
+Step 5 has three tabs: **Prompt** (first, open by default) asks a coding agent to write both files from a description, and **diagramAgent.ts** and **AI.tsx** hold the reference files to paste. The two file boxes are generated from these files, HTML-escaped. If you change either file, regenerate its box rather than editing the HTML by hand, and update the prompt to match. A coding agent's version differs a little from the reference; the guide tells attendees to paste the file tabs over it if Step 6 fails.
 
 ## Why it's built this way
 
