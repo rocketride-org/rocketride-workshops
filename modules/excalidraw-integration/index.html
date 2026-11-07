@@ -57,7 +57,7 @@
   <div class="grid"><table>
     <thead><tr><th>Time</th><th>What happens</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>Step 2: install the tools, redeem the promo code, create your keys</td></tr>
+      <tr><td>At home</td><td>Step 2: install the tools, set up RocketRide Cloud, create your keys</td></tr>
       <tr><td>0:00</td><td>Step 3: get the app</td></tr>
       <tr><td>0:02</td><td>Step 4: connect RocketRide: your keys, then one command</td></tr>
       <tr><td>0:05</td><td>Step 5: add the diagram agent: a prompt, or paste the files</td></tr>
@@ -106,9 +106,7 @@
   <h2>Set up RocketRide Cloud</h2>
   <ol class="run">
     <li><b>Make an account.</b> Sign up at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and confirm your email.</li>
-    <li><b>Redeem the promo code.</b> The workshop's promo code gives you a plan and credits, so you don't pay for anything today. When RocketRide Cloud asks you to pick a plan, type the code into the <strong>Enter code</strong> box under the plans and click <strong>Apply</strong>:
-      <div class="src"><div class="bar2"><span>promo code</span><button class="cp-btn">Copy</button></div><pre>ZERO2AGENTLA</pre></div>
-      It says <strong>No payment required. Your plan is active.</strong> Without an active plan, the deploy in Step 6 fails.</li>
+    <li><b>Start a subscription.</b> Without an active plan, the deploy in Step 6 fails.</li>
     <li><b>Create a RocketRide API key.</b> In RocketRide Cloud, create an API key. Keep it where you can copy it from. Treat it like a password.</li>
   </ol>
 
@@ -120,9 +118,6 @@
     </li>
   </ol>
 
-  <details class="fold"><summary>The code says <code>Code redeemed</code> instead</summary><div class="fb"><p>You already had a plan, so the code added its credits to it. You're set.</p></div></details>
-  <details class="fold"><summary>The code says it is not valid or has expired</summary><div class="fb"><p>Check you typed <code>ZERO2AGENTLA</code> with no spaces, or use the <strong>Copy</strong> button above. If it still fails, ask at the help desk or on Discord before you pay for anything.</p></div></details>
-
   <div class="note warn">
     <b class="k">Slow wifi? Download Excalidraw at home</b>
     <p>Excalidraw is a big app. Installing it downloads about 900 MB. If your connection is slow, do Step 3 and the command in Step 4 at home. In the room, open the same folder and carry on.</p>
@@ -133,7 +128,7 @@
     <p>Come 10 minutes early for the help desk. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, promo code redeemed, RocketRide API key created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, subscription started, RocketRide API key created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -747,7 +742,7 @@ export const AIComponents = ({
   <details class="fold"><summary><code>Cannot find module 'rocketride'</code></summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder, or the command in Step 4 didn't finish. Run <code>cd excalidraw</code>, run the Step 4 command again, then this one.</p></div></details>
   <details class="fold"><summary><code>no such file or directory</code> and <code>diagram-agent.pipe</code> or <code>.env.local</code></summary><div class="fb"><p>The file isn't saved, or it's in the wrong folder. It belongs at the top of <code>excalidraw</code>, next to <code>package.json</code>, not inside <code>excalidraw-app</code>. Move it there, save, and run the command again.</p></div></details>
   <details class="fold"><summary><code>Deploy failed:</code> and something about your key or signing in</summary><div class="fb"><p>Check the two <code>ROCKETRIDE_DEPLOY_</code> lines in <code>.env.local</code>: your RocketRide API key in place of <code>your-api-key</code>, no spaces, file saved. Then run the command again.</p></div></details>
-  <details class="fold"><summary><code>Deploy failed:</code> and something about a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Redeem the promo code (Step 2), then run the command again.</p></div></details>
+  <details class="fold"><summary><code>Deploy failed:</code> and something about a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Start a subscription in RocketRide Cloud (Step 2), then run the command again.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The terminal printed <code>The agent is running on RocketRide Cloud</code>.</span></label>
 </section>
