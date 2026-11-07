@@ -57,11 +57,12 @@
   <div class="grid"><table>
     <thead><tr><th>Time</th><th>What happens</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>Step 2: install the tools, create your keys</td></tr>
-      <tr><td>0:00</td><td>Get the app</td></tr>
-      <tr><td>0:02</td><td>Connect RocketRide: your keys, then one command</td></tr>
-      <tr><td>0:05</td><td>Add the diagram agent: a prompt, or paste two files</td></tr>
-      <tr><td>0:10</td><td>Run it: deploy the agent to RocketRide Cloud, then start the app</td></tr>
+      <tr><td>At home</td><td>Step 2: install the tools, redeem the promo code, create your keys</td></tr>
+      <tr><td>0:00</td><td>Step 3: get the app</td></tr>
+      <tr><td>0:02</td><td>Step 4: connect RocketRide: your keys, then one command</td></tr>
+      <tr><td>0:05</td><td>Step 5: add the diagram agent: a prompt, or paste the files</td></tr>
+      <tr><td>0:10</td><td>Step 6: deploy the agent to RocketRide Cloud: one command</td></tr>
+      <tr><td>0:12</td><td>Step 7: start the app and ask for a diagram</td></tr>
     </tbody>
   </table></div>
   <div class="note good">
@@ -102,13 +103,25 @@
   </table></div>
   <p>Close and reopen your terminal after installing anything, so it sees the new tool. You don't need Python for this project.</p>
 
-  <h2>Create your keys</h2>
+  <h2>Set up RocketRide Cloud</h2>
   <ol class="run">
-    <li>Sign up for RocketRide Cloud, confirm your email, and start a subscription.</li>
-    <li>Sign in at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and create an API key. Keep it where you can copy it from. Treat it like a password.</li>
-    <li>Create an Anthropic API key at <a href="https://console.anthropic.com">console.anthropic.com</a>. The agent uses it to call Claude. It starts with <code>sk-ant-api03-</code>.</li>
-    <li>In RocketRide Cloud, add a <strong>Variable</strong> named <code>ROCKETRIDE_ANTHROPIC_KEY</code> with your Anthropic key as its value. The agent runs on RocketRide Cloud and reads the key from there, so it never goes in a file on your laptop.</li>
+    <li><b>Make an account.</b> Sign up at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and confirm your email.</li>
+    <li><b>Redeem the promo code.</b> The workshop's promo code gives you a plan and credits, so you don't pay for anything today. When RocketRide Cloud asks you to pick a plan, type the code into the <strong>Enter code</strong> box under the plans and click <strong>Apply</strong>:
+      <div class="src"><div class="bar2"><span>promo code</span><button class="cp-btn">Copy</button></div><pre>ZERO2AGENTLA</pre></div>
+      It says <strong>No payment required. Your plan is active.</strong> Without an active plan, the deploy in Step 6 fails.</li>
+    <li><b>Create a RocketRide API key.</b> In RocketRide Cloud, create an API key. Keep it where you can copy it from. Treat it like a password.</li>
   </ol>
+
+  <h2>Set up your Anthropic key</h2>
+  <ol class="run">
+    <li><b>Create an Anthropic API key</b> at <a href="https://console.anthropic.com">console.anthropic.com</a>. The agent uses it to call Claude. It starts with <code>sk-ant-api03-</code>.</li>
+    <li><b>Save it in RocketRide Cloud.</b> Add a <strong>Variable</strong> named <code>ROCKETRIDE_ANTHROPIC_KEY</code> with your Anthropic key as its value. The agent runs on RocketRide Cloud and reads the key from there, so it never goes in a file on your laptop.
+      <div class="src"><div class="bar2"><span>Variable name</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_ANTHROPIC_KEY</pre></div>
+    </li>
+  </ol>
+
+  <details class="fold"><summary>The code says <code>Code redeemed</code> instead</summary><div class="fb"><p>You already had a plan, so the code added its credits to it. You're set.</p></div></details>
+  <details class="fold"><summary>The code says it is not valid or has expired</summary><div class="fb"><p>Check you typed <code>ZERO2AGENTLA</code> with no spaces, or use the <strong>Copy</strong> button above. If it still fails, ask at the help desk or on Discord before you pay for anything.</p></div></details>
 
   <div class="note warn">
     <b class="k">Slow wifi? Download Excalidraw at home</b>
@@ -120,7 +133,7 @@
     <p>Come 10 minutes early for the help desk. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, keys created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, promo code redeemed, RocketRide API key created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -169,7 +182,7 @@ git checkout 701b901</pre></div>
 VITE_ROCKETRIDE_APIKEY=your-api-key
 ROCKETRIDE_DEPLOY_URI=https://api.rocketride.ai
 ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
-      The <code>VITE_</code> lines are for the app. The <code>ROCKETRIDE_DEPLOY_</code> lines are for the deploy commands in Step 6, and Vite never sends them to the browser. The name matters. Excalidraw tells git to ignore <code>.env.local</code>, so your keys never get committed. It doesn't do that for a file named <code>.env</code>.
+      Yes, the same key goes in twice. The <code>VITE_</code> lines are for the app. The <code>ROCKETRIDE_DEPLOY_</code> lines are for the deploy command in Step 6, and Vite never sends them to the browser. The name matters. Excalidraw tells git to ignore <code>.env.local</code>, so your keys never get committed. It doesn't do that for a file named <code>.env</code>.
     </li>
     <li><b>Run this command</b> in the terminal. It adds the RocketRide SDK to the Excalidraw app and installs all of Excalidraw's other packages too. It takes about a minute:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn workspace excalidraw-app add rocketride@1.4.0</pre></div>
@@ -220,7 +233,7 @@ ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
   <div class="tabs">
     <div class="tl"><button class="on">Prompt</button><button>Files</button></div>
     <div class="tp on">
-      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the <strong>Files</strong> tab. If Step 6 doesn't work, paste those files over its files.</p>
+      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the <strong>Files</strong> tab. If Step 7 doesn't work, paste those files over its files.</p>
       <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. The agent itself runs on RocketRide Cloud: this repo holds its pipeline file, which gets deployed later, and the app connects to the deployed run. Change only the four files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
 
 1. Create diagram-agent.pipe at the top of the repo, next to package.json. It is the agent&#x27;s pipeline as JSON, indented with 2 spaces: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, project_id &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;, version 1, and components. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
@@ -237,7 +250,7 @@ ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
 
 2. Create excalidraw-app/components/diagramAgent.ts. It holds no pipeline: it talks to the deployed one.
    - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_ROCKETRIDE_URI (default https://api.rocketride.ai) and VITE_ROCKETRIDE_APIKEY from import.meta.env. They are in .env.local. Create one RocketRideClient with them as uri and auth.
-   - Export async function askDiagramAgent(messages), where messages is the chat so far: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected. Find the deployed run: teamId is client.getAccountInfo()?.devTeam, and the token comes from client.getTaskToken({ projectId: the project_id from diagram-agent.pipe, source: &quot;webhook_1&quot;, teamId }). A stopped run can keep its token, so also check client.getTaskStatus(token) is not completed. No token, a completed run, or an error whose text includes &quot;not running&quot; all mean the same thing: return the error &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy commands in Step 6.&quot;.
+   - Export async function askDiagramAgent(messages), where messages is the chat so far: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected. Find the deployed run: teamId is client.getAccountInfo()?.devTeam, and the token comes from client.getTaskToken({ projectId: the project_id from diagram-agent.pipe, source: &quot;webhook_1&quot;, teamId }). A stopped run can keep its token, so also check client.getTaskStatus(token) is not completed. No token, a completed run, or an error whose text includes &quot;not running&quot; all mean the same thing: return the error &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy command in Step 6.&quot;.
    - Send the chat as plain text with client.send(token, text, {}, &quot;text/plain&quot;). One message: send its content. More: send each turn as &quot;role: content&quot;, oldest first, then &quot;Answer the last user message.&quot;. The diagram is the last entry of result.answers. Strip a ``` fence if the agent added one.
    - askDiagramAgent never throws. It returns { generatedResponse: mermaid, error: null } on success and { error } on failure, where error is a RequestError from &quot;@excalidraw/excalidraw/errors&quot;. A failure to connect or send gets a message starting &quot;RocketRide error: &quot;. If the answer starts with &quot;LLM error&quot;, with or without ** around it, return that answer as the error. Never call client.terminate: the run is the deployed agent. An empty answer is an error too.
 
@@ -468,7 +481,7 @@ async function findRun(client: RocketRideClient): Promise&lt;string&gt; {
   }
   throw new RequestError({
     message:
-      &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy commands in Step 6.&quot;,
+      &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy command in Step 6.&quot;,
     status: 503,
   });
 }
@@ -709,25 +722,49 @@ export const AIComponents = ({
 </section>
 
 <!-- ===== 6 ===== -->
-<section class="phase" data-title="Run it" data-dur="5">
+<section class="phase" data-title="Deploy the agent" data-dur="2">
 
   <div class="lead">
     <span class="stepno">06</span>
     <div>
-      <p class="kicker">The finish <i>/ 5 minutes</i></p>
-      <h1>Run it</h1>
-      <p class="lede">Deploy the agent to RocketRide Cloud, start Excalidraw, and ask the agent for a diagram.</p>
+      <p class="kicker">The finish <i>/ 2 minutes</i></p>
+      <h1>Deploy the agent</h1>
+      <p class="lede">One command sends the agent to RocketRide Cloud and starts it there. You don't edit anything.</p>
+    </div>
+  </div>
+
+  <p>Your app talks to the agent, but the agent doesn't run on your laptop. It runs on RocketRide Cloud, so you send it there first. This is what <strong>deploy</strong> means.</p>
+
+  <ol class="run">
+    <li><b>Check you're in the right place.</b> The terminal is in the <code>excalidraw</code> folder, and <code>diagram-agent.pipe</code> and <code>.env.local</code> are saved there, next to <code>package.json</code>. If the app is running from an earlier step, press <strong>Ctrl+C</strong> to stop it.</li>
+    <li><b>Copy the whole command and paste it into the terminal.</b> It is one long line. Copy it with the <strong>Copy</strong> button, don't change it, and press <strong>Enter</strong>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local -e "const fs=require('fs');const {RocketRideClient}=require('rocketride');const pipe=JSON.parse(fs.readFileSync('diagram-agent.pipe','utf8'));const c=new RocketRideClient({uri:process.env.ROCKETRIDE_DEPLOY_URI,auth:process.env.ROCKETRIDE_DEPLOY_APIKEY});c.connect().then(async()=&gt;{const team=c.getAccountInfo().devTeam;const r=await c.deploy.add({kind:'pipe',pipeline:pipe,deployTo:team});console.log('Deployed version v'+r.artifact.version);await c.deploy.run(pipe.project_id,pipe.source,team);console.log('The agent is running on RocketRide Cloud');process.exit(0)}).catch(e=&gt;{console.error('Deploy failed: '+(e.message||e));process.exit(1)})"</pre></div>
+      It reads <code>diagram-agent.pipe</code>, copies it to your team on RocketRide Cloud as a new version, and starts it. It finds your team by itself, from your API key.</li>
+  </ol>
+  <div class="note good"><b class="k">Done when</b><p>The terminal prints <code>Deployed version v1</code>, then <code>The agent is running on RocketRide Cloud</code>. The number goes up each time you deploy: v2, v3 and so on.</p></div>
+
+  <details class="fold"><summary><code>node: bad option: --env-file</code></summary><div class="fb"><p>Your Node is older than 20.6. Install the current Node from <a href="https://nodejs.org">nodejs.org</a>, close and reopen the terminal, <code>cd excalidraw</code>, and run the command again.</p></div></details>
+  <details class="fold"><summary><code>Cannot find module 'rocketride'</code></summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder, or the command in Step 4 didn't finish. Run <code>cd excalidraw</code>, run the Step 4 command again, then this one.</p></div></details>
+  <details class="fold"><summary><code>no such file or directory</code> and <code>diagram-agent.pipe</code> or <code>.env.local</code></summary><div class="fb"><p>The file isn't saved, or it's in the wrong folder. It belongs at the top of <code>excalidraw</code>, next to <code>package.json</code>, not inside <code>excalidraw-app</code>. Move it there, save, and run the command again.</p></div></details>
+  <details class="fold"><summary><code>Deploy failed:</code> and something about your key or signing in</summary><div class="fb"><p>Check the two <code>ROCKETRIDE_DEPLOY_</code> lines in <code>.env.local</code>: your RocketRide API key in place of <code>your-api-key</code>, no spaces, file saved. Then run the command again.</p></div></details>
+  <details class="fold"><summary><code>Deploy failed:</code> and something about a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Redeem the promo code (Step 2), then run the command again.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The terminal printed <code>The agent is running on RocketRide Cloud</code>.</span></label>
+</section>
+
+<!-- ===== 7 ===== -->
+<section class="phase" data-title="Try it" data-dur="3">
+
+  <div class="lead">
+    <span class="stepno">07</span>
+    <div>
+      <p class="kicker">The finish <i>/ 3 minutes</i></p>
+      <h1>Try it</h1>
+      <p class="lede">Start Excalidraw and ask the agent for a diagram.</p>
     </div>
   </div>
 
   <ol class="run">
-    <li><b>Find your team id.</b> Your RocketRide account has teams, and the agent deploys to one of them. Run this in the terminal. It prints your team's id, a long string of letters, numbers and dashes:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local -e "const {RocketRideClient}=require('rocketride');const c=new RocketRideClient({uri:process.env.ROCKETRIDE_DEPLOY_URI,auth:process.env.ROCKETRIDE_DEPLOY_APIKEY});c.connect().then(()=&gt;{console.log(c.getAccountInfo().devTeam);process.exit(0)})"</pre></div>
-    </li>
-    <li><b>Deploy the agent.</b> Copy these two lines into your editor, put your team id in place of <code>your-team-id</code> in both, then paste them into the terminal. The first line copies <code>diagram-agent.pipe</code> to RocketRide Cloud and points your team at it. The second starts it.
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-typescript/src/cli/rocketride.js deploy add diagram-agent.pipe --deploy-to your-team-id
-node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-typescript/src/cli/rocketride.js deploy run dafb1567-0f6e-4b87-a00e-74ce8bef1db7 webhook_1 --team your-team-id</pre></div>
-      The terminal prints <code>Deployed pipe version v1</code>, then <code>Run started</code>. The agent now runs on RocketRide Cloud, not on your laptop.</li>
     <li>Start the app:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn start</pre></div>
       It opens <a href="http://localhost:3001">http://localhost:3001</a> in your browser. If it doesn't, open that address yourself.</li>
@@ -740,10 +777,8 @@ node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-type
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The architecture of the repo is on your canvas.</p></div>
 
-  <details class="fold"><summary><code>node: bad option: --env-file</code></summary><div class="fb"><p>Your Node is older than 20.6. Install the current Node from <a href="https://nodejs.org">nodejs.org</a>, close and reopen the terminal, and run the line again.</p></div></details>
-  <details class="fold"><summary><code>Error: teamId is required</code></summary><div class="fb"><p>The line still says <code>your-team-id</code>, or the id is missing. Put in the id the first command printed and run the line again.</p></div></details>
-  <details class="fold"><summary>The chat says <code>The diagram agent isn't running on RocketRide Cloud</code></summary><div class="fb"><p>The agent was never started, or it stopped. Run the second deploy line (<code>deploy run</code>) again, then send the message again.</p></div></details>
-  <details class="fold"><summary>The chat says <code>LLM error</code> and <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>ROCKETRIDE_ANTHROPIC_KEY</code> Variable in RocketRide Cloud is missing or has the wrong key. Fix it there, run the second deploy line again so the agent starts with the new key, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>The diagram agent isn't running on RocketRide Cloud</code></summary><div class="fb"><p>The agent was never started, or it stopped. Open a second terminal in <code>excalidraw</code> (the app keeps running in the first), run the Step 6 command again, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>LLM error</code> and <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>ROCKETRIDE_ANTHROPIC_KEY</code> Variable in RocketRide Cloud is missing or has the wrong key. Fix it there, run the Step 6 command again so the agent starts with the new key, then send the message again.</p></div></details>
   <details class="fold"><summary>The chat says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check the <code>VITE_ROCKETRIDE_APIKEY</code> line in <code>.env.local</code> has your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>yarn start</code> again: Vite only reads <code>.env.local</code> when it starts.</p></div></details>
   <details class="fold"><summary>The preview says <code>Generated an invalid diagram</code> or <code>Mermaid syntax error</code></summary><div class="fb"><p>The agent wrote Mermaid that Excalidraw can't draw. Reply in the chat: <strong>That diagram has a syntax error, fix it</strong>.</p></div></details>
   <details class="fold"><summary>A red error box covers the page, or the page is blank</summary><div class="fb"><p>A file wasn't pasted fully or wasn't saved. The red box, or the terminal, names the file. Copy that file's box in Step 5 again, paste over everything, and save. The page reloads by itself.</p></div></details>
@@ -751,7 +786,7 @@ node --env-file=.env.local node_modules/rocketride/dist/cli/packages/client-type
 
   <h2>Take it further</h2>
   <ul>
-    <li>Change how the agent draws: edit the instructions in <code>diagram-agent.pipe</code> (for example "Group the parts into subgraphs"), save, and run both deploy lines again. Each deploy is a new version, v2, v3 and so on, and your team moves to it.</li>
+    <li>Change how the agent draws: edit the instructions in <code>diagram-agent.pipe</code> (for example "Group the parts into subgraphs"), save, and run the Step 6 command again. Each deploy is a new version, v2, v3 and so on, and your team moves to it.</li>
     <li>Let the agent read more of GitHub: add a second <code>whitelistPattern</code> to the GitHub tool, such as <code>"^https://api\\.github\\.com/repos/"</code>, and tell it in the instructions what it can find there.</li>
   </ul>
   <div class="note warn">
