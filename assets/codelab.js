@@ -43,6 +43,7 @@
       c.addEventListener('change', function(){
         if (c.checked) st.done[i] = 1; else delete st.done[i];
         save(); paint();
+        if (c.checked) stepDone(i, 'checkpoint');
         if (c.checked && i === lastStep && !NEXT_HREF) finished();
       });
     }
@@ -151,12 +152,21 @@
     try { document.dispatchEvent(new CustomEvent('rr:finished')); } catch(e){}
   }
 
+  /* A step was newly marked done: other scripts (assets/analytics.js) react to this. */
+  function stepDone(i, via){
+    var detail = { step: ph.slice(0, i+1).filter(function(s){ return !s.dataset.ref; }).length,
+                   title: ph[i].dataset.title, steps: steps, via: via };
+    try { document.dispatchEvent(new CustomEvent('rr:step-done', { detail: detail })); } catch(e){}
+  }
+
   /* "Next" counts as finishing the step: tick it in the rail and its checkpoint box */
   function complete(i){
+    var was = !!st.done[i];
     st.done[i] = 1;
     var c = ph[i].querySelector('.cp input');
     if (c) c.checked = true;
     save();
+    if (!was) stepDone(i, 'next');
   }
 
   /* ============ scroll spy: tasks in the current step, the one being read highlighted ============ */

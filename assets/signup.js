@@ -41,7 +41,12 @@
   if (!dialog || typeof dialog.showModal !== 'function') return;
 
   // Focus the box itself, not the ×, so no focus ring shows when it opens.
-  function open(){ if (!dialog.open) { dialog.showModal(); dialog.focus(); } }
+  // Other scripts (assets/analytics.js) hear rr:signup-open; detail.auto is the first-visit pop-up.
+  function open(auto){
+    if (dialog.open) return;
+    dialog.showModal(); dialog.focus();
+    try { document.dispatchEvent(new CustomEvent('rr:signup-open', { detail: { auto: auto === true } })); } catch (e) {}
+  }
   window.openSignup = open;
 
   document.addEventListener('click', function(e){
@@ -77,6 +82,6 @@
   if (document.body.hasAttribute('data-signup-auto') && !started) {
     var SEEN = 'rr.hub.signup-seen.v1', seen = false;
     try { seen = localStorage.getItem(SEEN) === '1'; localStorage.setItem(SEEN, '1'); } catch (e) {}
-    if (!seen) open();
+    if (!seen) open(true);
   }
 })();
