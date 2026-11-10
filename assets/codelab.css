@@ -362,3 +362,26 @@ footer.foot{border-top:1px solid var(--line); color:var(--dim); font-size:13px}
 footer.foot div{max-width:1100px; margin:0 auto; padding:20px 26px}
 @media (max-width:960px){ .wrap{padding:24px 18px 64px} }
 @media (max-width:640px){ .bar .tag, .bar a.home{display:none} }
+
+/* ============ sign-up modal (assets/signup.js) ============ */
+.signup-open{
+  font-family:var(--sans); font-size:15px; font-weight:700; letter-spacing:-.005em; cursor:pointer;
+  background:var(--ink); color:#fff; border:2px solid var(--accent); border-radius:8px; padding:11px 18px;
+  box-shadow:0 0 0 4px var(--accent-soft); transition:background .14s, box-shadow .14s;
+}
+.signup-open:hover{background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft)}
+/* sign-up modal */
+.signup{
+  width:min(560px, calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto;
+  border:0; border-top:5px solid var(--accent); border-radius:var(--r); padding:26px 28px 10px;
+  background:var(--paper); color:var(--ink-2); box-shadow:0 30px 80px -20px rgba(11,10,31,.6);
+}
+.signup:focus, .signup:focus-visible{outline:none}
+.signup .btns{justify-content:center; margin:22px 0 18px}
+.signup::backdrop{background:rgba(11,10,31,.45); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+.signup h2{margin:0 0 10px; padding-left:0}
+.signup h2::before{display:none}
+.signup .promo{margin:12px 0 0}
+.signup .note{margin:22px 0 18px}
+.signup-x{position:absolute; top:12px; right:14px; border:0; background:none; font-size:26px; line-height:1; color:var(--mid); cursor:pointer; padding:4px 8px}
+.signup-x:hover{color:var(--ink)}
