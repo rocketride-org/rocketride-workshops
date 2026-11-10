@@ -7,9 +7,9 @@ Operational notes for running this module. Time box: **15 minutes**. The module 
 | Guide step                | Time  | Where people fall behind                                                                                                      |
 | ------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------- |
 | 3. Get the app            | 2 min | A clone cut short on slow wifi. Not opening `excalidraw` in the editor, so the Explorer shows the wrong folder.               |
-| 4. Connect RocketRide     | 3 min | The file named `.env` instead of `.env.local`, or saved inside `excalidraw-app`. The ~900 MB install on venue wifi.           |
+| 4. Connect RocketRide     | 3 min | `rocketride login` run outside `excalidraw`, so `.env` lands in the wrong folder. The two `VITE_APP_` lines missing from `.env`. The ~900 MB install on venue wifi. |
 | 5. Add the diagram agent  | 5 min | No coding agent set up, so time lost on the Prompt tab: send them to the Files tab. `diagramAgent.ts` created outside `excalidraw-app/components`. `AI.tsx` pasted without replacing everything. Unsaved tabs. |
-| 6. Run it                 | 5 min | A wrong `VITE_ROCKETRIDE_ANTHROPIC_KEY`. `.env.local` edited while `yarn start` was running. Not finding **More tools**.       |
+| 6. Run it                 | 5 min | A wrong `ROCKETRIDE_ANTHROPIC_KEY` Variable. `.env` edited while `yarn start` was running. Not finding **More tools**.       |
 
 ## Before the event
 
@@ -18,7 +18,7 @@ Operational notes for running this module. Time box: **15 minutes**. The module 
 - [ ] Test GitHub limits with a room-sized burst: have a few people (or a script) send the Step 6 message at once. Every agent's reads leave from RocketRide Cloud's shared outbound address, so the whole room shares one GitHub allowance.
 - [ ] Run the Step 5 prompt in at least one coding agent attendees are likely to use, and check that Step 6 works with what it writes.
 - [ ] Tell attendees on slow connections to do Step 3 and the Step 4 install at home.
-- [ ] Attendees have a RocketRide Cloud account and API key, an Anthropic API key, and installed Node 20+, Yarn 1 and git at home. The app sends the Anthropic key from `.env.local`, so RocketRide Variables aren't used.
+- [ ] Attendees have a RocketRide Cloud account with a subscription, an Anthropic API key saved as the `ROCKETRIDE_ANTHROPIC_KEY` Variable, and installed Node 20+, Yarn 1 and git at home. Their RocketRide API key comes from `npx rocketride login` in Step 4.
 
 ## Troubleshooting
 
@@ -29,9 +29,9 @@ Operational notes for running this module. Time box: **15 minutes**. The module 
 | `Unknown workspace "excalidraw-app"` or `Cannot find the root of your workspace` | The terminal isn't in `excalidraw`.                                               | `cd excalidraw` and run the `yarn workspace` command again.                                                 |
 | Red squiggles in a pasted file                                           | A partial paste, or a paste into the wrong file.                                          | Select all in that file, copy its box again, paste over.                                                    |
 | The coding agent's files fail in Step 6                                  | The agent wrote something different from the reference.                                  | Paste the two files from the **Files** tab over its files.                                                  |
-| Red squiggle only on the `"rocketride"` import                           | The install didn't finish.                                                                | Run `yarn workspace excalidraw-app add rocketride@1.4.0` again.                                             |
-| `Invalid Anthropic API key format` or `invalid x-api-key` in the chat    | `VITE_ROCKETRIDE_ANTHROPIC_KEY` in `.env.local` is empty or wrong.                        | Fix the line, save, Ctrl+C, `yarn start`. Send again; a second try if the first shows the old error.        |
-| Any other `RocketRide error: ...` in the chat                            | A key line is empty or wrong, the file is named `.env`, or it changed after `yarn start`. | Check the file is `.env.local` next to `package.json`, fix the keys, save, Ctrl+C and `yarn start` again.  |
+| Red squiggle only on the `"rocketride"` import                           | The install didn't finish.                                                                | Run `yarn workspace excalidraw-app add rocketride@1.6.0` again.                                             |
+| `LLM error` or `invalid x-api-key` in the chat                           | The `ROCKETRIDE_ANTHROPIC_KEY` Variable in RocketRide Cloud is missing or wrong.          | Fix the Variable, run both Step 6 commands again so the agent restarts with it, send again.                    |
+| Any other `RocketRide error: ...` in the chat                            | The `VITE_APP_` lines are missing from `.env`, or it changed after `yarn start`.          | Check `.env` sits next to `package.json` and ends with both `VITE_APP_` lines, save, Ctrl+C, `yarn start`.  |
 | `Generated an invalid diagram` or `Mermaid syntax error`                 | The agent wrote Mermaid the dialog can't parse.                                           | Reply "That diagram has a syntax error, fix it".                                                            |
 | Red error overlay or a blank page                                        | A pasted file has an error.                                                               | The overlay or terminal names the file; re-copy that file's box.                                            |
 | Port 3001 busy                                                           | Something else is on it.                                                                  | Vite moves to the next port and prints it; open that URL.                                                   |
@@ -41,7 +41,7 @@ Operational notes for running this module. Time box: **15 minutes**. The module 
 In `excalidraw`:
 
 ```sh
-git checkout -- excalidraw-app/components/AI.tsx
+git checkout -- excalidraw-app/components/AppSidebar.tsx excalidraw-app/components/AI.tsx
 ```
 
-Then delete `excalidraw-app/components/diagramAgent.ts` and redo Step 5 from the published page. Their `.env.local` and installed packages are untouched, so `yarn start` works straight after.
+Then delete `excalidraw-app/components/diagramAgent.ts`, `excalidraw-app/components/DiagramAgentPanel.tsx`, `DiagramAgentPanel.scss` and the `pipelines` folder, and redo Steps 5 and 6 from the published page. Their `.env` and installed packages are untouched, so `yarn start` works straight after.

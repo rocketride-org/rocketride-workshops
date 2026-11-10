@@ -39,43 +39,35 @@
       <p class="kicker">RocketRide workshop <i>/ project 2 of 3</i></p>
       <h1>Give Excalidraw a diagram agent</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app. Clone the app, run one command, add three files, and deploy the agent to RocketRide Cloud.</p>
+      <p class="lede">In 15 minutes you put an AI agent inside a real drawing app and deploy it to RocketRide Cloud.</p>
     </div>
   </div>
 
-  <h2>What you are building</h2>
-  <p><strong>Excalidraw</strong> is an open source whiteboard for diagrams that look hand drawn. It has a <strong>Text to diagram</strong> dialog: you describe a diagram in a chat, and Excalidraw draws it. On excalidraw.com, Excalidraw's own AI service answers that chat. When you run Excalidraw on your laptop, nothing is behind the dialog, so it fails.</p>
-  <p>You put a RocketRide agent behind it. Ask about a public GitHub repo and the agent reads the repo's files, then draws its architecture. Ask for a change, such as "make it top to bottom", and it draws the diagram again with the change.</p>
+  <p><strong>Excalidraw</strong> is an open source whiteboard. You give it a RocketRide agent, in a new tab of its sidebar: name a public GitHub repo in the chat, and the agent reads the repo and draws its architecture on the canvas.</p>
+  <div class="btns"><a class="btn ghost" href="https://github.com/excalidraw/excalidraw" target="_blank" rel="noopener">Excalidraw on GitHub</a></div>
 
-  <h2>What makes it an agent</h2>
-  <p>A plain pipeline runs the same steps every time. An agent decides what to do. Given your message, it decides whether to read files from GitHub, which ones, and when it has read enough. Then it answers with <strong>Mermaid</strong>, a short text format for diagrams, and Excalidraw turns that into shapes.</p>
-
-  <h2>Where RocketRide comes in</h2>
-  <p>The agent runs on RocketRide Cloud. You deploy it there from your terminal, and Excalidraw connects to it through the <strong>RocketRide TypeScript SDK</strong>: one client, one call.</p>
-
-  <h2>The 15 minutes</h2>
   <div class="grid"><table>
-    <thead><tr><th>Time</th><th>What happens</th></tr></thead>
+    <thead><tr><th>When</th><th>Step</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>Step 2: install the tools, set up RocketRide Cloud, create your keys</td></tr>
-      <tr><td>0:00</td><td>Step 3: get the app</td></tr>
-      <tr><td>0:02</td><td>Step 4: connect RocketRide: your keys, then one command</td></tr>
-      <tr><td>0:05</td><td>Step 5: add the diagram agent: a prompt, or paste the files</td></tr>
-      <tr><td>0:10</td><td>Step 6: deploy the agent to RocketRide Cloud: one command</td></tr>
-      <tr><td>0:12</td><td>Step 7: start the app and ask for a diagram</td></tr>
+      <tr><td>At home</td><td>2. Install the tools and set up your accounts</td></tr>
+      <tr><td>0:00</td><td>3. Download Excalidraw</td></tr>
+      <tr><td>0:02</td><td>4. Connect it to RocketRide</td></tr>
+      <tr><td>0:05</td><td>5. Add the agent's files</td></tr>
+      <tr><td>0:10</td><td>6. Deploy the agent</td></tr>
+      <tr><td>0:12</td><td>7. Ask it for a diagram</td></tr>
     </tbody>
   </table></div>
+
   <div class="note good">
-    <b class="k">What counts as done</b>
-    <p>You ask <strong>Text to diagram</strong> about a GitHub repo, click <strong>Insert</strong>, and the repo's architecture appears on the canvas as shapes.</p>
+    <b class="k">Done when</b>
+    <p>You ask about a GitHub repo, and the repo's architecture appears on the canvas.</p>
   </div>
-
   <div class="note">
-    <b class="k">New to all of this?</b>
-    <p>That's who this page is for. Every command, file and prompt is in a box with a <strong>Copy</strong> button. <strong>Words you will hear</strong> in the sidebar explains the terms.</p>
+    <b class="k">How to use this page</b>
+    <p>Do the numbered actions in order, one at a time. Anything you type is in a box with a <strong>Copy</strong> button. A green ✓ line tells you what you should see. Stuck? Open the grey boxes under each step.</p>
   </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You can say in one sentence what the diagram agent will do.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You know what you're building.</span></label>
 </section>
 
 <!-- ===== 2 ===== -->
@@ -86,49 +78,42 @@
     <div>
       <p class="kicker">Before the event <i>/ 15 minutes</i></p>
       <h1>Set up at home</h1>
-      <p class="lede">Do this before you come. On conference wifi it can take the whole session.</p>
+      <p class="lede">Do this before you come. Conference wifi is slow.</p>
     </div>
   </div>
 
-  <h2>Install the tools</h2>
-  <div class="grid"><table>
-    <thead><tr><th>Tool</th><th>Check it's there</th><th>Install</th></tr></thead>
-    <tbody>
-      <tr><td>An editor</td><td></td><td><a href="https://code.visualstudio.com">VS Code</a>, Cursor or Windsurf</td></tr>
-      <tr><td>Node 20+</td><td><code>node --version</code></td><td><a href="https://nodejs.org">nodejs.org</a></td></tr>
-      <tr><td>Yarn 1</td><td><code>yarn --version</code> (shows <code>1.</code> something)</td><td><code>npm install -g yarn</code></td></tr>
-      <tr><td>git</td><td><code>git --version</code></td><td><a href="https://git-scm.com">git-scm.com</a></td></tr>
-      <tr><td>A coding agent (optional)</td><td></td><td><a href="https://claude.com/claude-code">Claude Code</a>, or the chat built into your editor. Step 5 can use one.</td></tr>
-    </tbody>
-  </table></div>
-  <p>Close and reopen your terminal after installing anything, so it sees the new tool. You don't need Python for this project.</p>
-
-  <h2>Set up RocketRide Cloud</h2>
   <ol class="run">
-    <li><b>Make an account.</b> Sign up at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and confirm your email.</li>
-    <li><b>Start a subscription.</b> Without an active plan, the deploy in Step 6 fails.</li>
-    <li><b>Create a RocketRide API key.</b> In RocketRide Cloud, create an API key. Keep it where you can copy it from. Treat it like a password.</li>
-  </ol>
-
-  <h2>Set up your Anthropic key</h2>
-  <ol class="run">
-    <li><b>Create an Anthropic API key</b> at <a href="https://console.anthropic.com">console.anthropic.com</a>. The agent uses it to call Claude. It starts with <code>sk-ant-api03-</code>.</li>
-    <li><b>Save it in RocketRide Cloud.</b> Add a <strong>Variable</strong> named <code>ROCKETRIDE_ANTHROPIC_KEY</code> with your Anthropic key as its value. The agent runs on RocketRide Cloud and reads the key from there, so it never goes in a file on your laptop.
+    <li><b>Install what you're missing.</b> An editor (<a href="https://code.visualstudio.com">VS Code</a>, Cursor or Windsurf), <a href="https://nodejs.org">Node 20 or newer</a> and <a href="https://git-scm.com">git</a>. Skip any you already have.</li>
+    <li><b>Open a terminal.</b> <strong>Terminal</strong> on Mac and Linux, <strong>PowerShell</strong> on Windows.</li>
+    <li><b>Install Yarn.</b> Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npm install -g yarn</pre></div>
+    </li>
+    <li><b>Close the terminal and open a new one,</b> so it sees what you installed.</li>
+    <li><b>Check everything.</b> Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --version
+yarn --version
+git --version</pre></div>
+      <p class="see">Three version numbers: Node <code>v20</code> or higher, Yarn <code>1.</code> something, and any git.</p>
+    </li>
+    <li><b>Make a RocketRide Cloud account.</b> Sign up at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a>, confirm your email, and start a subscription. The deploy in Step 6 fails without one.</li>
+    <li><b>Create an Anthropic API key</b> at <a href="https://console.anthropic.com">console.anthropic.com</a>.
+      <p class="see">The key starts with <code>sk-ant-api03-</code>.</p>
+    </li>
+    <li><b>Save the Anthropic key in RocketRide Cloud.</b> Add a <strong>Variable</strong> with this name and your Anthropic key as the value. The agent reads it from there, so it never sits on your laptop.
       <div class="src"><div class="bar2"><span>Variable name</span><button class="cp-btn">Copy</button></div><pre>ROCKETRIDE_ANTHROPIC_KEY</pre></div>
     </li>
   </ol>
 
-  <div class="note warn">
-    <b class="k">Slow wifi? Download Excalidraw at home</b>
-    <p>Excalidraw is a big app. Installing it downloads about 900 MB. If your connection is slow, do Step 3 and the command in Step 4 at home. In the room, open the same folder and carry on.</p>
-  </div>
+  <div class="note warn"><b class="k">Slow internet at home too?</b><p>Excalidraw downloads about 900 MB. Do Steps 3 and 4 at home, then carry on from Step 5 in the room.</p></div>
 
-  <div class="note fac">
-    <b class="k">Stuck?</b>
-    <p>Come 10 minutes early for the help desk. Before then, the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a> is the fastest route.</p>
-  </div>
+  <details class="fold"><summary>Mac or Linux: <code>EACCES: permission denied</code> when installing Yarn</summary><div class="fb"><p>Your Node can't install tools for every user without permission. Run the same command with <code>sudo</code> in front and type your computer's password when it asks. Nothing shows while you type it: that's normal.</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>sudo npm install -g yarn</pre></div></div></details>
+  <details class="fold"><summary>Windows: <code>running scripts is disabled on this system</code></summary><div class="fb"><p>PowerShell blocks tools installed with npm until you allow them. Paste this, press <kbd>Enter</kbd>, close PowerShell, open a new one, and try again:</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</pre></div></div></details>
+  <details class="fold"><summary>A version is missing or too old</summary><div class="fb"><p>Install it from the link in action 1, close the terminal, open a new one, and check again.</p></div></details>
+  <details class="fold"><summary>Stuck on anything</summary><div class="fb"><p>Ask in the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a>, or come 10 minutes early for the help desk.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Tools installed, subscription started, RocketRide API key created, Anthropic key saved as a RocketRide Cloud Variable.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Three version numbers, a RocketRide Cloud account with a subscription, and <code>ROCKETRIDE_ANTHROPIC_KEY</code> saved in RocketRide Cloud.</span></label>
 </section>
 
 <!-- ===== 3 ===== -->
@@ -139,24 +124,34 @@
     <div>
       <p class="kicker">In the room <i>/ 2 minutes</i></p>
       <h1>Get the app</h1>
-      <p class="lede">Download Excalidraw and go into its folder. Everything happens there.</p>
+      <p class="lede">Download Excalidraw and open it in your editor.</p>
     </div>
   </div>
 
   <ol class="run">
-    <li>Open a terminal (Terminal on Mac, PowerShell on Windows) and run:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>git clone https://github.com/excalidraw/excalidraw.git
-cd excalidraw
-git checkout 701b901</pre></div>
+    <li><b>Open a terminal.</b> <strong>Terminal</strong> on Mac and Linux, <strong>PowerShell</strong> on Windows. Keep it open: every command from here on runs in it.</li>
+    <li><b>Download Excalidraw.</b> Paste this and press <kbd>Enter</kbd>. It takes a minute or two:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>git clone https://github.com/excalidraw/excalidraw.git</pre></div>
+      <p class="see">The terminal finishes with <code>Resolving deltas: 100%</code> and <code>done.</code></p>
+    </li>
+    <li><b>Go into the folder.</b>
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>cd excalidraw</pre></div>
+    </li>
+    <li><b>Pick the version this guide was written for.</b> Excalidraw changes often, and in Step 5 you replace one of its files, so your copy has to match:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>git checkout 701b901</pre></div>
+      <p class="see"><code>HEAD is now at 701b901</code>. A note about <strong>'detached HEAD' state</strong> is expected.</p>
+    </li>
+    <li><b>Open the folder in your editor.</b> Click <strong>File</strong>, then <strong>Open Folder</strong>, pick the <code>excalidraw</code> folder, and click <strong>Open</strong>.
+      <p class="see">The <strong>Explorer</strong> on the left lists <code>excalidraw-app</code>, <code>packages</code> and <code>package.json</code>.</p>
     </li>
   </ol>
-  <p>The last line picks the exact version of Excalidraw this guide was written for. Excalidraw changes often, and in Step 5 you replace one of its files, so your copy has to match. git prints a note about being in <strong>'detached HEAD' state</strong>. That's expected: it means you're on a fixed version instead of the newest one.</p>
-  <div class="note good"><b class="k">Done when</b><p>git printed <code>HEAD is now at 701b901</code> and the terminal is in <code>excalidraw</code>. Keep it open: every command from here on runs in it.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>The terminal says <code>HEAD is now at 701b901</code> and the editor shows the <code>excalidraw</code> folder.</p></div>
 
-  <details class="fold"><summary><code>git</code>: command not found</summary><div class="fb"><p>Install git (Step 2), then close and reopen your terminal.</p></div></details>
-  <details class="fold"><summary><code>error: pathspec '701b901' did not match</code></summary><div class="fb"><p>The download didn't finish. Run <code>cd ..</code> to leave the folder, delete the <code>excalidraw</code> folder, and run all three lines again.</p></div></details>
+  <details class="fold"><summary><code>git</code>: command not found</summary><div class="fb"><p>Install git (Step 2), close the terminal, open a new one, and start this step again.</p></div></details>
+  <details class="fold"><summary><code>error: pathspec '701b901' did not match</code></summary><div class="fb"><p>The download didn't finish. Run <code>cd ..</code> to leave the folder, delete the <code>excalidraw</code> folder, and start this step again.</p></div></details>
+  <details class="fold"><summary><code>destination path 'excalidraw' already exists</code></summary><div class="fb"><p>You downloaded it already, maybe at home. Skip to action 3.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Your terminal is in <code>excalidraw</code>, on version <code>701b901</code>.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The terminal is in <code>excalidraw</code> on version <code>701b901</code>, and the folder is open in your editor.</span></label>
 </section>
 
 <!-- ===== 4 ===== -->
@@ -167,29 +162,56 @@ git checkout 701b901</pre></div>
     <div>
       <p class="kicker">In the room <i>/ 3 minutes</i></p>
       <h1>Connect RocketRide</h1>
-      <p class="lede">Save your keys, then one command.</p>
+      <p class="lede">Install the RocketRide SDK, sign in, and point the app at your key.</p>
     </div>
   </div>
 
+  <h3 class="fileh"><small>First</small>Install the SDK and sign in</h3>
   <ol class="run">
-    <li><b>Save your keys.</b> Open <code>excalidraw</code> in your editor (<strong>File</strong>, <strong>Open Folder</strong>) so you can edit its files. In the Explorer on the left, click <strong>New File</strong> and name it <code>.env.local</code> (at the top, next to <code>package.json</code>). Paste this, put your RocketRide API key in place of <code>your-api-key</code> on both lines, and save:
-      <div class="src"><div class="bar2"><span>.env.local</span><button class="cp-btn">Copy</button></div><pre>VITE_APP_ROCKETRIDE_URI=https://api.rocketride.ai
-VITE_APP_ROCKETRIDE_APIKEY=your-api-key
-ROCKETRIDE_DEPLOY_URI=https://api.rocketride.ai
-ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
-      Yes, the same key goes in twice. The <code>VITE_APP_</code> lines are for the app. The <code>ROCKETRIDE_DEPLOY_</code> lines are for the deploy command in Step 6, and Vite never sends them to the browser. The name matters. Excalidraw tells git to ignore <code>.env.local</code>, so your keys never get committed. It doesn't do that for a file named <code>.env</code>.
+    <li><b>Install the SDK.</b> Paste this into the terminal and press <kbd>Enter</kbd>. It adds the RocketRide SDK and installs Excalidraw's other packages. It takes about a minute:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn workspace excalidraw-app add rocketride@1.6.0</pre></div>
+      <p class="see"><code>Done in</code> and a number of seconds. Yellow <code>warning ... unmet peer dependency</code> lines are fine.</p>
     </li>
-    <li><b>Run this command</b> in the terminal. It adds the RocketRide SDK to the Excalidraw app and installs all of Excalidraw's other packages too. It takes about a minute:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn workspace excalidraw-app add rocketride@1.4.0</pre></div>
+    <li><b>Sign in to RocketRide.</b> Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npx rocketride login --uri https://api.rocketride.ai</pre></div>
+      <p class="see"><code>Opening your browser to sign in...</code>, and a RocketRide sign-in page opens in your browser.</p>
+    </li>
+    <li><b>Sign in on that page</b> with your RocketRide Cloud account.
+      <p class="see">The page says <strong>You're signed in</strong>. Chrome and Edge close the tab by themselves; in other browsers, close it.</p>
+    </li>
+    <li><b>Go back to the terminal.</b>
+      <p class="see"><code>Signed in as</code> and your name, then a line that starts <code>Saved ROCKETRIDE_URI, ROCKETRIDE_APIKEY</code> and ends in <code>excalidraw</code> and <code>.env</code>.</p>
     </li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The terminal prints <code>Done in</code> and a number of seconds. Yellow <code>warning ... has unmet peer dependency</code> lines are fine.</p></div>
+  <p>The sign-in made you an API key and saved it, twice, in a new file named <code>.env</code>: once for the app, and once as <code>ROCKETRIDE_DEPLOY_</code> for the deploy in Step 6. It also told git to ignore <code>.env</code>, so your key never gets committed.</p>
 
-  <details class="fold"><summary><code>yarn</code>: command not found</summary><div class="fb"><p>Run <code>npm install -g yarn</code>, then close and reopen your terminal and <code>cd excalidraw</code> again.</p></div></details>
-  <details class="fold"><summary><code>Unknown workspace "excalidraw-app"</code> or <code>Cannot find the root of your workspace</code></summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder. Run <code>cd excalidraw</code> (or open a new terminal in that folder) and run the command again.</p></div></details>
-  <details class="fold"><summary>Optional: see the dialog fail before you fix it</summary><div class="fb"><p>Run <code>yarn start</code>. In the Excalidraw tab it opens, click <strong>More tools</strong> (the last button on the toolbar), then <strong>Text to diagram</strong>, and send any message. It fails, because nothing is behind the dialog yet. Press <strong>Ctrl+C</strong> in the terminal to stop the app.</p></div></details>
+  <h3 class="fileh"><small>File 1 of 1</small><code>.env</code></h3>
+  <p>The app runs in your browser, and Vite only hands it settings whose names start with <code>VITE_</code>. Two lines give the app your address and key under those names. <code>$ROCKETRIDE_APIKEY</code> means "the key from the line above", so you never paste the key itself.</p>
+  <ol class="run">
+    <li><b>Open the file.</b> In the Explorer, click <code>.env</code> at the top level, next to <code>package.json</code>.
+      <p class="see">Four lines, each starting with <code>ROCKETRIDE_</code>.</p>
+    </li>
+    <li><b>Go to the end of the file.</b> Click in the file, then <kbd>Cmd</kbd>+<kbd>↓</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>End</kbd> on Windows and Linux. If the cursor is at the end of a line with text on it, press <kbd>Enter</kbd> so it's on a new empty line.</li>
+    <li><b>Copy the two lines.</b> Click <strong>Copy</strong> on this box:
+      <div class="src"><div class="bar2"><span>.env (add at the end)</span><button class="cp-btn">Copy</button></div><pre>VITE_APP_ROCKETRIDE_URI=$ROCKETRIDE_URI
+VITE_APP_ROCKETRIDE_APIKEY=$ROCKETRIDE_APIKEY</pre></div>
+    </li>
+    <li><b>Paste:</b> <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+    <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+      <p class="see">Six lines: the four <code>ROCKETRIDE_</code> lines, then the two <code>VITE_APP_</code> lines. The dot on the file's tab disappears.</p>
+    </li>
+  </ol>
+  <div class="note good"><b class="k">Done when</b><p>The terminal printed <code>Saved ROCKETRIDE_URI, ROCKETRIDE_APIKEY</code>..., and <code>.env</code> is saved with the two <code>VITE_APP_</code> lines at the end.</p></div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Keys saved in <code>.env.local</code>, the command finished.</span></label>
+  <details class="fold"><summary>The browser didn't open</summary><div class="fb"><p>The terminal prints <code>If it did not open, visit:</code> and a link. Copy that link into your browser and sign in there.</p></div></details>
+  <details class="fold"><summary>It says <strong>Thanks for signing up</strong> and <strong>access queue</strong> instead of <code>Signed in</code></summary><div class="fb"><p>Your account is still waiting to be activated, so no key was made. You'll get an email when it's active. Finish setting up your RocketRide Cloud account and subscription (Step 2), then run the sign-in command again. At a workshop, tell the facilitator.</p></div></details>
+  <details class="fold"><summary>The <code>Saved</code> line doesn't end in <code>excalidraw</code> and <code>.env</code></summary><div class="fb"><p>The terminal was in a different folder, so <code>.env</code> landed there. Run <code>cd excalidraw</code> and run the sign-in command again.</p></div></details>
+  <details class="fold"><summary><code>could not determine executable to run</code>, or <code>rocketride</code> not found</summary><div class="fb"><p>The SDK install didn't finish, or the terminal isn't in <code>excalidraw</code>. Run <code>cd excalidraw</code>, run the install again, then the sign-in command.</p></div></details>
+  <details class="fold"><summary><code>yarn</code>: command not found</summary><div class="fb"><p>Run <code>npm install -g yarn</code>, close the terminal, open a new one, run <code>cd excalidraw</code>, and run the command again.</p></div></details>
+  <details class="fold"><summary><code>Unknown workspace "excalidraw-app"</code> or <code>Cannot find the root of your workspace</code></summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder. Run <code>cd excalidraw</code> and run the command again.</p></div></details>
+  <details class="fold"><summary>I already have a RocketRide API key and want to use it</summary><div class="fb"><p>Add it to the sign-in command, after a space: <code>--apikey</code> and your key. It skips the browser and saves that key instead.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Signed in, and <code>.env</code> saved with the two <code>VITE_APP_</code> lines at the end.</span></label>
 </section>
 
 <!-- ===== 5 ===== -->
@@ -200,17 +222,12 @@ ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
     <div>
       <p class="kicker">The build <i>/ 5 minutes</i></p>
       <h1>Add the diagram agent</h1>
-      <p class="lede">Ask a coding agent to write the files, or paste them yourself. Pick a tab below.</p>
+      <p class="lede">Add the agent's pipeline and the code that lets Excalidraw talk to it. Pick one tab: a coding agent writes the files for you, or you paste them yourself.</p>
     </div>
   </div>
 
-  <h2>The files</h2>
-  <ul>
-    <li><code>diagram-agent.pipe</code> is new. It is the agent's pipeline, the file you deploy to RocketRide Cloud in Step 6.</li>
-    <li><code>excalidraw-app/components/diagramAgent.ts</code> is new. It connects to RocketRide with the key from <code>.env.local</code>, finds the agent you deployed, and exports <code>askDiagramAgent()</code>, which sends it the chat and returns the diagram.</li>
-    <li><code>excalidraw-app/components/AI.tsx</code> is Excalidraw's own file. One part of it changes: the <code>TTDDialog</code> part near the end calls <code>askDiagramAgent()</code> instead of Excalidraw's AI service.</li>
-  </ul>
-  <p>The pipeline in <code>diagram-agent.pipe</code> has seven parts. The three in bold are what make it an agent: it decides, uses a tool, then answers.</p>
+  <details class="fold"><summary>What's in the pipeline</summary><div class="fb">
+  <p>The pipeline in <code>pipelines/diagram-agent.pipe</code> has seven parts. The three in bold make it an agent: it decides, uses a tool, then answers.</p>
   <div class="grid"><table>
     <thead><tr><th>Part</th><th>What it does</th></tr></thead>
     <tbody>
@@ -223,15 +240,18 @@ ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
       <tr><td>Answers</td><td>Sends the diagram back to Excalidraw.</td></tr>
     </tbody>
   </table></div>
+  </div></details>
 
-  <h2>Write the files</h2>
   <div class="tabs">
     <div class="tl"><button class="on">Prompt</button><button>Files</button></div>
     <div class="tp on">
-      <p>Use a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code, opened in the <code>excalidraw</code> folder. Paste this prompt. The agent writes both files and checks them. Its version will differ a little from the files in the <strong>Files</strong> tab. If Step 7 doesn't work, paste those files over its files.</p>
-      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. The agent itself runs on RocketRide Cloud: this repo holds its pipeline file, which gets deployed later, and the app connects to the deployed run. Change only the four files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.4.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
+      <p>Use this tab if you have a coding agent, such as Claude Code or the chat in Cursor, Windsurf or VS Code. No coding agent? Use the <strong>Files</strong> tab.</p>
+      <ol class="run">
+        <li><b>Open your coding agent in the <code>excalidraw</code> folder.</b> Claude Code: run <code>claude</code> in the terminal. Cursor, Windsurf or VS Code: open the chat panel in the window that has <code>excalidraw</code> open.</li>
+        <li><b>Copy the prompt.</b> Click <strong>Copy</strong> on this box:
+      <div class="src"><div class="bar2"><span>prompt</span><button class="cp-btn">Copy</button></div><pre>In this Excalidraw repo, add a RocketRide diagram agent to the right-hand sidebar, as a new tab next to search, library, comments and presentation. It should look like it has always been part of Excalidraw. The agent itself runs on RocketRide Cloud: this repo holds its pipeline file, which gets deployed later, and the app connects to the deployed run. Change only the five files below, and leave AI.tsx and the Text to diagram dialog as they are. The RocketRide TypeScript SDK (the rocketride package, version 1.6.0) is already installed for excalidraw-app: read its type definitions in node_modules/rocketride before you use it, and don&#x27;t invent any method.
 
-1. Create diagram-agent.pipe in the repo root: the folder that holds the root package.json, yarn.lock and the excalidraw-app folder. Not inside excalidraw-app, even though the other files go there: the deploy command in Step 6 reads it from the root. It is the agent&#x27;s pipeline as JSON, indented with 2 spaces: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, project_id &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;, version 1, and components. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
+1. Create pipelines/diagram-agent.pipe: make a new folder named pipelines in the repo root (the folder that holds the root package.json, yarn.lock and the excalidraw-app folder) and put the file in it. Not inside excalidraw-app, even though the other files go there: the deploy command in Step 6 reads it from pipelines/diagram-agent.pipe. It is the agent&#x27;s pipeline as JSON, indented with 2 spaces: name &quot;Excalidraw diagram agent&quot;, source &quot;webhook_1&quot;, project_id &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;, version 1, and components. Each component has an id, a provider, a config, and either input (data it receives) or control (the agent it serves). Use exactly these configs:
      webhook_1: provider webhook, config { hideForm: true, mode: &quot;Source&quot;, parameters: {}, type: &quot;webhook&quot; }.
      question_1: provider question, config {}, input [{ lane: &quot;text&quot;, from: &quot;webhook_1&quot; }].
      agent_rocketride_1: provider agent_rocketride, config { instructions: [...], max_waves: 6, parameters: {} }, where instructions is an array of strings, one per rule below. input [{ lane: &quot;questions&quot;, from: &quot;question_1&quot; }].
@@ -244,30 +264,56 @@ ROCKETRIDE_DEPLOY_APIKEY=your-api-key</pre></div>
    - The agent&#x27;s instructions, as separate strings: turn the request into one Mermaid diagram that Excalidraw will draw. If the request names a public GitHub repository (owner/repo or a github.com link), first GET https://raw.githubusercontent.com/OWNER/REPO/HEAD/README.md with the github.http_request tool, read at most three more files the README points to, and draw only what it read. Otherwise draw from the request. Use flowchart LR or flowchart TD unless asked for a sequence diagram, under 20 nodes, short labels, no quotes, parentheses or brackets inside labels. If the conversation already has a diagram and the user asks for a change, return the whole updated diagram. Reply with only the Mermaid code, no explanation and no code fences.
 
 2. Create excalidraw-app/components/diagramAgent.ts. It holds no pipeline: it talks to the deployed one.
-   - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_APP_ROCKETRIDE_URI (default https://api.rocketride.ai) and VITE_APP_ROCKETRIDE_APIKEY from import.meta.env. They are in .env.local. Create one RocketRideClient with them as uri and auth.
+   - Start with /// &lt;reference types=&quot;vite/client&quot; /&gt;. Read VITE_APP_ROCKETRIDE_URI (default https://api.rocketride.ai) and VITE_APP_ROCKETRIDE_APIKEY from import.meta.env. They are in .env at the repo root. Create one RocketRideClient with them as uri and auth.
    - Export async function askDiagramAgent(messages), where messages is the chat so far: an array of { role: &quot;user&quot; | &quot;assistant&quot;, content: string }. Connect if not connected. Find the deployed run: teamId is client.getAccountInfo()?.devTeam, and the token comes from client.getTaskToken({ projectId: the project_id from diagram-agent.pipe, source: &quot;webhook_1&quot;, teamId }). A stopped run can keep its token, so also check client.getTaskStatus(token) is not completed. No token, a completed run, or an error whose text includes &quot;not running&quot; all mean the same thing: return the error &quot;The diagram agent isn&#x27;t running on RocketRide Cloud. Run the deploy command in Step 6.&quot;.
    - Send the chat as plain text with client.send(token, text, {}, &quot;text/plain&quot;). One message: send its content. More: send each turn as &quot;role: content&quot;, oldest first, then &quot;Answer the last user message.&quot;. The diagram is the last entry of result.answers. Strip a ``` fence if the agent added one.
    - askDiagramAgent never throws. It returns { generatedResponse: mermaid, error: null } on success and { error } on failure, where error is a RequestError from &quot;@excalidraw/excalidraw/errors&quot;. A failure to connect or send gets a message starting &quot;RocketRide error: &quot;. If the answer starts with &quot;LLM error&quot;, with or without ** around it, return that answer as the error. Never call client.terminate: the run is the deployed agent. An empty answer is an error too.
 
 3. Create excalidraw-app/components/DiagramAgentPanel.tsx, the chat panel. To blend in, reuse Excalidraw&#x27;s own chat UI instead of writing new markup or CSS. Read ChatInterface.tsx and ChatMessage.tsx in packages/excalidraw/components/TTDDialog/Chat before you use them.
    - Export a DiagramAgentPanel component that renders ChatInterface from &quot;@excalidraw/excalidraw/components/TTDDialog/Chat&quot; with chatId &quot;diagram-agent&quot;. Use the TChat and LLMMessage types from &quot;@excalidraw/excalidraw/components/TTDDialog/types&quot;.
-   - Keep the messages, the current prompt and an isGenerating flag in atoms from &quot;../app-jotai&quot;, so the chat survives switching sidebar tabs and closing the sidebar.
-   - onGenerate: add the user message, then an assistant message with isGenerating true. Send askDiagramAgent the user and assistant messages so far that have content. Skip assistant messages with errorType &quot;other&quot; (their request failed), but keep ones with errorType &quot;parse&quot;: auto-fix needs the agent to see the broken diagram. On an error, set the assistant message&#x27;s error to the error&#x27;s message and errorType to &quot;other&quot;. On success, check the Mermaid parses: import parseMermaidToExcalidraw dynamically from &quot;@excalidraw/mermaid-to-excalidraw&quot; and pass it MERMAID_TO_EXCALIDRAW_CONFIG from &quot;@excalidraw/excalidraw/mermaid&quot;. If it parses, set content to the Mermaid. If not, set content to the Mermaid, error to the parse error&#x27;s message and errorType to &quot;parse&quot;.
-   - onInsertMessage: parse the message&#x27;s Mermaid the same way, convert the elements with convertToExcalidrawElements from &quot;@excalidraw/excalidraw&quot; ({ regenerateIds: true, renderEnvironment: app.renderEnvironment }), and add them with app.addElementsFromPasteOrLibrary({ elements, files, position: &quot;center&quot;, fit: &quot;scale-down&quot; }). app comes from useApp() in &quot;@excalidraw/excalidraw/components/App&quot;.
+   - Keep the messages, the current prompt, an isGenerating flag and the ids of the diagram the agent drew last in atoms from &quot;../app-jotai&quot;, so the chat survives switching sidebar tabs and closing the sidebar.
+   - Drawing on the canvas: parse the Mermaid with parseMermaidToExcalidraw, imported dynamically from &quot;@excalidraw/mermaid-to-excalidraw&quot;, passing MERMAID_TO_EXCALIDRAW_CONFIG from &quot;@excalidraw/excalidraw/mermaid&quot;. Convert the elements with convertToExcalidrawElements from &quot;@excalidraw/excalidraw&quot; ({ regenerateIds: true, renderEnvironment: app.renderEnvironment }) and add them with app.addElementsFromPasteOrLibrary({ elements, files, position: &quot;center&quot;, fit: &quot;scale-down&quot; }). app comes from useApp() in &quot;@excalidraw/excalidraw/components/App&quot;. addElementsFromPasteOrLibrary gives the elements new ids, so note the scene&#x27;s ids before and read the new ones after. To replace the agent&#x27;s previous diagram, first mark its elements deleted with app.scene.replaceAllElements and newElementWith(element, { isDeleted: true }) from &quot;@excalidraw/excalidraw&quot;: addElementsFromPasteOrLibrary then records the removal and the new diagram as one undo step. Adding elements can close the sidebar, so put app.state.openSidebar back afterwards with useExcalidrawSetAppState() from the same module.
+   - onGenerate: add the user message, then an assistant message with isGenerating true. Send askDiagramAgent the user and assistant messages so far that have content. Skip assistant messages whose request failed, but keep ones with errorType &quot;parse&quot;: auto-fix needs the agent to see the broken diagram. If the request fails, set the assistant message&#x27;s error to the error&#x27;s message and errorType to &quot;network&quot;, which makes the chat show its retry button. On success, draw the diagram on the canvas straight away, replacing the one the agent drew last, and set content to the Mermaid. If it doesn&#x27;t parse, set content to the Mermaid, error to the parse error&#x27;s message and errorType to &quot;parse&quot;, which makes the chat show its &quot;Regenerate (auto-fix)&quot; link.
+   - onRetry: ask the question before the failed answer again, in place of the failed answer and its question.
+   - onInsertMessage: add another copy of that answer&#x27;s diagram to the canvas, without replacing anything.
    - onDeleteMessage: remove that assistant message and the user message before it. onAiRepairClick: send &quot;That diagram has a syntax error, fix it.&quot;
-   - renderWelcomeScreen: a div with class chat-interface__welcome-screen__welcome-message holding an h3 &quot;Diagram agent&quot; and two short p lines: describe a diagram or name a public GitHub repo, and use the insert button on an answer to add it to the canvas.
+   - renderWelcomeScreen: a div with class chat-interface__welcome-screen__welcome-message holding an h3 &quot;Diagram agent&quot; and two short p lines: describe a diagram or name a public GitHub repo, and each answer is drawn on the canvas, replacing the last one.
+   - Import &quot;./DiagramAgentPanel.scss&quot; at the top of the file (file 4 below).
 
-4. In excalidraw-app/components/AppSidebar.tsx, add the agent to the sidebar&#x27;s row of tab buttons:
-   - Import brainIcon with the other icons from &quot;@excalidraw/excalidraw/components/icons&quot;, and import DiagramAgentPanel.
-   - In DefaultSidebar.TabTriggers, before the comments trigger, add &lt;Sidebar.TabTrigger tab=&quot;diagram-agent&quot; title=&quot;Diagram agent&quot; style={{ order: -1 }}&gt;{brainIcon}&lt;/Sidebar.TabTrigger&gt;. It must look exactly like the library (book) button, so give it no other style or className. Don&#x27;t copy the opacity style from the comments and presentation triggers: those two are faded because they advertise Excalidraw+. order: -1 puts it at the far left of the row: Excalidraw renders these triggers after search and library, and the row is a flex container.
+4. Create excalidraw-app/components/DiagramAgentPanel.scss. It sets where the brain button sits: Excalidraw renders an app&#x27;s sidebar tab buttons after its own search and library buttons, in a flex row, and Radix gives each button an id ending in -trigger-&lt;tab&gt;. Under .excalidraw .default-sidebar .sidebar-triggers, give .sidebar-tab-trigger[id$=&quot;-trigger-search&quot;] order: -2 and .sidebar-tab-trigger[id$=&quot;-trigger-diagram-agent&quot;] order: -1, so the row reads search, diagram agent, library, then the rest. Nothing else in it.
+
+5. In excalidraw-app/components/AppSidebar.tsx, add the agent to the sidebar&#x27;s row of tab buttons. It must look exactly like the search (magnifying glass) and library (book) buttons, in the same grey, with the same thin line:
+   - Import brainIconThin (not brainIcon, which is drawn with a heavier line and looks darker) with the other icons from &quot;@excalidraw/excalidraw/components/icons&quot;, and import DiagramAgentPanel.
+   - In DefaultSidebar.TabTriggers, before the comments trigger, add &lt;Sidebar.TabTrigger tab=&quot;diagram-agent&quot; title=&quot;Diagram agent&quot;&gt;{brainIconThin}&lt;/Sidebar.TabTrigger&gt;. Give it no style or className: its position comes from DiagramAgentPanel.scss. Don&#x27;t copy the opacity style from the comments and presentation triggers: those two are faded because they advertise Excalidraw+.
    - After the presentation Sidebar.Tab, add &lt;Sidebar.Tab tab=&quot;diagram-agent&quot; style={{ padding: &quot;0 0.75rem&quot;, minHeight: 0 }}&gt; with &lt;DiagramAgentPanel /&gt; inside.
    - Change nothing else in the file.
 
-Then run npx prettier --write on the three code files, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on the three code files, and fix anything they report. Last, check diagram-agent.pipe sits in the repo root next to yarn.lock, and that there is no copy of it anywhere inside excalidraw-app. Move it if it&#x27;s in the wrong place.</pre></div>
+Then run npx prettier --write on the three code files and DiagramAgentPanel.scss, npx tsc -p tsconfig.json --noEmit, and npx eslint --max-warnings=0 on the three code files, and fix anything they report. Last, check diagram-agent.pipe sits in the pipelines folder at the repo root (pipelines/diagram-agent.pipe, with pipelines next to yarn.lock), and that there is no copy of it anywhere else. Move it if it&#x27;s in the wrong place.</pre></div>
+        </li>
+        <li><b>Paste it into the agent's chat and send it</b> with <kbd>Enter</kbd>.</li>
+        <li><b>Wait for it to finish.</b> It reads Excalidraw's code, writes the files and runs checks. That takes a few minutes. If it asks to edit a file or run a command, allow it.
+          <p class="see">It says it's done, and the Explorer shows <code>pipelines/diagram-agent.pipe</code>, plus <code>diagramAgent.ts</code>, <code>DiagramAgentPanel.tsx</code> and <code>DiagramAgentPanel.scss</code> in <code>excalidraw-app/components</code>.</p>
+        </li>
+        <li><b>Check where the pipeline went.</b> In the Explorer, open the <code>pipelines</code> folder at the top level.
+          <p class="see"><code>diagram-agent.pipe</code> is inside it. If it's anywhere else, drag it into <code>pipelines</code>.</p>
+        </li>
+      </ol>
+      <p>Its files will differ a little from the ones in the <strong>Files</strong> tab, but do the same thing. If Step 7 doesn't work, come back and follow the <strong>Files</strong> tab instead.</p>
     </div>
     <div class="tp">
-      <p><b>1. New file.</b> In the Explorer, click <strong>New File</strong> at the top level, next to <code>package.json</code>, name it <code>diagram-agent.pipe</code>, paste, and save (<code>Cmd+S</code> or <code>Ctrl+S</code>).</p>
-      <div class="src"><div class="bar2"><span>diagram-agent.pipe</span><button class="cp-btn">Copy</button></div><pre>{
+      <p>Five files. Do them in order.</p>
+
+      <h3 class="fileh"><small>File 1 of 5</small><code>pipelines/diagram-agent.pipe</code></h3>
+      <ol class="run">
+        <li><b>Make the folder.</b> In the Explorer, click an empty spot below the files so nothing is selected, then click the <strong>New Folder</strong> icon at the top of the Explorer.</li>
+        <li><b>Name it</b> <code>pipelines</code> and press <kbd>Enter</kbd>.
+          <p class="see"><code>pipelines</code> sits at the top level, next to <code>package.json</code>.</p>
+        </li>
+        <li><b>Make the file.</b> Right-click <code>pipelines</code>, choose <strong>New File</strong>, type <code>diagram-agent.pipe</code> and press <kbd>Enter</kbd>.
+          <p class="see">The empty file opens, and the Explorer shows it inside <code>pipelines</code>.</p>
+        </li>
+        <li><b>Copy the pipeline.</b> Click <strong>Copy</strong> on this box. It's long: you don't need to scroll through it.
+      <div class="src file"><div class="bar2"><span>pipelines/diagram-agent.pipe</span><button class="cp-btn">Copy</button></div><pre>{
   &quot;name&quot;: &quot;Excalidraw diagram agent&quot;,
   &quot;source&quot;: &quot;webhook_1&quot;,
   &quot;project_id&quot;: &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;,
@@ -384,17 +430,33 @@ Then run npx prettier --write on the three code files, npx tsc -p tsconfig.json 
     }
   ]
 }</pre></div>
-      <p><b>2. New file.</b> In the Explorer, open the <code>excalidraw-app</code> folder. Right-click the <code>components</code> folder inside it, choose <strong>New File</strong>, name it <code>diagramAgent.ts</code>, paste, and save.</p>
-      <div class="src"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
+        </li>
+        <li><b>Paste</b> into the empty file: click in it, then <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+        <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+          <p class="see">The dot on the file's tab disappears. The first line is <code>{</code>.</p>
+        </li>
+      </ol>
+
+      <h3 class="fileh"><small>File 2 of 5</small><code>excalidraw-app/components/diagramAgent.ts</code></h3>
+      <ol class="run">
+        <li><b>Open the folder.</b> In the Explorer, click <code>excalidraw-app</code> to open it.
+          <p class="see">You see a <code>components</code> folder inside it.</p>
+        </li>
+        <li><b>Make the file.</b> Right-click <code>components</code>, choose <strong>New File</strong>, type <code>diagramAgent.ts</code> and press <kbd>Enter</kbd>. Mind the capital <code>A</code>.
+          <p class="see">The empty file opens, inside <code>excalidraw-app/components</code>.</p>
+        </li>
+        <li><b>Copy the code.</b> Click <strong>Copy</strong> on this box:
+      <div class="src file"><div class="bar2"><span>excalidraw-app/components/diagramAgent.ts</span><button class="cp-btn">Copy</button></div><pre>/// &lt;reference types=&quot;vite/client&quot; /&gt;
 import { RocketRideClient } from &quot;rocketride&quot;;
 import { RequestError } from &quot;@excalidraw/excalidraw/errors&quot;;
 
-// Your RocketRide address and key, from .env.local. Vite only passes VITE_* settings to the
+// Your RocketRide address and key, from .env. Vite only passes VITE_* settings to the
 // browser: fine on your laptop, but never ship a real key in a deployed app.
-const URI = import.meta.env.VITE_APP_ROCKETRIDE_URI ?? &quot;https://api.rocketride.ai&quot;;
+const URI =
+  import.meta.env.VITE_APP_ROCKETRIDE_URI ?? &quot;https://api.rocketride.ai&quot;;
 const APIKEY = import.meta.env.VITE_APP_ROCKETRIDE_APIKEY ?? &quot;&quot;;
 
-// The diagram agent runs on RocketRide Cloud. You deploy diagram-agent.pipe to your team in
+// The diagram agent runs on RocketRide Cloud. You deploy pipelines/diagram-agent.pipe to your team in
 // Step 6; these two values must match that file&#x27;s project_id and source.
 const PROJECT_ID = &quot;dafb1567-0f6e-4b87-a00e-74ce8bef1db7&quot;;
 const SOURCE = &quot;webhook_1&quot;;
@@ -524,196 +586,431 @@ function toFailure(error: unknown): DiagramResult {
     }),
   };
 }</pre></div>
-      <p><b>3. Replace the file.</b> Open <code>excalidraw-app/components/AI.tsx</code>, select everything (<code>Cmd+A</code> or <code>Ctrl+A</code>), paste over it, and save. Two things change: a new line near the top imports <code>askDiagramAgent</code>, and the <code>TTDDialog</code> part near the end calls it. The rest is Excalidraw's own code, unchanged.</p>
-      <div class="src"><div class="bar2"><span>excalidraw-app/components/AI.tsx</span><button class="cp-btn">Copy</button></div><pre>import {
-  DiagramToCodePlugin,
-  exportScene,
-  getNonDeletedElements,
-  getTextFromElements,
-  parseSSEStream,
-  TTDDialog,
-  THEME,
-  useOnExcalidrawStateChange,
+        </li>
+        <li><b>Paste</b> into the empty file: click in it, then <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+        <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+          <p class="see">The dot on the tab disappears, and no line has a red squiggle.</p>
+        </li>
+      </ol>
+
+      <h3 class="fileh"><small>File 3 of 5</small><code>excalidraw-app/components/DiagramAgentPanel.scss</code></h3>
+      <p>Puts the brain button between the magnifying glass and the book.</p>
+      <ol class="run">
+        <li><b>Make the file.</b> Right-click <code>components</code> (inside <code>excalidraw-app</code>), choose <strong>New File</strong>, type <code>DiagramAgentPanel.scss</code> and press <kbd>Enter</kbd>. It ends in <code>.scss</code>, not <code>.tsx</code>.
+          <p class="see">The empty file opens, inside <code>excalidraw-app/components</code>.</p>
+        </li>
+        <li><b>Copy the styles.</b> Click <strong>Copy</strong> on this box:
+      <div class="src"><div class="bar2"><span>excalidraw-app/components/DiagramAgentPanel.scss</span><button class="cp-btn">Copy</button></div><pre>// Excalidraw renders an app&#x27;s sidebar tab buttons after its own search and
+// library buttons, in a flex row. This puts the diagram agent between them.
+.excalidraw .default-sidebar .sidebar-triggers {
+  .sidebar-tab-trigger[id$=&quot;-trigger-search&quot;] {
+    order: -2;
+  }
+
+  .sidebar-tab-trigger[id$=&quot;-trigger-diagram-agent&quot;] {
+    order: -1;
+  }
+}</pre></div>
+        </li>
+        <li><b>Paste</b> into the empty file: click in it, then <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+        <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+          <p class="see">The dot on the tab disappears.</p>
+        </li>
+      </ol>
+
+      <h3 class="fileh"><small>File 4 of 5</small><code>excalidraw-app/components/DiagramAgentPanel.tsx</code></h3>
+      <p>The chat panel. It reuses Excalidraw's own chat, so it looks like it was always there.</p>
+      <ol class="run">
+        <li><b>Make the file.</b> Right-click <code>components</code> (inside <code>excalidraw-app</code>), choose <strong>New File</strong>, type <code>DiagramAgentPanel.tsx</code> and press <kbd>Enter</kbd>. Mind the capital <code>D</code>, <code>A</code> and <code>P</code>.
+          <p class="see">The empty file opens, inside <code>excalidraw-app/components</code>, next to <code>diagramAgent.ts</code>.</p>
+        </li>
+        <li><b>Copy the code.</b> Click <strong>Copy</strong> on this box:
+      <div class="src file"><div class="bar2"><span>excalidraw-app/components/DiagramAgentPanel.tsx</span><button class="cp-btn">Copy</button></div><pre>import { randomId } from &quot;@excalidraw/common&quot;;
+import {
+  convertToExcalidrawElements,
+  newElementWith,
 } from &quot;@excalidraw/excalidraw&quot;;
-import { getDataURL } from &quot;@excalidraw/excalidraw/data/blob&quot;;
-import { safelyParseJSON } from &quot;@excalidraw/common&quot;;
+import {
+  useApp,
+  useExcalidrawSetAppState,
+} from &quot;@excalidraw/excalidraw/components/App&quot;;
+import { ChatInterface } from &quot;@excalidraw/excalidraw/components/TTDDialog/Chat&quot;;
+import { MERMAID_TO_EXCALIDRAW_CONFIG } from &quot;@excalidraw/excalidraw/mermaid&quot;;
 
-import type { StreamChunk } from &quot;@excalidraw/excalidraw&quot;;
-import type { ExcalidrawImperativeAPI } from &quot;@excalidraw/excalidraw/types&quot;;
+import type {
+  LLMMessage,
+  TChat,
+  TTTDDialog,
+} from &quot;@excalidraw/excalidraw/components/TTDDialog/types&quot;;
 
-import { cacheMermaidChunks } from &quot;../data/cacheMermaidChunks&quot;;
-import { TTDIndexedDBAdapter } from &quot;../data/TTDStorage&quot;;
+import { atom, useAtom } from &quot;../app-jotai&quot;;
 
 import { askDiagramAgent } from &quot;./diagramAgent&quot;;
 
-export const AIComponents = ({
-  excalidrawAPI,
-}: {
-  excalidrawAPI: ExcalidrawImperativeAPI;
-}) =&gt; {
-  useOnExcalidrawStateChange(
-    (appState) =&gt; appState.openDialog?.name === &quot;ttd&quot;,
-    (isTTDDialogOpen) =&gt; {
-      if (isTTDDialogOpen) {
-        cacheMermaidChunks();
-      }
-    },
+import &quot;./DiagramAgentPanel.scss&quot;;
+
+// Kept in atoms so the chat survives switching sidebar tabs and closing the sidebar.
+const messagesAtom = atom&lt;TChat.ChatMessage[]&gt;([]);
+const promptAtom = atom(&quot;&quot;);
+const isGeneratingAtom = atom(false);
+// The elements of the diagram the agent drew last, so the next answer can replace it.
+const drawnIdsAtom = atom&lt;string[]&gt;([]);
+
+const REPAIR_PROMPT = &quot;That diagram has a syntax error, fix it.&quot;;
+
+/** Parses Mermaid the way Excalidraw does. Throws when the diagram is invalid. */
+const parseMermaid = async (definition: string) =&gt; {
+  const { parseMermaidToExcalidraw } = await import(
+    &quot;@excalidraw/mermaid-to-excalidraw&quot;
   );
+  return parseMermaidToExcalidraw(definition, MERMAID_TO_EXCALIDRAW_CONFIG);
+};
+
+/**
+ * The chat as the agent sees it. Failed requests are left out, but broken
+ * diagrams stay in: the agent needs them to fix its own syntax errors.
+ */
+const toAgentMessages = (messages: TChat.ChatMessage[]): LLMMessage[] =&gt;
+  messages
+    .filter(
+      (message) =&gt;
+        message.type !== &quot;warning&quot; &amp;&amp;
+        !!message.content &amp;&amp;
+        (!message.error || message.errorType === &quot;parse&quot;),
+    )
+    .map((message) =&gt; ({
+      role: message.type === &quot;user&quot; ? &quot;user&quot; : &quot;assistant&quot;,
+      content: message.content ?? &quot;&quot;,
+    }));
+
+const WelcomeScreen = () =&gt; (
+  &lt;div className=&quot;chat-interface__welcome-screen__welcome-message&quot;&gt;
+    &lt;h3&gt;Diagram agent&lt;/h3&gt;
+    &lt;p&gt;Describe a diagram, or name a public GitHub repo to draw.&lt;/p&gt;
+    &lt;p&gt;Each answer is drawn on the canvas, replacing the last one.&lt;/p&gt;
+  &lt;/div&gt;
+);
+
+export const DiagramAgentPanel = () =&gt; {
+  const app = useApp();
+  const setAppState = useExcalidrawSetAppState();
+  const [messages, setMessages] = useAtom(messagesAtom);
+  const [prompt, setPrompt] = useAtom(promptAtom);
+  const [isGenerating, setIsGenerating] = useAtom(isGeneratingAtom);
+  const [drawnIds, setDrawnIds] = useAtom(drawnIdsAtom);
+
+  /**
+   * Draws a Mermaid diagram on the canvas and returns its element ids. With
+   * `replacing`, those elements are removed in the same step, so one undo
+   * brings the old diagram back.
+   */
+  const drawOnCanvas = async (mermaid: string, replacing: string[] = []) =&gt; {
+    const { elements, files } = await parseMermaid(mermaid);
+    const openSidebar = app.state.openSidebar;
+
+    const toRemove = new Set(replacing);
+    const current = app.scene.getElementsIncludingDeleted();
+    if (toRemove.size) {
+      app.scene.replaceAllElements(
+        current.map((element) =&gt;
+          toRemove.has(element.id) &amp;&amp; !element.isDeleted
+            ? newElementWith(element, { isDeleted: true })
+            : element,
+        ),
+      );
+    }
+
+    const before = new Set(current.map((element) =&gt; element.id));
+    app.addElementsFromPasteOrLibrary({
+      elements: convertToExcalidrawElements(elements, {
+        regenerateIds: true,
+        renderEnvironment: app.renderEnvironment,
+      }),
+      files: files ?? null,
+      position: &quot;center&quot;,
+      fit: &quot;scale-down&quot;,
+    });
+    // Adding elements can close the sidebar; keep the chat open.
+    setAppState({ openSidebar });
+
+    return app.scene
+      .getElementsIncludingDeleted()
+      .filter((element) =&gt; !before.has(element.id))
+      .map((element) =&gt; element.id);
+  };
+
+  /** Sends the prompt after `history`, then draws the answer. */
+  const ask = async (prompt: string, history: TChat.ChatMessage[]) =&gt; {
+    const userMessage: TChat.ChatMessage = {
+      id: randomId(),
+      type: &quot;user&quot;,
+      content: prompt,
+      timestamp: new Date(),
+    };
+    const answerId = randomId();
+    const chat = [...history, userMessage];
+    setMessages([
+      ...chat,
+      {
+        id: answerId,
+        type: &quot;assistant&quot;,
+        isGenerating: true,
+        timestamp: new Date(),
+      },
+    ]);
+    setIsGenerating(true);
+
+    const finishAnswer = (patch: Partial&lt;TChat.ChatMessage&gt;) =&gt;
+      setMessages((current) =&gt;
+        current.map((message) =&gt;
+          message.id === answerId
+            ? { ...message, ...patch, isGenerating: false }
+            : message,
+        ),
+      );
+
+    try {
+      const result = await askDiagramAgent(toAgentMessages(chat));
+      if (result.error) {
+        // &quot;network&quot; shows the chat&#x27;s retry button.
+        finishAnswer({ error: result.error.message, errorType: &quot;network&quot; });
+        return;
+      }
+      const mermaid = result.generatedResponse;
+      try {
+        setDrawnIds(await drawOnCanvas(mermaid, drawnIds));
+        finishAnswer({ content: mermaid });
+      } catch (error) {
+        // &quot;parse&quot; shows the chat&#x27;s &quot;Regenerate (auto-fix)&quot; link.
+        finishAnswer({
+          content: mermaid,
+          error: (error as Error).message,
+          errorType: &quot;parse&quot;,
+        });
+      }
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const onGenerate: TTTDDialog.OnGenerate = ({ prompt }) =&gt;
+    ask(prompt, messages);
+
+  // Asks the failed question again, in place of the failed answer.
+  const onRetry = (message: TChat.ChatMessage) =&gt; {
+    const index = messages.findIndex(({ id }) =&gt; id === message.id);
+    const question = messages[index - 1];
+    if (index &lt; 1 || question?.type !== &quot;user&quot; || !question.content) {
+      return;
+    }
+    ask(question.content, messages.slice(0, index - 1));
+  };
+
+  // Adds another copy of an earlier answer to the canvas.
+  const onInsertMessage = (message: TChat.ChatMessage) =&gt; {
+    if (message.content) {
+      drawOnCanvas(message.content).catch((error) =&gt;
+        console.warn(`Couldn&#x27;t add the diagram: ${error.message}`),
+      );
+    }
+  };
+
+  // Removes an answer and the question that asked for it.
+  const onDeleteMessage = (messageId: string) =&gt; {
+    const index = messages.findIndex((message) =&gt; message.id === messageId);
+    if (index &lt; 0) {
+      return;
+    }
+    const start = messages[index - 1]?.type === &quot;user&quot; ? index - 1 : index;
+    setMessages([...messages.slice(0, start), ...messages.slice(index + 1)]);
+  };
 
   return (
-    &lt;&gt;
-      &lt;DiagramToCodePlugin
-        generate={async ({ frame, children, onPartial }) =&gt; {
-          const appState = excalidrawAPI.getAppState();
-
-          // SAFETY: This should never happen, but log it just in case
-          if (children.some((el) =&gt; el.isDeleted)) {
-            console.error(
-              &quot;[NONDELETED][INVARIANT] Generated children elements should not be `isDeleted: true`&quot;,
-            );
-          }
-
-          const blob = await exportScene({
-            type: &quot;jpeg&quot;,
-            data: {
-              elements: getNonDeletedElements(children),
-              appState,
-              files: excalidrawAPI.getFiles(),
-            },
-            config: {
-              exportingFrame: frame,
-              theme: appState.exportWithDarkMode ? THEME.DARK : THEME.LIGHT,
-            },
-          });
-
-          const dataURL = await getDataURL(blob);
-
-          const textFromFrameChildren = getTextFromElements(children);
-
-          const response = await fetch&#40;
-            `${
-              import.meta.env.VITE_APP_AI_BACKEND
-            }/v1/ai/diagram-to-code/generate-streaming`,
-            {
-              method: &quot;POST&quot;,
-              headers: {
-                Accept: &quot;text/event-stream&quot;,
-                &quot;Content-Type&quot;: &quot;application/json&quot;,
-              },
-              body: JSON.stringify({
-                texts: textFromFrameChildren,
-                image: dataURL,
-                theme: appState.theme,
-              }),
-            },
-          );
-
-          if (!response.ok) {
-            const text = await response.text();
-            const errorJSON = safelyParseJSON(text);
-
-            if (!errorJSON) {
-              throw new Error(text);
-            }
-
-            if (errorJSON.statusCode === 429) {
-              return {
-                html: `&lt;html&gt;
-                &lt;body style=&quot;margin: 0; text-align: center&quot;&gt;
-                &lt;div style=&quot;display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100vh; padding: 0 60px&quot;&gt;
-                  &lt;div style=&quot;color:red&quot;&gt;Too many requests today,&lt;/br&gt;please try again tomorrow!&lt;/div&gt;
-                  &lt;/br&gt;
-                  &lt;/br&gt;
-                  &lt;div&gt;You can also try &lt;a href=&quot;${
-                    import.meta.env.VITE_APP_PLUS_LP
-                  }/plus?utm_source=excalidraw&amp;utm_medium=app&amp;utm_content=d2c&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Excalidraw+&lt;/a&gt; to get more requests.&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;/body&gt;
-                &lt;/html&gt;`,
-              };
-            }
-
-            throw new Error(errorJSON.message || text);
-          }
-
-          const reader = response.body?.getReader();
-
-          if (!reader) {
-            throw new Error(&quot;Generation failed (invalid response)&quot;);
-          }
-
-          let html = &quot;&quot;;
-          let streamError: Error | null = null;
-
-          for await (const data of parseSSEStream(reader)) {
-            if (data === &quot;[DONE]&quot;) {
-              break;
-            }
-
-            const chunk = safelyParseJSON(data) as StreamChunk | null;
-
-            if (!chunk) {
-              continue;
-            }
-
-            switch (chunk.type) {
-              case &quot;content&quot;: {
-                if (chunk.delta) {
-                  html += chunk.delta;
-                  onPartial?.(html);
-                }
-                break;
-              }
-              case &quot;error&quot;: {
-                streamError = new Error(
-                  chunk.error.message || &quot;Generation failed&quot;,
-                );
-                break;
-              }
-              case &quot;done&quot;: {
-                break;
-              }
-            }
-          }
-
-          if (streamError) {
-            throw streamError;
-          }
-
-          if (!html.trim()) {
-            throw new Error(&quot;Generation failed (invalid response)&quot;);
-          }
-
-          return {
-            html,
-          };
-        }}
-      /&gt;
-
-      &lt;TTDDialog
-        onTextSubmit={async (props) =&gt; {
-          const { onChunk, onStreamCreated, messages } = props;
-
-          // RocketRide: the diagram agent answers instead of Excalidraw&#x27;s AI backend.
-          onStreamCreated?.();
-          const result = await askDiagramAgent(messages);
-          if (result.generatedResponse) {
-            onChunk?.(result.generatedResponse);
-          }
-
-          return result;
-        }}
-        persistenceAdapter={TTDIndexedDBAdapter}
-      /&gt;
-    &lt;/&gt;
+    &lt;ChatInterface
+      chatId=&quot;diagram-agent&quot;
+      messages={messages}
+      currentPrompt={prompt}
+      onPromptChange={setPrompt}
+      onGenerate={onGenerate}
+      isGenerating={isGenerating}
+      onInsertMessage={onInsertMessage}
+      onDeleteMessage={onDeleteMessage}
+      onRetry={onRetry}
+      onAiRepairClick={() =&gt; onGenerate({ prompt: REPAIR_PROMPT })}
+      renderWelcomeScreen={() =&gt; &lt;WelcomeScreen /&gt;}
+    /&gt;
   );
 };</pre></div>
+        </li>
+        <li><b>Paste</b> into the empty file: click in it, then <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+        <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+          <p class="see">The dot on the tab disappears, and no line has a red squiggle.</p>
+        </li>
+      </ol>
+
+      <h3 class="fileh"><small>File 5 of 5</small><code>excalidraw-app/components/AppSidebar.tsx</code></h3>
+      <p>Excalidraw's sidebar. This file is already there: you replace all of it. The new version adds the brain button to the sidebar's row of tabs, drawn and coloured like the magnifying glass and the book, and puts the chat panel behind it. The rest is Excalidraw's own code, unchanged.</p>
+      <ol class="run">
+        <li><b>Open the file.</b> In the Explorer, inside <code>excalidraw-app/components</code>, click <code>AppSidebar.tsx</code>.</li>
+        <li><b>Copy the new version.</b> Click <strong>Copy</strong> on this box:
+      <div class="src file"><div class="bar2"><span>excalidraw-app/components/AppSidebar.tsx</span><button class="cp-btn">Copy</button></div><pre>import { DefaultSidebar, Sidebar, THEME } from &quot;@excalidraw/excalidraw&quot;;
+import {
+  brainIconThin,
+  messageCircleIcon,
+  presentationIcon,
+} from &quot;@excalidraw/excalidraw/components/icons&quot;;
+import { LinkButton } from &quot;@excalidraw/excalidraw/components/LinkButton&quot;;
+import { useUIAppState } from &quot;@excalidraw/excalidraw/context/ui-appState&quot;;
+
+import { DiagramAgentPanel } from &quot;./DiagramAgentPanel&quot;;
+
+import &quot;./AppSidebar.scss&quot;;
+
+type SidebarPromoCopyProps = {
+  text: string;
+};
+
+const SidebarPromoCopy = (props: SidebarPromoCopyProps) =&gt; {
+  return (
+    &lt;div className=&quot;app-sidebar-promo-copy&quot;&gt;
+      &lt;div className=&quot;app-sidebar-promo-illustration&quot; aria-hidden=&quot;true&quot;&gt;
+        &lt;svg
+          xmlns=&quot;http://www.w3.org/2000/svg&quot;
+          viewBox=&quot;0 0 300 250&quot;
+          className=&quot;app-sidebar-promo-heart&quot;
+        &gt;
+          &lt;path
+            d=&quot;M 145 75
+           C 110 35, 60 55, 65 120
+           C 70 180, 140 190, 215 200
+           C 225 180, 260 110, 235 55
+           C 210 -5, 140 20, 160 105&quot;
+            fill=&quot;none&quot;
+            stroke=&quot;#D06B64&quot;
+            strokeWidth=&quot;16&quot;
+            strokeLinecap=&quot;round&quot;
+          /&gt;
+        &lt;/svg&gt;
+
+        &lt;div className=&quot;app-sidebar-promo-trial-note excalifont&quot;&gt;
+          14 days of
+          &lt;br /&gt;
+          free trial
+        &lt;/div&gt;
+        &lt;svg
+          className=&quot;app-sidebar-promo-trial-arrow&quot;
+          viewBox=&quot;0 0 72 48&quot;
+          fill=&quot;none&quot;
+          xmlns=&quot;http://www.w3.org/2000/svg&quot;
+        &gt;
+          &lt;path
+            d=&quot;M5 6C23 1 50 8 48 32&quot;
+            stroke=&quot;currentColor&quot;
+            strokeWidth=&quot;2&quot;
+            strokeLinecap=&quot;round&quot;
+          /&gt;
+          &lt;path
+            d=&quot;M42 26L48 32L54 26&quot;
+            stroke=&quot;currentColor&quot;
+            strokeWidth=&quot;2&quot;
+            strokeLinecap=&quot;round&quot;
+            strokeLinejoin=&quot;round&quot;
+          /&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;app-sidebar-promo-text&quot;&gt;{props.text}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+export const AppSidebar = () =&gt; {
+  const { theme, openSidebar } = useUIAppState();
+
+  return (
+    &lt;DefaultSidebar&gt;
+      &lt;DefaultSidebar.TabTriggers&gt;
+        &lt;Sidebar.TabTrigger tab=&quot;diagram-agent&quot; title=&quot;Diagram agent&quot;&gt;
+          {brainIconThin}
+        &lt;/Sidebar.TabTrigger&gt;
+        &lt;Sidebar.TabTrigger
+          tab=&quot;comments&quot;
+          style={{ opacity: openSidebar?.tab === &quot;comments&quot; ? 1 : 0.4 }}
+        &gt;
+          {messageCircleIcon}
+        &lt;/Sidebar.TabTrigger&gt;
+        &lt;Sidebar.TabTrigger
+          tab=&quot;presentation&quot;
+          style={{ opacity: openSidebar?.tab === &quot;presentation&quot; ? 1 : 0.4 }}
+        &gt;
+          {presentationIcon}
+        &lt;/Sidebar.TabTrigger&gt;
+      &lt;/DefaultSidebar.TabTriggers&gt;
+      &lt;Sidebar.Tab tab=&quot;comments&quot;&gt;
+        &lt;div className=&quot;app-sidebar-promo-container&quot;&gt;
+          &lt;div
+            className=&quot;app-sidebar-promo-image&quot;
+            style={{
+              [&quot;--image-source&quot; as any]: `url(/sidebar-comments-promo-${
+                theme === THEME.DARK ? &quot;dark&quot; : &quot;light&quot;
+              }.jpg)`,
+              opacity: 0.9,
+            }}
+          /&gt;
+          &lt;SidebarPromoCopy text=&quot;Make comments with Excalidraw+&quot; /&gt;
+          &lt;LinkButton
+            href={`${
+              import.meta.env.VITE_APP_PLUS_LP
+            }/plus?utm_source=excalidraw&amp;utm_medium=app&amp;utm_content=comments_promo#excalidraw-redirect`}
+          &gt;
+            Sign up now
+          &lt;/LinkButton&gt;
+        &lt;/div&gt;
+      &lt;/Sidebar.Tab&gt;
+      &lt;Sidebar.Tab tab=&quot;presentation&quot; className=&quot;px-3&quot;&gt;
+        &lt;div className=&quot;app-sidebar-promo-container&quot;&gt;
+          &lt;div
+            className=&quot;app-sidebar-promo-image&quot;
+            style={{
+              [&quot;--image-source&quot; as any]: `url(/sidebar-presentation-promo-${
+                theme === THEME.DARK ? &quot;dark&quot; : &quot;light&quot;
+              }.jpg)`,
+              opacity: 0.7,
+            }}
+          /&gt;
+          &lt;SidebarPromoCopy text=&quot;Create presentation with Excalidraw+&quot; /&gt;
+          &lt;LinkButton
+            href={`${
+              import.meta.env.VITE_APP_PLUS_LP
+            }/plus?utm_source=excalidraw&amp;utm_medium=app&amp;utm_content=presentations_promo#excalidraw-redirect`}
+          &gt;
+            Sign up now
+          &lt;/LinkButton&gt;
+        &lt;/div&gt;
+      &lt;/Sidebar.Tab&gt;
+      &lt;Sidebar.Tab
+        tab=&quot;diagram-agent&quot;
+        style={{ padding: &quot;0 0.75rem&quot;, minHeight: 0 }}
+      &gt;
+        &lt;DiagramAgentPanel /&gt;
+      &lt;/Sidebar.Tab&gt;
+    &lt;/DefaultSidebar&gt;
+  );
+};</pre></div>
+        </li>
+        <li><b>Select everything in <code>AppSidebar.tsx</code>.</b> Click in the file, then <kbd>Cmd</kbd>+<kbd>A</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>A</kbd> on Windows and Linux.</li>
+        <li><b>Paste over it:</b> <kbd>Cmd</kbd>+<kbd>V</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>V</kbd> on Windows and Linux.</li>
+        <li><b>Save:</b> <kbd>Cmd</kbd>+<kbd>S</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>S</kbd> on Windows and Linux.
+          <p class="see">The first line is <code>import { DefaultSidebar, Sidebar, THEME } from "@excalidraw/excalidraw";</code>, the icon import below it starts with <code>brainIconThin,</code>, and no line has a red squiggle.</p>
+        </li>
+      </ol>
     </div>
   </div>
+  <div class="note good"><b class="k">Done when</b><p><code>pipelines/diagram-agent.pipe</code> and the code files are saved, and none of them shows red squiggles.</p></div>
 
+  <details class="fold"><summary><code>No matching export in "components/AppSidebar.tsx" for import "AppSidebar"</code></summary><div class="fb"><p><code>AppSidebar.tsx</code> got another file's code, usually because the clipboard still held the box before it. Open <code>AppSidebar.tsx</code>, click <strong>Copy</strong> on the File 5 box, select everything in the file (<kbd>Cmd</kbd>+<kbd>A</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>A</kbd> on Windows and Linux), paste, and save. Its first line is <code>import { DefaultSidebar, Sidebar, THEME } from "@excalidraw/excalidraw";</code>. If the terminal still shows the error, stop the app with <kbd>Ctrl</kbd>+<kbd>C</kbd> and run <code>yarn start</code> again.</p></div></details>
   <details class="fold"><summary>A file shows red squiggly lines</summary><div class="fb"><p>Usually a partial paste. Select everything in that file, copy its box again, and paste over it. If the coding agent wrote the file, paste that file from the <strong>Files</strong> tab over it instead. If only the <code>"rocketride"</code> line at the top is red, the command in Step 4 didn't finish: run it again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The files written and saved, including <code>diagram-agent.pipe</code>.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>All files saved, including <code>pipelines/diagram-agent.pipe</code>, with no red squiggles.</span></label>
 </section>
 
 <!-- ===== 6 ===== -->
@@ -724,28 +1021,37 @@ export const AIComponents = ({
     <div>
       <p class="kicker">The finish <i>/ 2 minutes</i></p>
       <h1>Deploy the agent</h1>
-      <p class="lede">One command sends the agent to RocketRide Cloud and starts it there. You don't edit anything.</p>
+      <p class="lede">Two RocketRide commands: one sends the agent to RocketRide Cloud, one starts it.</p>
     </div>
   </div>
 
-  <p>Your app talks to the agent, but the agent doesn't run on your laptop. It runs on RocketRide Cloud, so you send it there first. This is what <strong>deploy</strong> means.</p>
+  <p>The agent runs on RocketRide Cloud, not on your laptop, so you send it there first. That is what <strong>deploy</strong> means. Both commands use the deploy key the sign-in saved in <code>.env</code>, and both are the same on Mac, Windows and Linux.</p>
 
   <ol class="run">
-    <li><b>Check you're in the right place.</b> The terminal is in the <code>excalidraw</code> folder, and <code>diagram-agent.pipe</code> and <code>.env.local</code> are saved there, next to <code>package.json</code>. If the app is running from an earlier step, press <strong>Ctrl+C</strong> to stop it.</li>
-    <li><b>Copy the whole command and paste it into the terminal.</b> It is one long line. Copy it with the <strong>Copy</strong> button, don't change it, and press <strong>Enter</strong>:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>node --env-file=.env.local -e "const fs=require('fs');const {RocketRideClient}=require('rocketride');const pipe=JSON.parse(fs.readFileSync('diagram-agent.pipe','utf8'));const c=new RocketRideClient({uri:process.env.ROCKETRIDE_DEPLOY_URI,auth:process.env.ROCKETRIDE_DEPLOY_APIKEY});c.connect().then(async()=&gt;{const team=c.getAccountInfo().devTeam;const r=await c.deploy.add({kind:'pipe',pipeline:pipe,deployTo:team});console.log('Deployed version v'+r.artifact.version);await c.deploy.run(pipe.project_id,pipe.source,team);console.log('The agent is running on RocketRide Cloud');process.exit(0)}).catch(e=&gt;{console.error('Deploy failed: '+(e.message||e));process.exit(1)})"</pre></div>
-      It reads <code>diagram-agent.pipe</code>, copies it to your team on RocketRide Cloud as a new version, and starts it. It finds your team by itself, from your API key.</li>
+    <li><b>Stop the app if it's running.</b> Click in the terminal and press <kbd>Ctrl</kbd>+<kbd>C</kbd> (on Mac too). If nothing is running, skip this.</li>
+    <li><b>Check the terminal is in <code>excalidraw</code>.</b> The line where you type ends in <code>excalidraw</code>. If it doesn't, run <code>cd excalidraw</code>.</li>
+    <li><b>Send the agent to RocketRide Cloud.</b> This uploads <code>pipelines/diagram-agent.pipe</code> as a new version and points your <strong>Development</strong> team at it, which is where the app looks for it. Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npx rocketride deploy add pipelines/diagram-agent.pipe --deploy-to Development</pre></div>
+      <p class="see"><code>Deployed pipe version v1</code>, maybe followed by the agent's name, then <code>Project: dafb1567-0f6e-4b87-a00e-74ce8bef1db7</code>. The number goes up each time you deploy: v2, v3 and so on.</p>
+      <p>It also prints <code>Deploying activates nothing - publish a rung to serve it.</code> You can ignore that here: <code>--deploy-to Development</code> already did that part.</p>
+    </li>
+    <li><b>Start the agent.</b> This starts the agent's webhook, <code>webhook_1</code>, in your Development team, so it's ready to answer. Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npx rocketride deploy run dafb1567-0f6e-4b87-a00e-74ce8bef1db7 webhook_1 --team Development</pre></div>
+      <p class="see"><code>Run started for dafb1567-0f6e-4b87-a00e-74ce8bef1db7/webhook_1</code>, followed by a token in brackets.</p>
+    </li>
   </ol>
-  <div class="note good"><b class="k">Done when</b><p>The terminal prints <code>Deployed version v1</code>, then <code>The agent is running on RocketRide Cloud</code>. The number goes up each time you deploy: v2, v3 and so on.</p></div>
+  <div class="note good"><b class="k">Done when</b><p>The first command printed <code>Deployed pipe version</code>, and the second printed <code>Run started for</code>.</p></div>
 
-  <details class="fold"><summary><code>node: bad option: --env-file</code></summary><div class="fb"><p>Your Node is older than 20.6. Install the current Node from <a href="https://nodejs.org">nodejs.org</a>, close and reopen the terminal, <code>cd excalidraw</code>, and run the command again.</p></div></details>
-  <details class="fold"><summary><code>Cannot find module 'rocketride'</code></summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder, or the command in Step 4 didn't finish. Run <code>cd excalidraw</code>, run the Step 4 command again, then this one.</p></div></details>
-  <details class="fold"><summary><code>no such file or directory</code> and <code>diagram-agent.pipe</code> or <code>.env.local</code></summary><div class="fb"><p>The file isn't saved, or it's in the wrong folder. It belongs at the top of <code>excalidraw</code>, next to <code>package.json</code>, not inside <code>excalidraw-app</code>. Move it there, save, and run the command again.</p></div></details>
-  <details class="fold"><summary><code>Deploy failed:</code> and something about your key or signing in</summary><div class="fb"><p>Check the two <code>ROCKETRIDE_DEPLOY_</code> lines in <code>.env.local</code>: your RocketRide API key in place of <code>your-api-key</code>, no spaces, file saved. Then run the command again.</p></div></details>
-  <details class="fold"><summary><code>Deploy failed:</code> and something about a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Start a subscription in RocketRide Cloud (Step 2), then run the command again.</p></div></details>
-  <details class="fold"><summary>The deploy worked, but the chat says <code>Your pipeline is not running</code></summary><div class="fb"><p>The agent is running, but the app is looking for it in a different team. This command deploys to your Development team, the one <code>client.getAccountInfo().devTeam</code> returns. If your coding agent wrote the app to use the first team in your account instead (something like <code>organization.teams[0]</code>), it finds your Production team, where nothing is deployed. Open <code>excalidraw-app/components/diagramAgent.ts</code>, find where it sets <code>teamId</code>, and change that to <code>client.getAccountInfo()?.devTeam</code>. Save, and send the message again. You don't need to deploy again.</p></div></details>
+  <details class="fold"><summary>What the long number is</summary><div class="fb"><p><code>dafb1567-0f6e-4b87-a00e-74ce8bef1db7</code> is the agent's project id. It's in <code>diagram-agent.pipe</code> as <code>project_id</code>, and <code>webhook_1</code> is its <code>source</code>. The app uses the same two values to find the running agent.</p></div></details>
+  <details class="fold"><summary>An error that mentions <code>diagram-agent.pipe</code> or a missing file</summary><div class="fb"><p>The file isn't saved, or it's in the wrong folder. It belongs in <code>excalidraw/pipelines</code>, not at the top and not inside <code>excalidraw-app</code>. Move it there, save, and run the command again.</p></div></details>
+  <details class="fold"><summary>It says there is no deployment target, or something about your key or signing in</summary><div class="fb"><p>The deploy key in <code>.env</code> is missing or no longer works. Run the sign-in from Step 4 again, then both commands:</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>npx rocketride login --uri https://api.rocketride.ai</pre></div></div></details>
+  <details class="fold"><summary>An error about the team, or <code>Development</code></summary><div class="fb"><p>Your Development team has a different name. In RocketRide Cloud, find the name of your Development team, and use it in place of <code>Development</code> in both commands. At a workshop, ask the facilitator.</p></div></details>
+  <details class="fold"><summary><code>could not determine executable to run</code>, or <code>rocketride</code> not found</summary><div class="fb"><p>The terminal isn't in the <code>excalidraw</code> folder, or the install in Step 4 didn't finish. Run <code>cd excalidraw</code>, run the Step 4 install again, then these commands.</p></div></details>
+  <details class="fold"><summary>It mentions a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Start a subscription in RocketRide Cloud (Step 2), then run both commands again.</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The terminal printed <code>The agent is running on RocketRide Cloud</code>.</span></label>
+  <details class="fold"><summary>The deploy worked, but the chat says <code>Your pipeline is not running</code></summary><div class="fb"><p>The agent is running, but the app is looking for it in a different team. Step 6 deploys to your Development team, the one <code>client.getAccountInfo().devTeam</code> returns. If your coding agent wrote the app to use the first team in your account instead (something like <code>organization.teams[0]</code>), it finds your Production team, where nothing is deployed. Open <code>excalidraw-app/components/diagramAgent.ts</code>, find where it sets <code>teamId</code>, and change that to <code>client.getAccountInfo()?.devTeam</code>. Save, and send the message again. You don't need to deploy again.</p></div></details>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The terminal printed <code>Deployed pipe version</code> and <code>Run started for</code>.</span></label>
 </section>
 
 <!-- ===== 7 ===== -->
@@ -761,29 +1067,43 @@ export const AIComponents = ({
   </div>
 
   <ol class="run">
-    <li>Start the app:
+    <li><b>Start the app.</b> Paste this into the terminal and press <kbd>Enter</kbd>:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>yarn start</pre></div>
-      It opens <a href="http://localhost:3001">http://localhost:3001</a> in your browser. If it doesn't, open that address yourself.</li>
-    <li>Click <strong>More tools</strong> (the last button on the toolbar), then <strong>Text to diagram</strong>.</li>
-    <li>Paste this message into the chat and send it:
+      <p class="see">Your browser opens <a href="http://localhost:3001">http://localhost:3001</a> with an empty Excalidraw canvas. If no tab opens, click that link.</p>
+    </li>
+    <li><b>Open the sidebar.</b> Click the <strong>Library</strong> button at the top right of the canvas.
+      <p class="see">The sidebar opens. Its row of tab buttons is the magnifying glass, the brain, then the book, all the same grey.</p>
+    </li>
+    <li><b>Click the brain.</b>
+      <p class="see">The <strong>Diagram agent</strong> chat opens in the sidebar.</p>
+    </li>
+    <li><b>Copy the message.</b> Click <strong>Copy</strong> on this box:
       <div class="src"><div class="bar2"><span>message</span><button class="cp-btn">Copy</button></div><pre>Diagram the architecture of rocketride-org/rocketride-server</pre></div>
-      The agent reads the repo on GitHub, then answers. The first answer can take up to a minute. A preview of the diagram appears next to the chat.</li>
-    <li>Ask for a change, for example <strong>Make it top to bottom</strong>. The agent sends the whole diagram again with the change.</li>
-    <li>Click <strong>Insert</strong>. The diagram lands on the canvas as shapes you can move and edit.</li>
+    </li>
+    <li><b>Paste it into the chat and press <kbd>Enter</kbd>.</b> The agent reads the repo on GitHub, then answers. The first answer can take up to a minute.
+      <p class="see">The answer appears in the chat as Mermaid text, and the diagram is drawn on the canvas as shapes you can move and edit.</p>
+    </li>
+    <li><b>Ask for a change.</b> Type <strong>Make it top to bottom</strong> and press <kbd>Enter</kbd>.
+      <p class="see">A new answer, and the diagram on the canvas is replaced by one running top to bottom. <kbd>Cmd</kbd>+<kbd>Z</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>Z</kbd> on Windows and Linux, brings the old one back.</p>
+    </li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>The architecture of the repo is on your canvas.</p></div>
 
-  <details class="fold"><summary>The chat says <code>The diagram agent isn't running on RocketRide Cloud</code></summary><div class="fb"><p>The agent was never started, or it stopped. Open a second terminal in <code>excalidraw</code> (the app keeps running in the first), run the Step 6 command again, then send the message again.</p></div></details>
-  <details class="fold"><summary>The chat says <code>Your pipeline is not running</code></summary><div class="fb"><p>If the Step 6 command printed <code>The agent is running on RocketRide Cloud</code>, the agent is running but the app is looking in the wrong team. See <strong>The deploy worked, but the chat says Your pipeline is not running</strong> in Step 6 for the one-line fix. If it didn't print that, run the Step 6 command first.</p></div></details>
-  <details class="fold"><summary>The chat says <code>LLM error</code> and <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>ROCKETRIDE_ANTHROPIC_KEY</code> Variable in RocketRide Cloud is missing or has the wrong key. Fix it there, run the Step 6 command again so the agent starts with the new key, then send the message again.</p></div></details>
-  <details class="fold"><summary>The chat says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check the <code>VITE_APP_ROCKETRIDE_APIKEY</code> line in <code>.env.local</code> has your key and the file is saved. Then stop the app (<strong>Ctrl+C</strong>) and run <code>yarn start</code> again: Vite only reads <code>.env.local</code> when it starts.</p></div></details>
-  <details class="fold"><summary>The preview says <code>Generated an invalid diagram</code> or <code>Mermaid syntax error</code></summary><div class="fb"><p>The agent wrote Mermaid that Excalidraw can't draw. Reply in the chat: <strong>That diagram has a syntax error, fix it</strong>.</p></div></details>
+  <details class="fold"><summary>I want an earlier answer on the canvas too</summary><div class="fb"><p>Under that answer in the chat, click the insert button, the first small icon. It adds a copy of that diagram without removing the one already there.</p></div></details>
+  <details class="fold"><summary>An answer failed with an error</summary><div class="fb"><p>Click the retry button under it. It asks the same question again. If the error names RocketRide or the Anthropic key, check the help boxes below first.</p></div></details>
+  <details class="fold"><summary>The chat says <code>The diagram agent isn't running on RocketRide Cloud</code></summary><div class="fb"><p>The agent was never started, or it stopped. Open a second terminal in <code>excalidraw</code> (the app keeps running in the first), run the two Step 6 commands again, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>Your pipeline is not running</code></summary><div class="fb"><p>If the Step 6 commands printed <code>Run started for</code>, the agent is running but the app is looking in the wrong team. See <strong>The deploy worked, but the chat says Your pipeline is not running</strong> in Step 6 for the one-line fix. If they didn't, run the Step 6 commands first.</p></div></details>
+  <details class="fold"><summary>The chat says <code>LLM error</code> and <code>invalid x-api-key</code></summary><div class="fb"><p>The <code>ROCKETRIDE_ANTHROPIC_KEY</code> Variable in RocketRide Cloud is missing or has the wrong key. Fix it there, run the two Step 6 commands again so the agent starts with the new key, then send the message again.</p></div></details>
+  <details class="fold"><summary>The chat says <code>RocketRide error: ...</code></summary><div class="fb"><p>Check <code>.env</code> ends with the two <code>VITE_APP_</code> lines from Step 4, spelled exactly, and the file is saved. Then stop the app (<kbd>Ctrl</kbd>+<kbd>C</kbd>) and run <code>yarn start</code> again: Vite only reads <code>.env</code> when it starts.</p></div></details>
+  <details class="fold"><summary>The answer says the diagram is invalid, or <code>Mermaid syntax error</code></summary><div class="fb"><p>The agent wrote Mermaid that Excalidraw can't draw, so nothing changed on the canvas. Click <strong>Regenerate (auto-fix)</strong> under the answer, or reply in the chat: <strong>That diagram has a syntax error, fix it</strong>.</p></div></details>
+  <details class="fold"><summary>There's no brain in the sidebar</summary><div class="fb"><p><code>AppSidebar.tsx</code> wasn't replaced, or wasn't saved. Do Files 3 and 5 of Step 5 again: copy its box, select everything in the file, paste, and save. The page reloads by itself.</p></div></details>
+  <details class="fold"><summary><code>No matching export in "components/AppSidebar.tsx" for import "AppSidebar"</code></summary><div class="fb"><p><code>AppSidebar.tsx</code> got another file's code, usually because the clipboard still held the box before it. Open <code>AppSidebar.tsx</code>, click <strong>Copy</strong> on the File 5 box, select everything in the file (<kbd>Cmd</kbd>+<kbd>A</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>A</kbd> on Windows and Linux), paste, and save. Its first line is <code>import { DefaultSidebar, Sidebar, THEME } from "@excalidraw/excalidraw";</code>. If the terminal still shows the error, stop the app with <kbd>Ctrl</kbd>+<kbd>C</kbd> and run <code>yarn start</code> again.</p></div></details>
   <details class="fold"><summary>A red error box covers the page, or the page is blank</summary><div class="fb"><p>A file wasn't pasted fully or wasn't saved. The red box, or the terminal, names the file. Copy that file's box in Step 5 again, paste over everything, and save. The page reloads by itself.</p></div></details>
   <details class="fold"><summary>The app opened on a different port</summary><div class="fb"><p>Something else is using port 3001, so Vite took the next free one and printed it, for example <code>localhost:3002</code>. Open that.</p></div></details>
 
   <h2>Take it further</h2>
   <ul>
-    <li>Change how the agent draws: edit the instructions in <code>diagram-agent.pipe</code> (for example "Group the parts into subgraphs"), save, and run the Step 6 command again. Each deploy is a new version, v2, v3 and so on, and your team moves to it.</li>
+    <li>Change how the agent draws: edit the instructions in <code>pipelines/diagram-agent.pipe</code> (for example "Group the parts into subgraphs"), save, and run the two Step 6 commands again. Each deploy is a new version, v2, v3 and so on, and your team moves to it.</li>
     <li>Let the agent read more of GitHub: add a second <code>whitelistPattern</code> to the GitHub tool, such as <code>"^https://api\\.github\\.com/repos/"</code>, and tell it in the instructions what it can find there.</li>
   </ul>
   <div class="note warn">
@@ -837,7 +1157,7 @@ export const AIComponents = ({
       <tr><td>Terminal</td><td>The text window where you type commands like <code>yarn start</code>.</td></tr>
       <tr><td>Yarn</td><td>The tool that installs a JavaScript project's packages and runs it. Excalidraw uses Yarn 1.</td></tr>
       <tr><td>Workspace</td><td>One app inside a bigger project. Excalidraw's repo holds several; <code>excalidraw-app</code> is the one you run.</td></tr>
-      <tr><td>Vite</td><td>The tool that runs Excalidraw on your laptop and reloads it when a file changes. It reads <code>.env.local</code> when it starts.</td></tr>
+      <tr><td>Vite</td><td>The tool that runs Excalidraw on your laptop and reloads it when a file changes. It reads <code>.env</code> when it starts.</td></tr>
       <tr><td>TypeScript</td><td>JavaScript with types. Your editor uses them to put red squiggles under mistakes.</td></tr>
       <tr><td>API key</td><td>The password a service gives you so your code can call it.</td></tr>
       <tr><td>Deploy</td><td>Copy a pipeline to RocketRide Cloud as a new version, so it runs there instead of on your laptop.</td></tr>
@@ -849,9 +1169,10 @@ export const AIComponents = ({
   <h2>The pieces of this project</h2>
   <div class="grid"><table>
     <tbody>
-      <tr><td>Text to diagram</td><td>The Excalidraw dialog where you describe a diagram in a chat. Your agent answers it.</td></tr>
-      <tr><td><code>.env.local</code></td><td>The settings file with your RocketRide address and your keys. git ignores it, so it never gets committed.</td></tr>
-      <tr><td><code>VITE_</code></td><td>The prefix Vite needs before it passes a setting from <code>.env.local</code> to the app in the browser.</td></tr>
+      <tr><td>Diagram agent tab</td><td>The brain button in Excalidraw's sidebar. It opens the chat where your agent answers.</td></tr>
+      <tr><td><code>.env</code></td><td>The settings file with your RocketRide address and key. <code>rocketride login</code> writes it and tells git to ignore it, so it never gets committed.</td></tr>
+      <tr><td><code>rocketride login</code></td><td>The command that signs you in to RocketRide, makes an API key, and saves it in <code>.env</code>.</td></tr>
+      <tr><td><code>VITE_</code></td><td>The prefix Vite needs before it passes a setting from <code>.env</code> to the app in the browser.</td></tr>
       <tr><td>RocketRide client</td><td>The SDK object in <code>diagramAgent.ts</code> that connects to RocketRide and runs the agent.</td></tr>
       <tr><td>Dev server</td><td>What <code>yarn start</code> starts: Excalidraw at <code>localhost:3001</code> while you work.</td></tr>
       <tr><td>Webhook</td><td>The pipeline step that receives data sent to it, here the chat from Excalidraw.</td></tr>

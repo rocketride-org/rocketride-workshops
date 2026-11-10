@@ -181,6 +181,7 @@ details.fold .fb>:last-child{margin-bottom:12px}
 .src .bar2 button:hover{background:var(--accent); color:#fff}
 .src .bar2 button.ok{background:var(--ok); color:#fff}
 .src pre{margin:0; padding:16px 18px; overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.72; color:#E3E1F4}
+.src.file pre{max-height:min(480px,60vh); overflow-y:auto; overscroll-behavior:contain}
 .src pre .c{color:#7E7BA8; font-style:italic} .src pre .k{color:#FF8F72} .src pre .s{color:#7FDCB0}
 
 /* ============ tables ============ */
@@ -201,6 +202,22 @@ ol.run>li::before{
   display:grid; place-items:center;
 }
 ol.run>li>.src,ol.run>li>.grid{margin-top:12px}
+ol.run>li>p{margin:8px 0 0}
+ol.run>li>b:first-child{color:var(--ink)}
+/* "You should see" line after an action */
+.see{
+  font-size:14.5px; line-height:1.55; color:var(--ink-2); margin:8px 0 0;
+  padding:7px 12px 7px 32px; position:relative; background:var(--ok-soft); border-radius:6px;
+}
+.see::before{content:"✓"; position:absolute; left:12px; top:7px; color:var(--ok); font-weight:700}
+/* one heading per file in a file-by-file walkthrough */
+h3.fileh{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:34px 0 12px; padding-top:18px; border-top:1px solid var(--line)}
+h3.fileh:first-child{margin-top:4px; padding-top:0; border-top:0}
+h3.fileh small{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:600}
+kbd{
+  font-family:var(--mono); font-size:.8em; color:var(--ink); background:var(--paper);
+  border:1px solid var(--line-2); border-bottom-width:2px; border-radius:4px; padding:1px 5px; white-space:nowrap;
+}
 
 /* ============ figures ============ */
 figure{margin:0 0 24px}
@@ -326,7 +343,11 @@ a.btn.ghost:hover{border-color:var(--accent); color:var(--accent-d)}
 .chip.cloud{background:var(--info-soft); color:var(--info)}
 .chip.draft{background:var(--warn-soft); color:var(--warn)}
 .projects{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; margin:0 0 20px}
-.pcard{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:var(--r); background:var(--paper); padding:20px 22px; transition:border-color .14s, box-shadow .14s}
+.pcard{position:relative; display:flex; flex-direction:column; border:1px solid var(--line); border-radius:var(--r); background:var(--paper); padding:20px 22px; transition:border-color .14s, box-shadow .14s}
+.pcard a.cardlink{color:inherit; border:0}
+.pcard a.cardlink::after{content:""; position:absolute; inset:0; border-radius:inherit}
+.pcard:hover a.cardlink{color:var(--accent-d)}
+.pcard .btns{position:relative; z-index:1}
 .pcard:hover{border-color:var(--line-2); box-shadow:var(--shadow)}
 .pcard .top{display:flex; align-items:baseline; gap:14px; margin-bottom:10px}
 .pcard .stepno{font-size:40px}
