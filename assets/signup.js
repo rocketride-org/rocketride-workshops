@@ -31,7 +31,7 @@
               '<p>For the Excalidraw diagram agent.</p>' +
             '</div>' +
             '<div class="pc">' +
-              '<span class="code">EXCALIDRAW_DEMO</span>' +
+              '<span class="code">EXCALIDRAW_WALKTHROUGH</span>' +
               '<button type="button" class="promo-cp">Copy</button>' +
             '</div>' +
           '</div>' +
