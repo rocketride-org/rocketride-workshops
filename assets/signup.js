@@ -1,7 +1,7 @@
 /* Sign-up modal, shared by the hub and every project guide.
    Any element with data-signup opens it. A page whose <body> has data-signup-auto
    also opens it the first time a browser loads that page.
-   It closes only on its × or a click outside the box. Styles live in codelab.css. */
+   It closes on its ×, Esc, or a click outside the box. Styles live in codelab.css. */
 (function(){
   var SIGNUP = 'https://auth.rocketride.ai/ui/v2/login/register';
   var CLOUD = 'https://cloud.rocketride.ai';
@@ -10,35 +10,29 @@
   var html =
     '<dialog class="signup" id="signup" aria-labelledby="signup-title" tabindex="-1" autofocus>' +
       '<button type="button" class="signup-x" data-close aria-label="Close">×</button>' +
-      '<div class="note fac">' +
-        '<b class="k">Before the event</b>' +
-        '<p>Set up once, at home, in about 15 minutes: <a href="' + SETUP + '">SETUP.md</a>. ' +
-        'Every project guide repeats the steps it needs in <strong>Set up at home</strong>.</p>' +
-      '</div>' +
-      '<p class="kicker">Before you start</p>' +
+      '<p class="kicker">Before the event <i>/ 2 minutes</i></p>' +
       '<h2 id="signup-title">Sign up for RocketRide Cloud</h2>' +
-      '<p>Every project deploys to RocketRide Cloud, so do this first, before the event.</p>' +
+      '<p>Every project deploys to your RocketRide Cloud account.</p>' +
       '<ol class="run">' +
-        '<li><b>Open the <a href="' + SIGNUP + '" target="_blank" rel="noopener">RocketRide sign-up page</a></b> and create your account.</li>' +
-        '<li><b>Confirm your email.</b> Open the email RocketRide sends you and click its link.' +
-          '<p class="see">You\'re signed in to RocketRide Cloud.</p>' +
+        '<li><b>Create your account.</b>' +
+          '<div class="btns"><a class="btn" href="' + SIGNUP + '" target="_blank" rel="noopener">Sign up →</a></div>' +
+          '<p class="see">You land on your desktop at cloud.rocketride.ai.</p>' +
         '</li>' +
-        '<li><b>Redeem the promo code.</b> Click <strong>Copy</strong>, then redeem it at ' +
-          '<a href="' + CLOUD + '" target="_blank" rel="noopener">cloud.rocketride.ai</a>.' +
+        '<li><b>Redeem the workshop code.</b> In the <strong>Have a promo code?</strong> bar at the bottom of your ' +
+          '<a href="' + CLOUD + '" target="_blank" rel="noopener">desktop</a>, paste it and click <strong>Redeem</strong>.' +
           '<div class="promo">' +
-            '<div class="pt">' +
-              '<span class="pk">Promo code: Excalidraw demo</span>' +
-              '<p>For the Excalidraw diagram agent.</p>' +
-            '</div>' +
             '<div class="pc">' +
               '<span class="code">EXCALIDRAW_WALKTHROUGH</span>' +
               '<button type="button" class="promo-cp">Copy</button>' +
             '</div>' +
           '</div>' +
+          '<p class="see">Your plan is active. There\'s no subscription to buy.</p>' +
         '</li>' +
       '</ol>' +
-      '<div class="btns">' +
-        '<a class="btn" href="' + SIGNUP + '" target="_blank" rel="noopener">Sign up for RocketRide Cloud →</a>' +
+      '<div class="note">' +
+        '<b class="k">Next, at home</b>' +
+        '<p>Install the tools, add your Anthropic key and download Excalidraw: about 20 minutes, ' +
+        'and much longer on venue wifi. <a href="' + SETUP + '" target="_blank" rel="noopener">Open the setup checklist →</a></p>' +
       '</div>' +
     '</dialog>';
 
@@ -63,8 +57,6 @@
     var r = dialog.getBoundingClientRect();
     if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close();
   });
-  // Esc doesn't close it.
-  dialog.addEventListener('cancel', function(e){ e.preventDefault(); });
 
   // The promo code's Copy button.
   var copy = dialog.querySelector('.promo-cp');
@@ -80,7 +72,9 @@
     });
   }
 
-  if (document.body.hasAttribute('data-signup-auto')) {
+  // Someone who has already started a project is past sign-up: let the feedback ask lead instead.
+  var started = window.rrFeedback && window.rrFeedback.hasProgress && window.rrFeedback.hasProgress();
+  if (document.body.hasAttribute('data-signup-auto') && !started) {
     var SEEN = 'rr.hub.signup-seen.v1', seen = false;
     try { seen = localStorage.getItem(SEEN) === '1'; localStorage.setItem(SEEN, '1'); } catch (e) {}
     if (!seen) open();

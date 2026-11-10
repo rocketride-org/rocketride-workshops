@@ -1,76 +1,84 @@
 # Set up at home
 
-Do this before the workshop. It takes about 15 minutes at home, and much longer on shared venue wifi. Every workshop uses the same setup.
+Do this before the **Zero to Agent** workshop. It takes about 20 minutes at home, and much longer on venue wifi. Do it all, so the hour in the room is spent building.
 
-In the room you start each project yourself, in a terminal, and deploy it from the RocketRide extension. Nothing here is scripted for you. The notebooks only hold the build.
+Each project guide repeats the setup it needs in its **Set up at home** step. This page puts all of it on one list.
 
-## 1. An editor and its extensions
+## 1. Tools
 
-Install one of [VS Code](https://code.visualstudio.com), [Cursor](https://cursor.com) or [Windsurf](https://windsurf.com). You need admin rights on the laptop.
+Install whatever you don't already have:
 
-Then install these extensions from the Extensions view (`Cmd+Shift+X` on Mac, `Ctrl+Shift+X` on Windows and Linux):
+- An editor: [VS Code](https://code.visualstudio.com), [Cursor](https://cursor.com) or [Windsurf](https://windsurf.com)
+- [Node 20 or newer](https://nodejs.org)
+- [git](https://git-scm.com)
+- [Claude Code](https://claude.com/claude-code). It needs a Claude Pro or Max plan, or an Anthropic Console account. Run `claude` once to sign in, then type `/exit`.
 
-- **RocketRide**: its App Builder previews, deploys and publishes your apps.
-- **Python** (`ms-python.python`)
-- **Jupyter** (`ms-toolsai.jupyter`)
-
-## 2. Python 3.10 or newer
-
-```sh
-python3 --version    # Windows: python --version
-```
-
-If it's older than 3.10, install a current version from [python.org](https://www.python.org/downloads/). You install the `rocketride` package yourself as the first step of each project (`python3 -m pip install rocketride`, or `python -m pip` on Windows). From a clone of this repo, `python3 -m pip install -r requirements.txt` installs everything the notebooks use in one go.
-
-## 3. Node, pnpm, Yarn and git
-
-| Tool     | Check            | Install                            | Needed for                                              |
-| -------- | ---------------- | ---------------------------------- | ------------------------------------------------------- |
-| Node 20+ | `node --version` | [nodejs.org](https://nodejs.org)   | Every module: the App Builder and Excalidraw run on it   |
-| pnpm 10+ | `pnpm --version` | `npm install -g pnpm@latest`       | `kanban` and `specter-mutual`: `rocketride app create` and the preview |
-| Yarn 1   | `yarn --version` | `npm install -g yarn`              | `excalidraw-integration`: Excalidraw installs and runs with Yarn 1 |
-| git      | `git --version`  | [git-scm.com](https://git-scm.com) | `excalidraw-integration`, which clones Excalidraw      |
-
-Restart your editor after installing them, so its terminals see them. The hub lists what each module requires.
-
-## 4. A RocketRide Cloud account
-
-1. Sign up at RocketRide Cloud and confirm your email.
-2. **Start a RocketRide Cloud subscription.** Deploying from the App Builder fails without an active subscription.
-3. Find your organization's **developer id**: open the RocketRide App Builder's **Deploy** tab. If your organization hasn't claimed one, an org admin claims it there. You pass it to `rocketride app create`.
-
-## 5. Your API key
-
-Create an API key at [cloud.rocketride.ai](https://cloud.rocketride.ai) and keep it handy. Each project starts with a `.env` file in the project folder, made with your editor's **New File** button:
+Then open a terminal (**Terminal** on Mac and Linux, **PowerShell** on Windows) and run:
 
 ```sh
-ROCKETRIDE_URI=https://api.rocketride.ai
-ROCKETRIDE_APIKEY=your-api-key
+npm install -g pnpm@latest yarn rocketride@latest
 ```
 
-Then `rocketride init` reads it. (rocketride 1.4.0 can't sign in through the browser, so the key in `.env` is required.) Don't make the file with `echo ... > .env` in PowerShell: that writes UTF-16, and `rocketride` fails with `UnicodeDecodeError ... byte 0xff`. The notebooks' RocketRide client reads the same `.env`.
-
-Never commit a `.env` file or paste a key into a notebook cell.
-
-## 6. Claude Code (kanban board, Specter Mutual)
-
-The kanban board asks [Claude Code](https://claude.com/claude-code) to build the board, and Specter Mutual uses it to run its pipelines and build the portal. Install it and run `claude` once to sign in. Without it, the kanban board's **Files** tab and Specter Mutual's fallback notebooks do the same work; the notebooks also need `python3 -m pip install nbformat`. The kanban board needs no Python: its `rocketride` command comes from `npm install -g rocketride`.
-
-## 7. Select the right kernel
-
-Open a workshop notebook in VS Code, click **Select Kernel** in the top right, choose **Python Environments**, and pick the Python 3.10+ interpreter where you installed `rocketride`.
-
-TODO(joshua): screenshot of the kernel picker with the right interpreter selected.
-
-If the notebook says `No module named 'rocketride'`, the kernel is pointing at a different Python. Pick the interpreter you ran `pip install rocketride` with.
-
-## 8. Check everything
-
-In an empty folder, save the `.env` from step 5, then run:
+Close the terminal and open a new one, then check:
 
 ```sh
-python3 -m pip install rocketride   # Windows: python -m pip install rocketride
-rocketride init
+node --version
+pnpm --version
+yarn --version
+rocketride --version
+git --version
 ```
 
-If init ends with `Workspace initialized against https://api.rocketride.ai`, you're set. Delete the folder, or keep it for the workshop.
+You should see Node `v20` or higher, pnpm `10` or higher, Yarn `1.x`, RocketRide `1.6.0` or higher, and any git.
+
+- **Mac or Linux, `EACCES: permission denied`:** put `sudo` in front of the install command.
+- **Windows, `running scripts is disabled on this system`:** run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then open a new PowerShell.
+
+Finally, in your editor, open Extensions (`Cmd+Shift+X` on Mac, `Ctrl+Shift+X` on Windows and Linux), search **RocketRide** and click **Install**. Specter Mutual uses it.
+
+## 2. RocketRide Cloud account
+
+1. [Sign up for RocketRide Cloud](https://auth.rocketride.ai/ui/v2/login/register) and confirm your email.
+2. On your desktop at [cloud.rocketride.ai](https://cloud.rocketride.ai), find the **Have a promo code?** bar at the bottom. Enter `EXCALIDRAW_WALKTHROUGH` and click **Redeem**. The code activates your plan, so you don't need to buy a subscription.
+
+Your new account is its own organization, and you are its admin.
+
+## 3. Developer id
+
+Every app id starts with your developer id, for example `yourname_dev.kanban`. Sign in, then claim one. Pick something like `yourname_dev`, using letters and underscores. You can't rename it later.
+
+```sh
+rocketride login --uri https://api.rocketride.ai
+rocketride app developer register yourname_dev
+```
+
+## 4. Anthropic key (Excalidraw and Specter Mutual)
+
+1. Create an API key at [console.anthropic.com](https://console.anthropic.com). The account needs a few dollars of credit. The key starts with `sk-ant-api03-`.
+2. At [cloud.rocketride.ai](https://cloud.rocketride.ai), open the menu at the bottom of the sidebar, then **Settings → Environment Variables**.
+3. Add a user variable named `ROCKETRIDE_ANTHROPIC_KEY`, with your key as the value.
+
+Your agents read the key from RocketRide Cloud, so it never sits on your laptop.
+
+## 5. Download Excalidraw (about 900 MB)
+
+This is the slow part. Do it at home:
+
+```sh
+git clone https://github.com/excalidraw/excalidraw.git
+cd excalidraw
+git checkout 701b901
+yarn workspace excalidraw-app add rocketride@1.6.0
+```
+
+The last command installs Excalidraw and the RocketRide SDK. It ends with `Done`. Remember where the `excalidraw` folder is.
+
+## Ready
+
+- [ ] Five version numbers in the terminal, and the RocketRide extension installed
+- [ ] Signed up, email confirmed, workshop code redeemed
+- [ ] Developer id claimed
+- [ ] `ROCKETRIDE_ANTHROPIC_KEY` saved in RocketRide Cloud
+- [ ] An `excalidraw` folder with its packages installed
+
+Stuck? Ask in the [RocketRide Discord](https://discord.gg/PMXrtenMsY), or come 10 minutes early for the help desk.

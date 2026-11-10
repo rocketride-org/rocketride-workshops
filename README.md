@@ -47,9 +47,9 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
   <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/kanban"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>From an empty folder to a deployed app in 5 minutes. Start a RocketRide project with two commands (<code>rocketride init</code>, <code>rocketride app create</code>), have Claude Code build a kanban to-do board (or paste the finished file), then deploy and publish it to your desktop on cloud.rocketride.ai with one more: <code>rocketride app deploy kanban --publish @me</code>. UI only, no pipeline.</p>
+<p>From an empty folder to a deployed app in 10 minutes. Start a RocketRide project with two commands (<code>rocketride init</code>, <code>rocketride app create</code>), have Claude Code build a kanban to-do board (or paste the finished file), then deploy and publish it to your desktop on cloud.rocketride.ai with one more: <code>rocketride app deploy kanban --publish @me</code>. UI only, no pipeline.</p>
 
-<p><sub><b>5 min</b> &nbsp;·&nbsp; rocketride init → app create → Claude builds the board → app deploy --publish @me &nbsp;·&nbsp; needs Node 20+, pnpm 10+, the npm rocketride CLI, Claude Code</sub></p>
+<p><sub><b>10 min</b> &nbsp;·&nbsp; rocketride init → app create → Claude builds the board → app deploy --publish @me &nbsp;·&nbsp; needs Node 20+, pnpm 10+, the npm rocketride CLI, Claude Code</sub></p>
 
 </div>
 
@@ -63,10 +63,10 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
   <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/excalidraw-integration"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>Put a RocketRide agent behind Excalidraw's <b>Text to diagram</b> dialog. Clone Excalidraw, add the RocketRide TypeScript SDK, and paste two files. Ask about a public GitHub repo and the agent reads it with a read-only GitHub tool, then answers with a Mermaid diagram that Excalidraw draws on the canvas.</p>
+<p>Give Excalidraw a RocketRide agent in a new tab of its sidebar. Clone Excalidraw at home, add the RocketRide TypeScript SDK, then have Claude Code build the tab (or paste the files). Name a public GitHub repo in the chat and the agent reads it with a read-only GitHub tool, then draws its architecture on the canvas.</p>
 
 
-<p><sub><b>15 min</b> &nbsp;·&nbsp; clone Excalidraw → add the SDK → paste the agent → ask Text to diagram about a repo &nbsp;·&nbsp; needs Node 20+, Yarn 1, git</sub></p>
+<p><sub><b>15 min</b> &nbsp;·&nbsp; clone Excalidraw at home → add the agent's tab → deploy the pipeline → ask it about a repo &nbsp;·&nbsp; needs Node 20+, Yarn 1, git</sub></p>
 
 </div>
 
@@ -85,7 +85,7 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 <img src="images/specter-mutual.png" alt="The Specter Mutual claims portal: a claim form on the left, the escalation queue and audit log on the right" width="75%">
 
 
-<p><sub><b>40 min</b> &nbsp;·&nbsp; rocketride init → paste the pipelines, run them with Claude → paste the logic, Claude builds the UI → deploy from the App Builder &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, Claude Code</sub></p>
+<p><sub><b>35 min</b> &nbsp;·&nbsp; New App wizard → paste the agent pipeline, try it on test claims → paste the logic, Claude builds the UI → deploy from the App Builder &nbsp;·&nbsp; needs the RocketRide extension, Node 20+, pnpm 10+, Claude Code</sub></p>
 
 </div>
 

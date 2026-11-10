@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../../assets/tokens.css">
 <link rel="stylesheet" href="../../assets/codelab.css">
 </head>
-<body data-key="zero-to-agent.kanban">
+<body data-key="zero-to-agent.kanban" data-next="../excalidraw-integration/index.html" data-next-title="Give Excalidraw a diagram agent">
 
 <div class="bar">
   <div class="bar-in">
@@ -39,11 +39,11 @@
       <p class="kicker">RocketRide workshop <i>/ project 1 of 3</i></p>
       <h1>Kanban board</h1>
       <p class="sub">Zero to Agent</p>
-      <p class="lede">In 5 minutes you go from an empty folder to a to-do app running on RocketRide Cloud.</p>
+      <p class="lede">In 10 minutes you go from an empty folder to a to-do app running on RocketRide Cloud.</p>
     </div>
   </div>
 
-  <p>The <strong>kanban board</strong> has three columns, <strong>To do</strong>, <strong>Doing</strong> and <strong>Done</strong>. You add cards, drag them from column to column, and they're still there next time you open it. It's a RocketRide <strong>app</strong>: a small web page that RocketRide shows in its own window, with your theme and sign-in already in place. It's all screen, with no AI behind it, so it's the quickest way to see how an app gets from your laptop to the cloud.</p>
+  <p>A three-column to-do board (<strong>To do</strong>, <strong>Doing</strong>, <strong>Done</strong>) that saves your cards. No AI yet: it's the fastest way to see an app go from your laptop to the cloud.</p>
 
   <div class="btns"><button type="button" class="signup-open" data-signup>Sign up for RocketRide Cloud</button></div>
 
@@ -52,8 +52,8 @@
     <tbody>
       <tr><td>At home</td><td>2. Install the tools and sign in</td></tr>
       <tr><td>0:00</td><td>3. Start the project: two commands</td></tr>
-      <tr><td>0:01</td><td>4. Build the board: Claude Code, or paste one file</td></tr>
-      <tr><td>0:03</td><td>5. Deploy it: one command</td></tr>
+      <tr><td>0:02</td><td>4. Build the board: Claude Code, or paste one file</td></tr>
+      <tr><td>0:06</td><td>5. Deploy it: one command</td></tr>
     </tbody>
   </table></div>
 
@@ -61,16 +61,12 @@
     <b class="k">Done when</b>
     <p>Your kanban board opens from your desktop on cloud.rocketride.ai.</p>
   </div>
-  <div class="note">
-    <b class="k">How to use this page</b>
-    <p>Do the numbered actions in order, one at a time. Anything you type is in a box with a <strong>Copy</strong> button. A green ✓ line tells you what you should see. Stuck? Open the grey boxes under each step.</p>
-  </div>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You know what you're building.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>You've signed up for RocketRide Cloud.</span></label>
 </section>
 
 <!-- ===== 2 ===== -->
-<section class="phase" data-title="Set up at home" data-dur="15">
+<section class="phase" data-title="Set up at home" data-dur="0">
 
   <div class="lead">
     <span class="stepno">02</span>
@@ -94,8 +90,8 @@ pnpm --version
 rocketride --version</pre></div>
       <p class="see">Three version numbers: Node <code>v20</code> or higher, pnpm <code>10</code> or higher, RocketRide <code>1.6.0</code> or higher.</p>
     </li>
-    <li><b>Sign in to Claude Code.</b> Run <code>claude</code>, follow its sign-in, then type <code>/exit</code> and press <kbd>Enter</kbd>.</li>
-    <li><b>Make a RocketRide Cloud account.</b> Sign up at <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a>, confirm your email, and start a subscription.</li>
+    <li><b>Sign in to Claude Code.</b> Run <code>claude</code>, follow its sign-in, then type <code>/exit</code> and press <kbd>Enter</kbd>. It needs a Claude Pro or Max plan, or an Anthropic Console account. No plan? Skip this and use the <strong>Files</strong> tab in Step 4.</li>
+    <li><b>Make a RocketRide Cloud account.</b> <a href="https://auth.rocketride.ai/ui/v2/login/register" data-signup>Sign up for RocketRide Cloud</a> (the <strong>Sign up</strong> button at the top of this page), confirm your email, then redeem the workshop code <code>EXCALIDRAW_WALKTHROUGH</code> in the <strong>Have a promo code?</strong> bar at the bottom of your desktop at cloud.rocketride.ai. The code activates your plan: you don't need to buy a subscription. Kanban needs no model key.</li>
     <li><b>Make the project folder and go into it.</b> Paste this and press <kbd>Enter</kbd>:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>mkdir kanban
 cd kanban</pre></div>
@@ -105,12 +101,12 @@ cd kanban</pre></div>
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride login --uri https://api.rocketride.ai</pre></div>
       <p class="see">The browser says <strong>You're signed in</strong>. The terminal says <code>Signed in as</code> and your name, then a line that starts <code>Saved ROCKETRIDE_URI</code>.</p>
     </li>
-    <li><b>Check your developer id.</b> Every app id starts with your organization's developer id, for example <code>acme_labs.kanban</code>. Paste this and press <kbd>Enter</kbd>:
+    <li><b>Check your developer id.</b> Every app id starts with it, for example <code>yourname_dev.kanban</code>. Paste this and press <kbd>Enter</kbd>:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app developer status</pre></div>
-      <p class="see">Your organization's developer id. If it says there isn't one, do the next action.</p>
+      <p class="see">Your developer id. A new account doesn't have one yet: do the next action.</p>
     </li>
-    <li><b>Claim one, only if there isn't one.</b> Copy this, put your chosen name in place of <code>your_developer_id</code> (lowercase letters and underscores, for example <code>acme_labs</code>), and press <kbd>Enter</kbd>. It can't be renamed or removed afterwards, and only an org admin can claim it.
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app developer register your_developer_id</pre></div>
+    <li><b>Claim one, if you don't have one.</b> Pick something like <code>yourname_dev</code> (letters and underscores). It can't be renamed later. Copy this, put your pick in place of <code>yourname_dev</code>, and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app developer register yourname_dev</pre></div>
     </li>
   </ol>
 
@@ -126,12 +122,12 @@ cd kanban</pre></div>
 </section>
 
 <!-- ===== 3 ===== -->
-<section class="phase" data-title="Start the project" data-dur="1">
+<section class="phase" data-title="Start the project" data-dur="2">
 
   <div class="lead">
     <span class="stepno">03</span>
     <div>
-      <p class="kicker">In the room <i>/ 1 minute</i></p>
+      <p class="kicker">In the room <i>/ 2 minutes</i></p>
       <h1>Start the project</h1>
       <p class="lede">Turn your <code>kanban</code> folder into a RocketRide project with an app in it. This is how every RocketRide project starts.</p>
     </div>
@@ -153,32 +149,21 @@ cd kanban</pre></div>
   </ol>
   <div class="note good"><b class="k">Done when</b><p><code>apps/kanban-ui</code> is in the Explorer.</p></div>
 
-  <details class="fold"><summary>What's in <code>apps/kanban-ui</code></summary><div class="fb">
-    <div class="grid"><table>
-      <thead><tr><th>File</th><th>What it is</th></tr></thead>
-      <tbody>
-        <tr><td><code>src/App.tsx</code></td><td>The screen. Step 4 replaces it with the board.</td></tr>
-        <tr><td><code>package.json</code></td><td>The app's manifest: its id, name, icon and the packages it uses.</td></tr>
-        <tr><td><code>kanban.rrapp</code></td><td>Opens the app in the App Builder, if you have the RocketRide extension.</td></tr>
-        <tr><td><code>icon.svg</code>, <code>README.md</code></td><td>The app's icon and store listing.</td></tr>
-      </tbody>
-    </table></div>
-  </div></details>
   <details class="fold"><summary>The browser opens to sign in</summary><div class="fb"><p>You didn't sign in at home, or you're in a different folder. Sign in in the browser; the command carries on by itself. If the folder is wrong, check the line where you type ends in <code>kanban</code>.</p></div></details>
   <details class="fold"><summary><code>rocketride</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>Run <code>npm install -g pnpm@latest rocketride@latest</code>, close the editor's terminal, open a new one, and run the command again.</p></div></details>
-  <details class="fold"><summary><code>app create</code> warns it's using <code>'local'</code></summary><div class="fb"><p>It couldn't find your organization's developer id, so the app id starts with <code>local</code>, and deploying will fail. Run <code>rocketride app developer status</code> and, if there isn't one, claim it (Step 2). Then delete the <code>apps/kanban-ui</code> folder and make the app again with your id, putting it in place of <code>your_developer_id</code>:</p>
-    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app create kanban --name "Kanban" --developer your_developer_id</pre></div></div></details>
+  <details class="fold"><summary><code>app create</code> warns it's using <code>'local'</code></summary><div class="fb"><p>It couldn't find your developer id, so the app id starts with <code>local</code>, and deploying will fail. Run <code>rocketride app developer status</code> and, if there isn't one, claim it (Step 2). Then delete the <code>apps/kanban-ui</code> folder and make the app again with your id, putting it in place of <code>yourname_dev</code>:</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app create kanban --name "Kanban" --developer yourname_dev</pre></div></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b><code>apps/kanban-ui</code> exists.</span></label>
 </section>
 
 <!-- ===== 4 ===== -->
-<section class="phase" data-title="Build the board" data-dur="2">
+<section class="phase" data-title="Build the board" data-dur="4">
 
   <div class="lead">
     <span class="stepno">04</span>
     <div>
-      <p class="kicker">The build <i>/ 2 minutes</i></p>
+      <p class="kicker">The build <i>/ 4 minutes</i></p>
       <h1>Build the board</h1>
       <p class="lede">Replace the starter screen with the kanban board. Pick one tab: Claude Code writes it for you, or you paste the finished file.</p>
     </div>
@@ -197,7 +182,9 @@ cd kanban</pre></div>
 
 - Three columns side by side: To do, Doing and Done, each showing how many cards it holds.
 - Above them, a text box and an "Add card" button. Adding (or pressing Enter) puts a new card in To do and clears the box.
-- Cards can be dragged from one column to another. Each card also has a left arrow and a right arrow button to move it one column, and an x button to delete it.
+- Edit a card in place: double-click its text or click its pencil button. Enter or clicking away saves, Esc cancels, and an empty edit keeps the old text.
+- Drag a card to another column, or up and down within a column to reorder it. While dragging, show a line where it will land and highlight that column.
+- Each card also has a left arrow and a right arrow button to move it one column, and an x button to delete it.
 - Start with three example cards, one in each column.
 - Save the cards with useWorkspace() from "shell": read appState.cards, write them with updateAppState((prev) =&gt; ({ ...prev, cards })), and show "Loading your board…" until loaded is true.
 - Wrap the board in &lt;AppLayout showStatus&gt; from "shell".
@@ -206,7 +193,7 @@ cd kanban</pre></div>
 Then run pnpm typecheck in apps/kanban-ui and fix anything it reports.</pre></div>
         </li>
         <li><b>Paste it into Claude Code and press <kbd>Enter</kbd>.</b></li>
-        <li><b>Wait for it to finish.</b> Claude reads the <code>CLAUDE.md</code> and RocketRide docs that init added, then writes the board. When it asks to edit a file or run a command, allow it.
+        <li><b>Wait for it to finish.</b> Claude reads the <code>CLAUDE.md</code> and RocketRide docs that init added, then writes the board. When it asks permission to edit a file or run a command, choose <strong>Yes, and don't ask again for this session</strong>.
           <p class="see">Claude says it has rewritten <code>apps/kanban-ui/src/App.tsx</code> and the typecheck passes.</p>
         </li>
         <li><b>Leave Claude Code:</b> type <code>/exit</code> and press <kbd>Enter</kbd>.</li>
@@ -221,7 +208,7 @@ Then run pnpm typecheck in apps/kanban-ui and fix anything it reports.</pre></di
         <li><b>Copy the board.</b> Click <strong>Copy</strong> on this box:
       <div class="src file"><div class="bar2"><span>apps/kanban-ui/src/App.tsx</span><button class="cp-btn">Copy</button></div><pre>/**
  * Kanban: a to-do board with three columns, rendered by the RocketRide shell.
- * Cards are saved in the workspace&#x27;s appState, so they&#x27;re still there next time.
+ * Add, edit, delete and drag cards. They&#x27;re saved in the workspace&#x27;s appState, so they&#x27;re still there next time.
  */
 
 import React, { useState } from &#x27;react&#x27;;
@@ -229,6 +216,8 @@ import { AppLayout, useWorkspace } from &#x27;shell&#x27;;
 
 type Column = &#x27;todo&#x27; | &#x27;doing&#x27; | &#x27;done&#x27;;
 type Card = { id: string; text: string; column: Column };
+/** Where a dragged card will land: in a column, before a card (or at the end when before is null). */
+type DropAt = { column: Column; before: string | null };
 
 const COLUMNS: { id: Column; title: string }[] = [
 	{ id: &#x27;todo&#x27;, title: &#x27;To do&#x27; },
@@ -238,14 +227,16 @@ const COLUMNS: { id: Column; title: string }[] = [
 
 const STARTER: Card[] = [
 	{ id: &#x27;c1&#x27;, text: &#x27;Add your first card&#x27;, column: &#x27;todo&#x27; },
-	{ id: &#x27;c2&#x27;, text: &#x27;Drag a card to another column&#x27;, column: &#x27;doing&#x27; },
-	{ id: &#x27;c3&#x27;, text: &#x27;Deploy the board to RocketRide Cloud&#x27;, column: &#x27;done&#x27; },
+	{ id: &#x27;c2&#x27;, text: &#x27;Double-click a card to edit it&#x27;, column: &#x27;doing&#x27; },
+	{ id: &#x27;c3&#x27;, text: &#x27;Drag a card to another column&#x27;, column: &#x27;done&#x27; },
 ];
 
 const Board: React.FC = () =&gt; {
 	const { appState, updateAppState, loaded } = useWorkspace();
 	const [draft, setDraft] = useState(&#x27;&#x27;);
+	const [editing, setEditing] = useState&lt;{ id: string; text: string } | null&gt;(null);
 	const [dragging, setDragging] = useState&lt;string | null&gt;(null);
+	const [dropAt, setDropAt] = useState&lt;DropAt | null&gt;(null);
 
 	const cards = (appState.cards as Card[] | undefined) ?? STARTER;
 	const save = (next: Card[]) =&gt; {
@@ -260,16 +251,53 @@ const Board: React.FC = () =&gt; {
 		save([...cards, { id: `c${Date.now()}`, text, column: &#x27;todo&#x27; }]);
 		setDraft(&#x27;&#x27;);
 	};
-	const move = (id: string, column: Column) =&gt; {
-		save(cards.map((card) =&gt; (card.id === id ? { ...card, column } : card)));
-	};
 	const remove = (id: string) =&gt; {
 		save(cards.filter((card) =&gt; card.id !== id));
+	};
+
+	// Editing: Enter or clicking away saves, Esc cancels. Saving an empty card keeps the old text.
+	const startEdit = (card: Card) =&gt; {
+		setEditing({ id: card.id, text: card.text });
+	};
+	const finishEdit = () =&gt; {
+		if (!editing) {
+			return;
+		}
+		const text = editing.text.trim();
+		if (text) {
+			save(cards.map((card) =&gt; (card.id === editing.id ? { ...card, text } : card)));
+		}
+		setEditing(null);
+	};
+
+	/** Move a card into a column, before another card, or to the column&#x27;s end when before is null. */
+	const place = (id: string, column: Column, before: string | null) =&gt; {
+		const card = cards.find((c) =&gt; c.id === id);
+		if (!card || id === before) {
+			return;
+		}
+		const rest = cards.filter((c) =&gt; c.id !== id);
+		const moved = { ...card, column };
+		const at = before ? rest.findIndex((c) =&gt; c.id === before) : -1;
+		save(at &lt; 0 ? [...rest, moved] : [...rest.slice(0, at), moved, ...rest.slice(at)]);
+	};
+
+	const endDrag = () =&gt; {
+		setDragging(null);
+		setDropAt(null);
+	};
+	const drop = () =&gt; {
+		if (dragging &amp;&amp; dropAt) {
+			place(dragging, dropAt.column, dropAt.before);
+		}
+		endDrag();
 	};
 
 	if (!loaded) {
 		return &lt;div style={styles.loading}&gt;Loading your board…&lt;/div&gt;;
 	}
+
+	const marker = &lt;div style={styles.marker} /&gt;;
 
 	return (
 		&lt;div style={styles.board}&gt;
@@ -294,72 +322,137 @@ const Board: React.FC = () =&gt; {
 			&lt;div style={styles.columns}&gt;
 				{COLUMNS.map((column, index) =&gt; {
 					const inColumn = cards.filter((card) =&gt; card.column === column.id);
+					const landing = dragging !== null &amp;&amp; dropAt?.column === column.id;
 					return (
 						&lt;section
 							key={column.id}
-							style={styles.column}
+							style={{ ...styles.column, ...(landing ? styles.columnOver : {}) }}
 							onDragOver={(e) =&gt; {
+								// Over the column but not over a card: the card lands at the end.
 								e.preventDefault();
-							}}
-							onDrop={() =&gt; {
-								if (dragging) {
-									move(dragging, column.id);
+								if (dropAt?.column !== column.id || dropAt.before !== null) {
+									setDropAt({ column: column.id, before: null });
 								}
-								setDragging(null);
+							}}
+							onDrop={(e) =&gt; {
+								e.preventDefault();
+								drop();
 							}}
 						&gt;
 							&lt;h2 style={styles.columnTitle}&gt;
 								{column.title} &lt;span style={styles.count}&gt;{inColumn.length}&lt;/span&gt;
 							&lt;/h2&gt;
-							{inColumn.map((card) =&gt; (
-								&lt;div
-									key={card.id}
-									draggable
-									onDragStart={() =&gt; {
-										setDragging(card.id);
-									}}
-									onDragEnd={() =&gt; {
-										setDragging(null);
-									}}
-									style={{ ...styles.card, opacity: dragging === card.id ? 0.5 : 1 }}
-								&gt;
-									&lt;span style={styles.cardText}&gt;{card.text}&lt;/span&gt;
-									&lt;span style={styles.cardActions}&gt;
-										{index &gt; 0 &amp;&amp; (
-											&lt;button
-												title={`Move to ${COLUMNS[index - 1].title}`}
-												onClick={() =&gt; {
-													move(card.id, COLUMNS[index - 1].id);
-												}}
-												style={styles.iconButton}
-											&gt;
-												←
-											&lt;/button&gt;
-										)}
-										{index &lt; COLUMNS.length - 1 &amp;&amp; (
-											&lt;button
-												title={`Move to ${COLUMNS[index + 1].title}`}
-												onClick={() =&gt; {
-													move(card.id, COLUMNS[index + 1].id);
-												}}
-												style={styles.iconButton}
-											&gt;
-												→
-											&lt;/button&gt;
-										)}
-										&lt;button
-											title=&quot;Delete&quot;
-											onClick={() =&gt; {
-												remove(card.id);
+							{inColumn.map((card, k) =&gt; {
+								const isEditing = editing?.id === card.id;
+								return (
+									&lt;React.Fragment key={card.id}&gt;
+										{landing &amp;&amp; dropAt?.before === card.id &amp;&amp; marker}
+										&lt;div
+											draggable={!isEditing}
+											onDragStart={(e) =&gt; {
+												// Firefox only starts a drag when it carries data.
+												e.dataTransfer.setData(&#x27;text/plain&#x27;, card.id);
+												e.dataTransfer.effectAllowed = &#x27;move&#x27;;
+												setDragging(card.id);
 											}}
-											style={styles.iconButton}
+											onDragEnd={endDrag}
+											onDragOver={(e) =&gt; {
+												// Top half of a card: land before it. Bottom half: land before the next one.
+												e.preventDefault();
+												e.stopPropagation();
+												const box = e.currentTarget.getBoundingClientRect();
+												const below = e.clientY &gt; box.top + box.height / 2;
+												const before = below ? (inColumn[k + 1]?.id ?? null) : card.id;
+												if (dropAt?.column !== column.id || dropAt.before !== before) {
+													setDropAt({ column: column.id, before });
+												}
+											}}
+											onDrop={(e) =&gt; {
+												e.preventDefault();
+												e.stopPropagation();
+												drop();
+											}}
+											style={{ ...styles.card, opacity: dragging === card.id ? 0.4 : 1, cursor: isEditing ? &#x27;auto&#x27; : &#x27;grab&#x27; }}
 										&gt;
-											×
-										&lt;/button&gt;
-									&lt;/span&gt;
-								&lt;/div&gt;
-							))}
-							{inColumn.length === 0 &amp;&amp; &lt;div style={styles.empty}&gt;Drop a card here&lt;/div&gt;}
+											{isEditing ? (
+												&lt;input
+													autoFocus
+													value={editing.text}
+													onChange={(e) =&gt; {
+														setEditing({ id: card.id, text: e.target.value });
+													}}
+													onKeyDown={(e) =&gt; {
+														if (e.key === &#x27;Enter&#x27;) {
+															finishEdit();
+														}
+														if (e.key === &#x27;Escape&#x27;) {
+															setEditing(null);
+														}
+													}}
+													onBlur={finishEdit}
+													style={styles.editInput}
+												/&gt;
+											) : (
+												&lt;span
+													title=&quot;Double-click to edit&quot;
+													onDoubleClick={() =&gt; {
+														startEdit(card);
+													}}
+													style={styles.cardText}
+												&gt;
+													{card.text}
+												&lt;/span&gt;
+											)}
+											{!isEditing &amp;&amp; (
+												&lt;span style={styles.cardActions}&gt;
+													{index &gt; 0 &amp;&amp; (
+														&lt;button
+															title={`Move to ${COLUMNS[index - 1].title}`}
+															onClick={() =&gt; {
+																place(card.id, COLUMNS[index - 1].id, null);
+															}}
+															style={styles.iconButton}
+														&gt;
+															←
+														&lt;/button&gt;
+													)}
+													{index &lt; COLUMNS.length - 1 &amp;&amp; (
+														&lt;button
+															title={`Move to ${COLUMNS[index + 1].title}`}
+															onClick={() =&gt; {
+																place(card.id, COLUMNS[index + 1].id, null);
+															}}
+															style={styles.iconButton}
+														&gt;
+															→
+														&lt;/button&gt;
+													)}
+													&lt;button
+														title=&quot;Edit&quot;
+														onClick={() =&gt; {
+															startEdit(card);
+														}}
+														style={styles.iconButton}
+													&gt;
+														✎
+													&lt;/button&gt;
+													&lt;button
+														title=&quot;Delete&quot;
+														onClick={() =&gt; {
+															remove(card.id);
+														}}
+														style={styles.iconButton}
+													&gt;
+														×
+													&lt;/button&gt;
+												&lt;/span&gt;
+											)}
+										&lt;/div&gt;
+									&lt;/React.Fragment&gt;
+								);
+							})}
+							{landing &amp;&amp; dropAt?.before === null &amp;&amp; marker}
+							{inColumn.length === 0 &amp;&amp; !landing &amp;&amp; &lt;div style={styles.empty}&gt;Drop a card here&lt;/div&gt;}
 						&lt;/section&gt;
 					);
 				})}
@@ -376,12 +469,15 @@ const styles: Record&lt;string, React.CSSProperties&gt; = {
 	addButton: { fontSize: 14, padding: &#x27;8px 14px&#x27;, borderRadius: 6, border: &#x27;none&#x27;, cursor: &#x27;pointer&#x27;, background: &#x27;var(--rr-accent, #3b82f6)&#x27;, color: &#x27;#fff&#x27; },
 	columns: { display: &#x27;grid&#x27;, gridTemplateColumns: &#x27;repeat(3, minmax(0, 1fr))&#x27;, gap: 16, alignItems: &#x27;start&#x27; },
 	column: { display: &#x27;flex&#x27;, flexDirection: &#x27;column&#x27;, gap: 8, minHeight: 200, padding: 12, borderRadius: 8, background: &#x27;var(--rr-bg-surface, #f4f4f5)&#x27;, border: &#x27;1px solid var(--rr-border, #e4e4e7)&#x27; },
+	columnOver: { borderColor: &#x27;var(--rr-accent, #3b82f6)&#x27; },
 	columnTitle: { margin: &#x27;0 0 4px&#x27;, fontSize: 14, fontWeight: 600, display: &#x27;flex&#x27;, alignItems: &#x27;center&#x27;, gap: 8 },
 	count: { fontSize: 12, fontWeight: 500, color: &#x27;var(--rr-text-secondary, #666)&#x27; },
-	card: { display: &#x27;flex&#x27;, alignItems: &#x27;center&#x27;, gap: 8, padding: &#x27;10px 12px&#x27;, borderRadius: 6, cursor: &#x27;grab&#x27;, background: &#x27;var(--rr-bg-paper, #fff)&#x27;, border: &#x27;1px solid var(--rr-border, #e4e4e7)&#x27; },
+	card: { display: &#x27;flex&#x27;, alignItems: &#x27;center&#x27;, gap: 8, padding: &#x27;10px 12px&#x27;, borderRadius: 6, background: &#x27;var(--rr-bg-paper, #fff)&#x27;, border: &#x27;1px solid var(--rr-border, #e4e4e7)&#x27; },
 	cardText: { flex: 1, fontSize: 14, overflowWrap: &#x27;anywhere&#x27; },
+	editInput: { flex: 1, minWidth: 0, fontSize: 14, padding: &#x27;4px 6px&#x27;, borderRadius: 4, border: &#x27;1px solid var(--rr-accent, #3b82f6)&#x27;, background: &#x27;var(--rr-bg-input, #fff)&#x27;, color: &#x27;var(--rr-text-primary, #111)&#x27; },
 	cardActions: { display: &#x27;flex&#x27;, gap: 2 },
 	iconButton: { fontSize: 14, lineHeight: 1, padding: &#x27;4px 6px&#x27;, border: &#x27;none&#x27;, borderRadius: 4, cursor: &#x27;pointer&#x27;, background: &#x27;transparent&#x27;, color: &#x27;var(--rr-text-secondary, #666)&#x27; },
+	marker: { height: 3, borderRadius: 2, background: &#x27;var(--rr-accent, #3b82f6)&#x27; },
 	empty: { padding: &#x27;16px 0&#x27;, textAlign: &#x27;center&#x27;, fontSize: 13, color: &#x27;var(--rr-text-disabled, #999)&#x27; },
 };
 
@@ -406,20 +502,19 @@ export default App;</pre></div>
   </div>
   <div class="note good"><b class="k">Done when</b><p><code>apps/kanban-ui/src/App.tsx</code> holds the board and is saved.</p></div>
 
-  <details class="fold"><summary>Want to see it before you deploy?</summary><div class="fb"><p>With the RocketRide extension installed, click <code>apps/kanban-ui/kanban.rrapp</code> in the Explorer. The App Builder opens: click <strong>Design</strong>, then <strong>Preview</strong>. The first build takes a moment. Skip this if you're short on time: Step 5 shows it on the cloud anyway.</p></div></details>
   <details class="fold"><summary>A line has a red squiggle</summary><div class="fb"><p>Usually a partial paste. Select everything in <code>App.tsx</code>, copy the box in the <strong>Files</strong> tab again, paste over it, and save.</p></div></details>
-  <details class="fold"><summary>Claude Code isn't installed or won't sign in</summary><div class="fb"><p>Use the <strong>Files</strong> tab instead. It gives you the same board.</p></div></details>
+  <details class="fold"><summary>Claude Code isn't installed, won't sign in, or you have no Claude plan</summary><div class="fb"><p>Use the <strong>Files</strong> tab instead. It gives you the same board.</p></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The board is in <code>App.tsx</code>, saved.</span></label>
 </section>
 
 <!-- ===== 5 ===== -->
-<section class="phase" data-title="Deploy it" data-dur="2">
+<section class="phase" data-title="Deploy it" data-dur="4">
 
   <div class="lead">
     <span class="stepno">05</span>
     <div>
-      <p class="kicker">The finish <i>/ 2 minutes</i></p>
+      <p class="kicker">The finish <i>/ 4 minutes</i></p>
       <h1>Deploy it</h1>
       <p class="lede">One command sends the app to RocketRide Cloud, waits while the cloud builds it, and publishes it to your own desktop.</p>
     </div>
@@ -429,31 +524,25 @@ export default App;</pre></div>
     <li><b>Check the terminal is in <code>kanban</code>.</b> The line where you type ends in <code>kanban</code>. If Claude Code is still running, type <code>/exit</code> first.</li>
     <li><b>Deploy and publish.</b> Paste this and press <kbd>Enter</kbd>:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app deploy kanban --publish @me</pre></div>
-      <p class="see"><code>Deployed</code> and your app id with <code>v1</code>, then <code>build v1:</code> lines while the cloud builds it, about a minute. It ends with <code>Published</code>, your app id, <code>v1 to @me</code>.</p>
+      <p class="see"><code>Deployed</code> and your app id with <code>v1</code>, then <code>build v1:</code> lines while the cloud builds it, about a minute. It ends with <code>Published</code>, your app id, <code>v1 to @me</code>. <code>@me</code> means only you see it.</p>
     </li>
     <li><b>Open <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a></b> in your browser.
       <p class="see"><strong>Kanban</strong> is on your desktop.</p>
     </li>
-    <li><b>Open it and add a card.</b>
-      <p class="see">Your board, with the three example cards. Drag one to another column, then reload the page: it stays where you put it.</p>
+    <li><b>Open it and try the board.</b>
+      <p class="see">Add a card, double-click it to edit it, drag it to Done, delete another, then reload: all of it stays.</p>
     </li>
   </ol>
   <div class="note good"><b class="k">Done when</b><p>Your kanban board opens from your desktop on cloud.rocketride.ai.</p></div>
 
-  <details class="fold"><summary>What <code>@me</code> means</summary><div class="fb"><p><strong>Deploy</strong> uploads a new version of the app and the cloud builds it. <strong>Publish</strong> decides who sees that version: <code>@me</code> is just you. <code>@team/&lt;name&gt;</code> and <code>@public</code> are the other choices.</p></div></details>
+  <p><b>Stretch goal:</b> ask Claude Code for a change (a fourth column, a due date), then run the same deploy command to ship v2.</p>
+
   <details class="fold"><summary>The build failed</summary><div class="fb"><p>Read the build log. The reason is near the end:</p>
     <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app log kanban</pre></div>
     <p>Paste it into Claude Code and ask for a fix, or paste the <strong>Files</strong> tab's <code>App.tsx</code> over yours. Then run the deploy command again.</p></div></details>
-  <details class="fold"><summary>It mentions a developer id, namespace or <code>local</code></summary><div class="fb"><p>The app id doesn't start with your organization's developer id. See <strong><code>app create</code> warns it's using <code>'local'</code></strong> in Step 3, then deploy again.</p></div></details>
-  <details class="fold"><summary>It mentions a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Start a subscription at cloud.rocketride.ai, then run the deploy command again.</p></div></details>
+  <details class="fold"><summary>It mentions a developer id, namespace or <code>local</code></summary><div class="fb"><p>The app id doesn't start with your developer id. See <strong><code>app create</code> warns it's using <code>'local'</code></strong> in Step 3, then deploy again.</p></div></details>
+  <details class="fold"><summary>It mentions a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Redeem the workshop code in the <strong>Have a promo code?</strong> bar at the bottom of your desktop at cloud.rocketride.ai, then run the deploy command again. Already redeemed it? Ask a facilitator.</p></div></details>
   <details class="fold"><summary>Kanban isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it loads. Reload cloud.rocketride.ai.</p></div></details>
-  <details class="fold"><summary>Ship a change</summary><div class="fb"><p>Ask Claude Code for a change (a fourth column, card colours, a due date), then run the same deploy command. Versions never change, so each deploy makes the next one: v2, v3 and so on.</p></div></details>
-
-  <h2>Next project</h2>
-  <div class="ports">
-    <a href="../excalidraw-integration/index.html"><b>Give Excalidraw a diagram agent</b><span>project 2 of 3 / 15 min</span></a>
-    <a href="../../index.html"><b>All workshops</b><span>back to the hub</span></a>
-  </div>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Your board is live on cloud.rocketride.ai.</span></label>
 </section>
@@ -490,7 +579,6 @@ export default App;</pre></div>
       <tr><td>pnpm</td><td>The tool that installs an app's packages. <code>rocketride</code> runs it for you.</td></tr>
       <tr><td>Claude Code</td><td>A coding agent you talk to in the terminal. It reads the project's <code>CLAUDE.md</code> to learn RocketRide.</td></tr>
       <tr><td>API key</td><td>The password a service gives your code. <code>rocketride login</code> makes one and saves it in <code>.env</code>.</td></tr>
-      <tr><td>App Builder</td><td>The RocketRide extension's screen for an app, with a live preview. Optional in this project.</td></tr>
     </tbody>
   </table></div>
 
@@ -502,7 +590,7 @@ export default App;</pre></div>
       <tr><td><code>rocketride app create</code></td><td>Makes a new app from RocketRide's template, in <code>apps/&lt;name&gt;-ui</code>.</td></tr>
       <tr><td>Workspace</td><td>Your project folder after <code>rocketride init</code>: your sign-in, the RocketRide docs, and the <code>apps</code> folder.</td></tr>
       <tr><td>Template</td><td>The starter app RocketRide makes for you, so every app has the same shape.</td></tr>
-      <tr><td>Developer id</td><td>Your organization's publisher name. Every app id starts with it, like <code>acme_labs.kanban</code>.</td></tr>
+      <tr><td>Developer id</td><td>Your publisher name. Every app id starts with it, like <code>yourname_dev.kanban</code>.</td></tr>
       <tr><td><code>appState</code></td><td>Where the board keeps its cards. RocketRide saves it for you, so cards survive a reload.</td></tr>
       <tr><td>Deploy</td><td>Uploading a new version of the app to RocketRide Cloud, which builds it.</td></tr>
       <tr><td>Publish</td><td>Choosing who sees a version. <code>@me</code> is your own desktop.</td></tr>
@@ -524,5 +612,6 @@ export default App;</pre></div>
 
 <script src="../../assets/codelab.js"></script>
 <script src="../../assets/signup.js"></script>
+<script src="../../assets/feedback.js"></script>
 </body>
 </html>

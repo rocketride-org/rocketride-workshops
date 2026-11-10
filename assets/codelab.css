@@ -67,6 +67,30 @@ a:hover{color:var(--accent-d); border-bottom-color:var(--accent)}
 .rail li.ref .num::after{content:"·"; font-size:18px; line-height:0; color:var(--dim)}
 .rail li.ref.on .num::after{color:#fff}
 
+/* ============ toc: scroll spy of the current step's tasks (assets/codelab.js) ============ */
+.deck.has-toc{grid-template-columns:252px minmax(0,1fr) 210px; gap:44px}
+.toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + 61px); padding-block:30px 50px; max-height:calc(100vh - 72px); overflow-y:auto}
+.toc[hidden]{display:none}
+.toc h6{
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--dim); margin:0 0 10px; padding-left:10px; font-weight:500;
+}
+.toc ol{list-style:none; margin:0; padding:0; border-left:1px solid var(--line)}
+.toc li{margin:0}
+.toc button{
+  width:100%; text-align:left; background:none; border:0; cursor:pointer; margin-left:-1px;
+  border-left:2px solid transparent; display:block;
+  padding:6px 8px 6px 12px; font-family:var(--sans); font-size:13px; line-height:1.4; color:var(--mid);
+  transition:color .14s ease, border-color .14s ease;
+}
+.toc button:hover{color:var(--ink)}
+.toc li.on button{color:var(--ink); font-weight:600; border-left-color:var(--accent)}
+main h2, main h3.fileh, main ol.run>li{scroll-margin-top:80px}
+@media (max-width:1200px){
+  .deck.has-toc{grid-template-columns:252px minmax(0,1fr); gap:54px}
+  .toc{display:none}
+}
+
 /* ============ content ============ */
 main{padding-block:30px 100px; min-width:0}
 .phase{max-width:74ch}
@@ -300,19 +324,74 @@ figure{margin:0 0 24px}
 
 /* ============ pager ============ */
 .pg{display:flex; gap:16px; align-items:stretch; margin-top:44px; padding-top:24px; border-top:1px solid var(--line); flex-wrap:wrap}
-.pg button{
+.pg button, .pg a.nx{
   background:var(--paper); border:1px solid var(--line); border-radius:var(--r); cursor:pointer; padding:12px 18px;
   text-align:left; font-family:var(--sans); font-weight:600; font-size:15.5px; color:var(--ink); transition:all .14s; min-width:0;
 }
-.pg button small{display:block; font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:3px; font-weight:500}
+.pg a.nx{display:block; border-color:var(--accent); background:var(--accent-soft)}
+.pg a.nx:hover{border-color:var(--accent); color:var(--accent-d); box-shadow:var(--shadow)}
+.pg button small, .pg a.nx small{display:block; font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:3px; font-weight:500}
 .pg button:hover:not([disabled]){border-color:var(--accent); color:var(--accent-d); box-shadow:var(--shadow)}
 .pg button:hover:not([disabled]) small{color:var(--accent)}
 .pg button[disabled]{opacity:.35; cursor:not-allowed}
 .pg .sp{flex:1}
 .pg .nx{text-align:right}
 
+/* ============ feedback: the "Give feedback" call to action (hub and guide endings) ============ */
+.feedback{
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:18px 22px; margin:0 0 22px;
+  background:var(--ok-soft); border:1px solid #CFE8DE; border-left:4px solid var(--ok); border-radius:var(--r);
+}
+.feedback .ft{flex:1 1 220px; min-width:0}
+.feedback .fk{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); font-weight:600; margin-bottom:4px}
+.feedback p{margin:0; font-size:15px; line-height:1.5; color:var(--ink-2)}
+.feedback a.btn{background:var(--ok); border-color:var(--ok); white-space:nowrap}
+.feedback a.btn:hover{filter:brightness(.9); background:var(--ok); border-color:var(--ok); color:#fff}
+
+/* ============ feedback pill, dialog and hub banner (assets/feedback.js) ============ */
+.bar a.fb-pill{
+  display:inline-flex; align-items:center; gap:4px; white-space:nowrap; border:0;
+  font-family:var(--mono); font-size:11px; letter-spacing:.04em; font-weight:600;
+  color:#fff; background:var(--ok); padding:5px 11px; border-radius:999px; transition:filter .14s;
+}
+.bar a.fb-pill:hover{color:#fff; filter:brightness(1.12)}
+@media (max-width:640px){ .bar a.fb-pill .fb-long{display:none} }
+/* on phones the pill outranks the guide's name and the hub's Docs/GitHub/Discord links */
+@media (max-width:480px){ .bar .nm, .bar nav{display:none} }
+
+.pg button.fin{border-color:var(--ok); background:var(--ok-soft); text-align:right}
+.pg button.fin:hover{border-color:var(--ok); color:var(--ok); box-shadow:var(--shadow)}
+.pg button.fin small{color:var(--ok)}
+
+.fb-done{border-top-color:var(--ok); text-align:center}
+.fb-done .kicker{color:var(--ok)}
+.fb-done .kicker i{font-style:normal; color:var(--dim)}
+.fb-done h2{font-size:clamp(22px,4vw,26px)}
+.fb-row{display:flex; flex-direction:column; align-items:center; gap:18px; margin:20px 0 14px}
+.fb-act{display:flex; flex-direction:column; align-items:center; gap:10px}
+.fb-done a.fb-go{background:var(--ok); border-color:var(--ok); font-size:16px; padding:12px 20px}
+.fb-done a.fb-go:hover{filter:brightness(.92); background:var(--ok); border-color:var(--ok); color:#fff}
+.fb-later{background:none; border:0; padding:4px 0; cursor:pointer; font-family:var(--sans); font-size:14px; color:var(--mid); text-decoration:underline; text-underline-offset:3px}
+.fb-later:hover{color:var(--ink)}
+.fb-qr{margin:0; text-align:center}
+.fb-qr img{display:block; margin:0 auto; width:148px; height:148px; padding:8px; background:#fff; border:1px solid var(--line); border-radius:var(--r)}
+.fb-qr figcaption{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--mid); margin-top:6px}
+@media (max-width:480px){ .fb-act{align-self:stretch; align-items:stretch} .fb-act .fb-go{justify-content:center} }
+.fb-confetti{position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:10}
+
+.feedback.fb-hub{margin:0 0 34px; padding:20px 24px; border-left-width:5px; box-shadow:var(--shadow)}
+.feedback.fb-hub p{font-size:16px}
+.fb-qr-sm{width:72px; height:72px; padding:4px; background:#fff; border:1px solid #CFE8DE; border-radius:6px}
+@media (max-width:640px){ .fb-qr-sm{display:none} }
+.signup-open.ghosted{background:var(--paper); color:var(--ink); border:1px solid var(--line-2); box-shadow:none; font-weight:600; font-size:14px; padding:8px 14px}
+.signup-open.ghosted:hover{background:var(--tint); box-shadow:none}
+
+/* ============ faq: a step's troubleshooting dropdowns, below the pager (assets/codelab.js) ============ */
+.faq{margin-top:8px}
+.faq .faq-h{margin-top:40px}
+
 @media (max-width:960px){
-  .deck{grid-template-columns:1fr; gap:0; padding:0 18px}
+  .deck, .deck.has-toc{grid-template-columns:1fr; gap:0; padding:0 18px}
   .rail{position:static; max-height:none; display:none; padding-block:16px 10px; border-bottom:1px solid var(--line)}
   .rail.open{display:block}
   .menub{display:block}
@@ -381,7 +460,12 @@ footer.foot div{max-width:1100px; margin:0 auto; padding:20px 26px}
 .signup::backdrop{background:rgba(11,10,31,.45); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
 .signup h2{margin:0 0 10px; padding-left:0}
 .signup h2::before{display:none}
-.signup .promo{margin:12px 0 0}
+.signup .promo{margin:12px 0 0; padding:14px 16px}
+.signup .promo .pc{flex:1 1 auto; min-width:0; max-width:100%}
+.signup .promo .code{min-width:0; overflow-wrap:anywhere}
+.signup ol.run>li>.btns{margin:10px 0 0; justify-content:flex-start}
+@media (max-width:480px){ .signup .promo .code{font-size:13px; letter-spacing:.02em; padding:7px 10px} }
+.signup .kicker i{font-style:normal; color:var(--dim)}
 .signup .note{margin:22px 0 18px}
 .signup-x{position:absolute; top:12px; right:14px; border:0; background:none; font-size:26px; line-height:1; color:var(--mid); cursor:pointer; padding:4px 8px}
 .signup-x:hover{color:var(--ink)}

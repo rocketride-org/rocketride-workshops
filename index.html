@@ -12,22 +12,11 @@
   .bar nav a{font-family:var(--mono); font-size:11.5px; color:#9A97BE; border:0}
   .bar nav a:hover{color:#fff}
   @media (max-width:640px){ .bar .tag{display:none} .bar nav{gap:12px} }
-  /* promo code and feedback: two panels side by side, stacked on narrow screens */
-  .promos{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin:6px 0 28px}
-  .promos .promo{margin:0; align-content:center}
-  /* feedback: light green, so it reads as its own thing next to the promo code */
-  .feedback{
-    display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:18px 22px;
-    background:var(--ok-soft); border:1px solid #CFE8DE; border-left:4px solid var(--ok); border-radius:var(--r);
-  }
-  .feedback .ft{flex:1 1 220px; min-width:0}
-  .feedback .fk{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); font-weight:600; margin-bottom:4px}
-  .feedback p{margin:0; font-size:15px; line-height:1.5; color:var(--ink-2)}
-  .feedback a.btn{background:var(--ok); border-color:var(--ok); white-space:nowrap}
+  @media (max-width:480px){ .bar nav{display:none} }
   /* workshop heading row: title left, sign-up button far right */
   .ws-head{display:flex; align-items:center; justify-content:space-between; gap:12px 20px; flex-wrap:wrap; margin:0 0 14px}
   .ws-head h2{margin:0}
-  .feedback a.btn:hover{filter:brightness(.9); background:var(--ok); border-color:var(--ok)}
+  .ws-head .acts{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 </style>
 </head>
 <body data-signup-auto>
@@ -50,25 +39,13 @@
   <div class="lead hero">
     <div>
       <p class="kicker">RocketRide workshops</p>
-      <h1>Pick your project</h1>
-      <p class="lede">Every workshop is a set of projects. Each project has its own step-by-step guide you follow in VS Code, from a first pipeline to a deployed app.</p>
-    </div>
-  </div>
-
-  <div class="promos">
-    <div class="feedback">
-      <div class="ft">
-        <span class="fk">Feedback · 500 free tokens</span>
-        <p>Tell us how the workshop went. Everyone who fills out the feedback form gets 500 free tokens.</p>
-      </div>
-      <a class="btn" href="https://forms.gle/TzwLaRYKGRkUXpds9" target="_blank" rel="noopener">Give feedback →</a>
+      <h1>Zero to Agent in an hour</h1>
+      <p class="lede">Three projects, done in order: deploy your first app, put an agent inside a real app, then build and deploy an agent of your own. Sign up and do the setup at home before the event, so the hour is all building.</p>
     </div>
   </div>
 
   <div id="workshops"></div>
 </div>
-
-<footer class="foot"><div>Works offline: clone the repo and open <code>index.html</code>.</div></footer>
 
 
 <script src="workshops.js"></script>
@@ -104,14 +81,16 @@
     var sec = el('section', 'ws');
     var head = el('div', 'ws-head');
     head.appendChild(el('h2', null, w.title));
-    var open = el('button', 'signup-open', 'Sign up for RocketRide Cloud');
+    var acts = el('div', 'acts');
+    var open = el('button', 'signup-open', '1. Sign up for RocketRide Cloud');
     open.type = 'button';
     open.setAttribute('data-signup', '');
-    head.appendChild(open);
+    acts.appendChild(open);
+    acts.appendChild(link('https://github.com/rocketride-org/rocketride-workshops/blob/main/SETUP.md', '2. Set up at home →', 'btn ghost'));
+    head.appendChild(acts);
     sec.appendChild(head);
     var meta = el('div', 'meta');
-    meta.appendChild(el('span', 'chip', total + ' min · ' + ids.length + ' projects'));
-    if (w.funnel === 'cloud') meta.appendChild(el('span', 'chip cloud', 'Cloud'));
+    meta.appendChild(el('span', 'chip', total + ' min' + (w.feedbackMinutes ? ' + ' + w.feedbackMinutes + ' min feedback' : '') + ' · ' + ids.length + ' projects'));
     if (w.status === 'draft') meta.appendChild(el('span', 'chip draft', 'Draft'));
     sec.appendChild(meta);
     sec.appendChild(el('p', null, w.summary));
@@ -122,7 +101,7 @@
       var card = el('article', 'pcard' + (m ? '' : ' missing'));
       var top = el('div', 'top');
       top.appendChild(el('span', 'stepno', pad(i + 1)));
-      top.appendChild(el('p', 'kicker', m ? 'Project ' + (i + 1) + ' / ' + m.duration + ' min' : 'Missing'));
+      top.appendChild(el('p', 'kicker', m ? (i === 0 ? 'Start here' : 'Project ' + (i + 1)) + ' / ' + m.duration + ' min' : 'Missing'));
       card.appendChild(top);
       var h = el('h3');
       // The title link's ::after covers the whole card, so the card opens the guide.
@@ -150,6 +129,7 @@
   });
 })();
 </script>
+<script src="assets/feedback.js"></script>
 <script src="assets/signup.js"></script>
 </body>
 </html>

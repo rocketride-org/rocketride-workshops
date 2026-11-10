@@ -2,8 +2,8 @@ window.MODULES = {
   kanban: {
     title: "Kanban board",
     summary:
-      "From an empty folder to a deployed app in 5 minutes: two commands, a kanban to-do board built by Claude Code, and one command to deploy it to RocketRide Cloud.",
-    duration: 5,
+      "From an empty folder to a deployed app in 10 minutes: a kanban to-do board built by Claude Code, deployed to RocketRide Cloud with one command.",
+    duration: 10,
     guide: "modules/kanban/index.html",
     github: "modules/kanban",
     requires: ["node", "pnpm"],
@@ -28,11 +28,11 @@ window.MODULES = {
     title: "Specter Mutual: zero to a deployed app",
     summary:
       "Build an AI claims reviewer from nothing: an agent that decides, a policy engine that holds it to the rules, and a portal deployed to your workspace.",
-    duration: 40,
+    duration: 32,
     notebook: "modules/specter-mutual/specter-mutual.ipynb",
     download: false,
     guide: "modules/specter-mutual/index.html",
-    requires: ["python", "node", "pnpm"],
+    requires: ["node", "pnpm"],
   },
 };
 
@@ -41,8 +41,9 @@ window.WORKSHOPS = [
     id: "zero-to-agent",
     title: "Zero to Agent",
     summary:
-      "Ship your first RocketRide pipeline, integrate one into a real app, then build and deploy your own.",
+      "Deploy your first app, put a RocketRide agent inside a real app, then build and deploy an agent of your own.",
     funnel: "cloud", // cloud | local
+    feedbackMinutes: 3, // reserved at the end of the hour, after the last project
     status: "live", // live | draft
     modules: ["kanban", "excalidraw-integration", "specter-mutual"],
   },
