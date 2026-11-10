@@ -4,6 +4,7 @@ window.MODULES = {
     summary: "Start a RocketRide project in three commands, build an alarm clock app with Claude Code, and deploy it from the App Builder.",
     duration: 15,
     notebook: "modules/alarm-clock/alarm-clock.ipynb",
+    download: false,
     guide: "modules/alarm-clock/index.html",
     requires: ["python", "node", "pnpm"],
   },
@@ -17,9 +18,10 @@ window.MODULES = {
   "excalidraw-integration": {
     title: "Give Excalidraw a diagram agent",
     summary:
-      "Clone Excalidraw and paste in a RocketRide agent that reads a GitHub repo and draws its architecture through Text to diagram.",
+      "Clone Excalidraw and add a RocketRide agent to its sidebar that reads a GitHub repo and draws its architecture.",
     duration: 15,
     guide: "modules/excalidraw-integration/index.html",
+    github: "modules/excalidraw-integration",
     requires: ["node", "yarn", "git"],
   },
   "specter-mutual": {
@@ -28,6 +30,7 @@ window.MODULES = {
       "Build an AI claims reviewer from nothing: an agent that decides, a policy engine that holds it to the rules, and a portal deployed to your workspace.",
     duration: 40,
     notebook: "modules/specter-mutual/specter-mutual.ipynb",
+    download: false,
     guide: "modules/specter-mutual/index.html",
     requires: ["python", "node", "pnpm"],
   },

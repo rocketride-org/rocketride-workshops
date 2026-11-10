@@ -64,6 +64,7 @@
 <script>
 (function(){
   var REPO = 'https://github.com/rocketride-org/rocketride-workshops/blob/main/';
+  var TREE = 'https://github.com/rocketride-org/rocketride-workshops/tree/main/';
   var modules = window.MODULES || {};
   var showDrafts = new URLSearchParams(location.search).get('drafts') === '1';
   var list = (window.WORKSHOPS || []).filter(function(w){ return showDrafts || w.status !== 'draft'; });
@@ -106,7 +107,11 @@
       top.appendChild(el('span', 'stepno', pad(i + 1)));
       top.appendChild(el('p', 'kicker', m ? 'Project ' + (i + 1) + ' / ' + m.duration + ' min' : 'Missing'));
       card.appendChild(top);
-      card.appendChild(el('h3', null, m ? m.title : 'Unknown module: ' + id));
+      var h = el('h3');
+      // The title link's ::after covers the whole card, so the card opens the guide.
+      if (m && m.guide) h.appendChild(link(m.guide, m.title, 'cardlink'));
+      else h.textContent = m ? m.title : 'Unknown module: ' + id;
+      card.appendChild(h);
       if (m){
         card.appendChild(el('p', null, m.summary));
         var reqs = el('div', 'reqs');
@@ -114,10 +119,11 @@
         card.appendChild(reqs);
         var btns = el('div', 'btns');
         if (m.guide) btns.appendChild(link(m.guide, 'Open the guide →', 'btn'));
-        if (m.notebook){
+        if (m.notebook && m.download !== false)
           btns.appendChild(link(m.notebook, 'Download notebook', 'btn ghost', true));
-          btns.appendChild(link(REPO + m.notebook, 'View on GitHub', 'btn ghost'));
-        }
+        // github: a folder in this repo; otherwise the notebook file.
+        if (m.github) btns.appendChild(link(TREE + m.github, 'View on GitHub', 'btn ghost'));
+        else if (m.notebook) btns.appendChild(link(REPO + m.notebook, 'View on GitHub', 'btn ghost'));
         card.appendChild(btns);
       }
       grid.appendChild(card);
