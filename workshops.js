@@ -1,12 +1,12 @@
 window.MODULES = {
-  "alarm-clock": {
-    title: "Alarm clock",
-    summary: "Start a RocketRide project in three commands, build an alarm clock app with Claude Code, and deploy it from the App Builder.",
-    duration: 15,
-    notebook: "modules/alarm-clock/alarm-clock.ipynb",
-    download: false,
-    guide: "modules/alarm-clock/index.html",
-    requires: ["python", "node", "pnpm"],
+  kanban: {
+    title: "Kanban board",
+    summary:
+      "From an empty folder to a deployed app in 5 minutes: two commands, a kanban to-do board built by Claude Code, and one command to deploy it to RocketRide Cloud.",
+    duration: 5,
+    guide: "modules/kanban/index.html",
+    github: "modules/kanban",
+    requires: ["node", "pnpm"],
   },
   "notepad-integration": {
     title: "Integrate RocketRide into an existing app",
@@ -44,6 +44,6 @@ window.WORKSHOPS = [
       "Ship your first RocketRide pipeline, integrate one into a real app, then build and deploy your own.",
     funnel: "cloud", // cloud | local
     status: "live", // live | draft
-    modules: ["alarm-clock", "excalidraw-integration", "specter-mutual"],
+    modules: ["kanban", "excalidraw-integration", "specter-mutual"],
   },
 ];

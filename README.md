@@ -39,20 +39,17 @@ The repo is organized as **modules**. A workshop is an ordered list of modules, 
 
 <div align="center">
 
-<h3>Alarm clock: your first deployed app</h3>
+<h3>Kanban board: your first deployed app</h3>
 
 <p>
-  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/alarm-clock/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
+  <a href="https://rocketride-org.github.io/rocketride-workshops/modules/kanban/index.html"><img src="https://img.shields.io/badge/Walkthrough-12111a?style=for-the-badge&logo=bookstack&logoColor=eeede7" alt="Walkthrough"></a>
   &nbsp;
-  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/alarm-clock"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
+  <a href="https://github.com/rocketride-org/rocketride-workshops/tree/main/modules/kanban"><img src="https://img.shields.io/badge/Source-eeede7?style=for-the-badge&logo=github&logoColor=12111a" alt="Source"></a>
 </p>
 
-<p>Start a RocketRide project from an empty folder in three commands (<code>pip install rocketride</code>, <code>rocketride init</code>, <code>rocketride app create</code>), then ask Claude Code for an analog alarm clock: a ticking face, a time picker and an alarm that flashes and beeps. Watch it live in the App Builder, then deploy and publish it from the App Builder to your desktop on cloud.rocketride.ai.</p>
+<p>From an empty folder to a deployed app in 5 minutes. Start a RocketRide project with two commands (<code>rocketride init</code>, <code>rocketride app create</code>), have Claude Code build a kanban to-do board (or paste the finished file), then deploy and publish it to your desktop on cloud.rocketride.ai with one more: <code>rocketride app deploy kanban --publish @me</code>. UI only, no pipeline.</p>
 
-<img src="images/alarm-clock.png" alt="The alarm clock app: an analog clock face above the digital time, a time picker with a Set alarm button, and the alarm status" width="75%">
-
-
-<p><sub><b>15 min</b> &nbsp;·&nbsp; rocketride init → app create → Claude builds the clock → deploy from the App Builder &nbsp;·&nbsp; needs Python 3.10+, Node 20+, pnpm 10+, Claude Code</sub></p>
+<p><sub><b>5 min</b> &nbsp;·&nbsp; rocketride init → app create → Claude builds the board → app deploy --publish @me &nbsp;·&nbsp; needs Node 20+, pnpm 10+, the npm rocketride CLI, Claude Code</sub></p>
 
 </div>
 
@@ -164,7 +161,7 @@ A workshop is only a manifest entry. Add it to `window.WORKSHOPS`:
   summary: "...",
   funnel: "cloud",          // cloud | local
   status: "draft",          // live | draft (drafts show on the hub with ?drafts=1)
-  modules: ["alarm-clock", "specter-mutual"]
+  modules: ["kanban", "specter-mutual"]
 }
 ```
 

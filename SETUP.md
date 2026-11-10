@@ -27,7 +27,7 @@ If it's older than 3.10, install a current version from [python.org](https://www
 | Tool     | Check            | Install                            | Needed for                                              |
 | -------- | ---------------- | ---------------------------------- | ------------------------------------------------------- |
 | Node 20+ | `node --version` | [nodejs.org](https://nodejs.org)   | Every module: the App Builder and Excalidraw run on it   |
-| pnpm 10+ | `pnpm --version` | `npm install -g pnpm@latest`       | `alarm-clock` and `specter-mutual`: `rocketride app create` and the preview |
+| pnpm 10+ | `pnpm --version` | `npm install -g pnpm@latest`       | `kanban` and `specter-mutual`: `rocketride app create` and the preview |
 | Yarn 1   | `yarn --version` | `npm install -g yarn`              | `excalidraw-integration`: Excalidraw installs and runs with Yarn 1 |
 | git      | `git --version`  | [git-scm.com](https://git-scm.com) | `excalidraw-integration`, which clones Excalidraw      |
 
@@ -52,9 +52,9 @@ Then `rocketride init` reads it. (rocketride 1.4.0 can't sign in through the bro
 
 Never commit a `.env` file or paste a key into a notebook cell.
 
-## 6. Claude Code (alarm clock, Specter Mutual)
+## 6. Claude Code (kanban board, Specter Mutual)
 
-The alarm clock asks [Claude Code](https://claude.com/claude-code) to build the clock, and Specter Mutual uses it to run its pipelines and build the portal. Install it and run `claude` once to sign in. Without it, each module's fallback notebooks do the same work; Specter Mutual's also need `python3 -m pip install nbformat`.
+The kanban board asks [Claude Code](https://claude.com/claude-code) to build the board, and Specter Mutual uses it to run its pipelines and build the portal. Install it and run `claude` once to sign in. Without it, the kanban board's **Files** tab and Specter Mutual's fallback notebooks do the same work; the notebooks also need `python3 -m pip install nbformat`. The kanban board needs no Python: its `rocketride` command comes from `npm install -g rocketride`.
 
 ## 7. Select the right kernel
 
