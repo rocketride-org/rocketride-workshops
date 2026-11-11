@@ -15,6 +15,8 @@ a:hover{color:var(--accent-d); border-bottom-color:var(--accent)}
 .bar{position:sticky; top:env(safe-area-inset-top,0px); z-index:70; background:var(--ink); color:#fff}
 .bar-in{max-width:1300px; margin:0 auto; padding:0 26px; height:58px; display:flex; align-items:center; gap:16px}
 .bar img{height:18px; width:auto; flex:none; vertical-align:middle}
+.bar a.logo{display:flex; flex:none; border:0; transition:opacity .14s}
+.bar a.logo:hover{opacity:.8}
 .bar .tag{
   font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
   color:#fff; background:var(--accent); padding:3px 8px; border-radius:4px; white-space:nowrap;
@@ -63,6 +65,8 @@ a:hover{color:var(--accent-d); border-bottom-color:var(--accent)}
 .rail li.done .num::after{content:"✓"; font-size:13px; font-family:var(--sans)}
 .rail li.on.done .num{background:var(--accent); border-color:var(--accent)}
 .rail .sep{border:0; border-top:1px solid var(--line); margin:16px 12px}
+.rail li:not(.ref) .num{cursor:pointer; transition:box-shadow .15s}
+.rail li:not(.ref) .num:hover{box-shadow:0 0 0 3px var(--ok-soft); border-color:var(--ok)}
 .rail li.ref .num{border-style:dashed; font-size:0}
 .rail li.ref .num::after{content:"·"; font-size:18px; line-height:0; color:var(--dim)}
 .rail li.ref.on .num::after{color:#fff}
@@ -206,7 +210,12 @@ details.fold .fb>:last-child{margin-bottom:12px}
 .src .bar2 button.ok{background:var(--ok); color:#fff}
 .src pre{margin:0; padding:16px 18px; overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.72; color:#E3E1F4}
 .src.file pre{max-height:min(480px,60vh); overflow-y:auto; overscroll-behavior:contain}
+/* syntax tokens, painted by assets/codelab.js: comment, keyword, string, function/command,
+   number, property/key, type/tag, variable, flag */
 .src pre .c{color:#7E7BA8; font-style:italic} .src pre .k{color:#FF8F72} .src pre .s{color:#7FDCB0}
+.src pre .f{color:#8EC5FF} .src pre .n{color:#F6C177} .src pre .p{color:#C9B2FF}
+.src pre .t{color:#FFD58A} .src pre .v{color:#F49AC1} .src pre .a{color:#9E9BC6}
+.src.lang-sh pre .f{color:#FFFFFF; font-weight:500}
 
 /* ============ tables ============ */
 .grid{overflow-x:auto; margin:0 0 22px; border:1px solid var(--line); border-radius:var(--r)}
@@ -355,6 +364,7 @@ figure{margin:0 0 24px}
   color:#fff; background:var(--ok); padding:5px 11px; border-radius:999px; transition:filter .14s;
 }
 .bar a.fb-pill:hover{color:#fff; filter:brightness(1.12)}
+.bar a.fb-pill .fb-ico{width:13px; height:13px; flex:none; margin-right:2px}
 @media (max-width:640px){ .bar a.fb-pill .fb-long{display:none} }
 /* on phones the pill outranks the guide's name and the hub's Docs/GitHub/Discord links */
 @media (max-width:480px){ .bar .nm, .bar nav{display:none} }
@@ -362,6 +372,9 @@ figure{margin:0 0 24px}
 .pg button.fin{border-color:var(--ok); background:var(--ok-soft); text-align:right}
 .pg button.fin:hover{border-color:var(--ok); color:var(--ok); box-shadow:var(--shadow)}
 .pg button.fin small{color:var(--ok)}
+/* the party-popper icon on Finish and in the finish dialog's title (assets/codelab.js, assets/feedback.js) */
+.ico-pop{width:1em; height:1em; vertical-align:-.12em; margin-left:.15em}
+.fb-done h2 .ico-pop{color:var(--ok)}
 
 .fb-done{border-top-color:var(--ok); text-align:center}
 .fb-done .kicker{color:var(--ok)}

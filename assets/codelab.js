@@ -26,6 +26,12 @@
     b.type = 'button';
     b.innerHTML = '<span class="num">' + (isRef ? '' : (n++)) + '</span><span class="nm">' + sec.dataset.title + '</span>';
     b.addEventListener('click', function(){ go(i); rail.classList.remove('open'); menub.setAttribute('aria-expanded','false'); });
+    /* the number circle ticks the step off (or back on) without leaving the current step */
+    if (!isRef) {
+      var num = b.querySelector('.num');
+      num.title = 'Mark this step done';
+      num.addEventListener('click', function(e){ e.stopPropagation(); toggleDone(i); });
+    }
     li.appendChild(b); list.appendChild(li);
   });
   var lis = Array.prototype.slice.call(list.querySelectorAll('li'));
@@ -80,7 +86,9 @@
       /* the last project of the workshop: Finish wraps up the hour (assets/feedback.js listens for rr:finished) */
       var fin = document.createElement('button');
       fin.type = 'button'; fin.className = 'nx fin';
-      fin.innerHTML = '<small>All done</small>Finish 🎉';
+      /* party-popper icon (Lucide, ISC) */
+      fin.innerHTML = '<small>All done</small>Finish ' +
+        '<svg class="ico-pop" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>';
       fin.addEventListener('click', function(){ complete(i); paint(); finished(); });
       nav.appendChild(fin);
     }
@@ -107,6 +115,83 @@
     run.forEach(function(d){ box.appendChild(d); });
     return box;
   }
+
+  /* syntax highlighting: the language comes from <div class="src" data-lang="...">,
+     else from the box's label (terminal, a file name), else from the text itself.
+     Prompts and plain names stay unhighlighted. Copy reads innerText, so spans don't leak. */
+  var STR1 = /'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"/;
+  var LANGS = {
+    sh: [
+      ['c', /(?<=^|\s)#.*/],
+      ['s', STR1],
+      ['v', /\$\{?\w+\}?/],
+      ['f', /(?<=^[ \t]*|(?:&&|\|\||[|;])[ \t]*)(?:sudo[ \t]+)?[A-Za-z_][\w.-]*/],
+      ['a', /(?<=\s)--?[A-Za-z][\w-]*/],
+      ['k', /&&|\|\||[|>;]/]
+    ],
+    env: [
+      ['c', /^[ \t]*#.*/],
+      ['p', /^[ \t]*[A-Za-z_]\w*(?==)/],
+      ['v', /\$\{?\w+\}?/],
+      ['s', /(?<==)[^$\n]+/]
+    ],
+    json: [
+      ['p', /"(?:[^"\\\n]|\\.)*"(?=\s*:)/],
+      ['s', /"(?:[^"\\\n]|\\.)*"/],
+      ['k', /\b(?:true|false|null)\b/],
+      ['n', /-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b/]
+    ],
+    js: [
+      ['c', /\/\/.*|\/\*[\s\S]*?\*\//],
+      ['s', /'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/],
+      ['k', /\b(?:import|export|from|default|as|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|class|extends|implements|interface|type|enum|async|await|try|catch|finally|throw|typeof|instanceof|in|of|void|delete|this|super|true|false|null|undefined|readonly|public|private|protected|static|keyof)\b/],
+      ['t', /(?<=<\/?)[A-Za-z][\w.]*|\b[A-Z][A-Za-z0-9_]*\b/],
+      ['f', /\b[A-Za-z_$][\w$]*(?=\s*(?:<[^<>()\n]*>)?\()/],
+      ['n', /\b\d+(?:\.\d+)?\b/]
+    ],
+    css: [
+      ['c', /\/\*[\s\S]*?\*\/|(?<![:\w])\/\/.*/],
+      ['s', STR1],
+      ['k', /@[\w-]+|!important/],
+      ['v', /\$[\w-]+|--[\w-]+/],
+      ['t', /(?<=^[ \t]*)[^\s{};\/@$][^{};\n]*?(?=\s*\{)/],
+      ['p', /(?<=^[ \t]*|[{;][ \t]*)-?[A-Za-z][\w-]*(?=\s*:(?![^;{}\n]*\{))/],
+      ['f', /[A-Za-z-][\w-]*(?=\()/],
+      ['n', /#[0-9A-Fa-f]{3,8}\b|(?<![\w-])-?\d*\.?\d+(?:px|r?em|%|vh|vw|vmin|vmax|s|ms|deg|fr|ch)?\b/]
+    ]
+  };
+  function langOf(box, pre){
+    if (box.dataset.lang) return box.dataset.lang;
+    var lab = box.querySelector('.bar2 span');
+    var l = lab ? lab.textContent.toLowerCase() : '';
+    if (l === 'terminal') return 'sh';
+    if (/(^|[\s\/])\.env\b/.test(l)) return 'env';
+    if (/\.(?:[cm]?[jt]sx?)\b/.test(l)) return 'js';
+    if (/\.s?css\b/.test(l)) return 'css';
+    if (/\.(?:json|pipe)\b/.test(l)) return 'json';
+    if (/^\s*"[^"\n]+"\s*:/.test(pre.textContent)) return 'json';
+    return null;
+  }
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function highlight(text, rules){
+    var re = new RegExp(rules.map(function(r){ return '(' + r[1].source + ')'; }).join('|'), 'gm');
+    var out = '', last = 0, m;
+    while ((m = re.exec(text))){
+      if (!m[0]) { re.lastIndex++; continue; }
+      var g = 1; while (m[g] === undefined) g++;
+      out += esc(text.slice(last, m.index)) + '<span class="' + rules[g-1][0] + '">' + esc(m[0]) + '</span>';
+      last = re.lastIndex;
+    }
+    return out + esc(text.slice(last));
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.src'), function(box){
+    var pre = box.querySelector('pre');
+    if (!pre || pre.children.length) return;
+    var lang = langOf(box, pre);
+    if (!LANGS[lang]) return;
+    box.classList.add('lang-' + lang);
+    try { pre.innerHTML = highlight(pre.textContent, LANGS[lang]); } catch(e){}
+  });
 
   /* copy buttons */
   Array.prototype.forEach.call(document.querySelectorAll('.cp-btn'), function(btn){
@@ -167,6 +252,17 @@
     if (c) c.checked = true;
     save();
     if (!was) stepDone(i, 'next');
+  }
+
+  /* The rail's number circle: flip the step's done state, keeping its checkpoint box in step */
+  function toggleDone(i){
+    var on = !st.done[i];
+    if (on) st.done[i] = 1; else delete st.done[i];
+    var c = ph[i].querySelector('.cp input');
+    if (c) c.checked = on;
+    save(); paint();
+    if (on) stepDone(i, 'rail');
+    if (on && i === lastStep && !NEXT_HREF) finished();
   }
 
   /* ============ scroll spy: tasks in the current step, the one being read highlighted ============ */
