@@ -39,7 +39,7 @@ Finally, in your editor, open Extensions (`Cmd+Shift+X` on Mac, `Ctrl+Shift+X` o
 ## 2. RocketRide Cloud account
 
 1. [Sign up for RocketRide Cloud](https://auth.rocketride.ai/ui/v2/login/register) and confirm your email.
-2. On your desktop at [cloud.rocketride.ai](https://cloud.rocketride.ai), find the **Have a promo code?** bar at the bottom. Enter `EXCALIDRAW_WALKTHROUGH` and click **Redeem**. The code activates your plan, so you don't need to buy a subscription.
+2. On your desktop at [cloud.rocketride.ai](https://cloud.rocketride.ai), find the **Have a promo code?** bar at the bottom. Enter `WORKSHOP_LA_001` and click **Redeem**. The code activates your plan, so you don't need to buy a subscription.
 
 Your new account is its own organization, and you are its admin.
 

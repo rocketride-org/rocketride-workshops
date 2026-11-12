@@ -20,7 +20,7 @@ rocketride app deploy kanban --publish @me         # waits for the cloud build, 
 
 **Time:** 10 minutes in the room (2 to start, 4 to build, 4 to deploy), after about 15 minutes of setup at home.
 
-**Requires:** Node 20+, pnpm 10+, the npm `rocketride` package (1.6.0+, installed globally for the CLI), a RocketRide Cloud account with the workshop code `EXCALIDRAW_WALKTHROUGH` redeemed (it activates the plan; no subscription to buy), a developer id (each new account is its own org, so attendees claim their own, e.g. `yourname_dev`), and [Claude Code](https://claude.com/claude-code) for the Prompt tab (needs a Claude Pro/Max plan or an Anthropic Console account; otherwise the Files tab). No model key, no Python, no RocketRide extension.
+**Requires:** Node 20+, pnpm 10+, the npm `rocketride` package (1.6.0+, installed globally for the CLI), a RocketRide Cloud account with the workshop code `WORKSHOP_LA_001` redeemed (it activates the plan; no subscription to buy), a developer id (each new account is its own org, so attendees claim their own, e.g. `yourname_dev`), and [Claude Code](https://claude.com/claude-code) for the Prompt tab (needs a Claude Pro/Max plan or an Anthropic Console account; otherwise the Files tab). No model key, no Python, no RocketRide extension.
 
 ## How it's built
 

@@ -22,7 +22,7 @@
           '<a href="' + CLOUD + '" target="_blank" rel="noopener">desktop</a>, paste it and click <strong>Redeem</strong>.' +
           '<div class="promo">' +
             '<div class="pc">' +
-              '<span class="code">EXCALIDRAW_WALKTHROUGH</span>' +
+              '<span class="code">WORKSHOP_LA_001</span>' +
               '<button type="button" class="promo-cp">Copy</button>' +
             '</div>' +
           '</div>' +
