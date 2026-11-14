@@ -71,7 +71,8 @@
     if (t.matches('.fb-pill')) posthog.capture('feedback opened', { placement: 'pill' });
     else if (t.matches('.fb-go')) posthog.capture('feedback opened', { placement: 'finish dialog' });
     else if (t.matches('.fb-hub a')) posthog.capture('feedback opened', { placement: 'hub banner' });
+    else if (t.matches('.fb-end a')) posthog.capture('feedback opened', { placement: 'guide ending' });
     else if (t.matches('#signup a[href*="/register"]')) posthog.capture('signup link clicked');
-    else if (t.matches('.promo-cp')) posthog.capture('promo code copied');
+    else if (t.matches('.promo-cp, [data-promo]')) posthog.capture('promo code copied', { placement: t.matches('[data-promo]') ? 'guide step' : 'signup modal' });
   }, true);
 })();

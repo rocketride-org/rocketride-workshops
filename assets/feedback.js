@@ -57,6 +57,26 @@
     Array.prototype.forEach.call(document.querySelectorAll('.ws-head .signup-open'), function(b){ b.classList.add('ghosted'); });
   }
 
+  /* ============ guides: a feedback box under the last build step's "Done when" ============
+     Not everyone reaches Finish on the last project, so every project ends with the ask. */
+  if (document.body.hasAttribute('data-key')) {
+    var builds = document.querySelectorAll('section.phase:not([data-ref])');
+    var last = builds[builds.length - 1];
+    var goods = last ? last.querySelectorAll('.note.good') : [];
+    var anchor = goods[goods.length - 1];
+    if (anchor) {
+      var end = document.createElement('div');
+      end.className = 'feedback fb-end';
+      end.innerHTML =
+        '<div class="ft"><span class="fk">Before you go</span>' +
+        '<p><strong>Claim 500 free tokens:</strong> tell us what was fast and what got in the way. It takes 2 minutes.</p></div>' +
+        '<img class="fb-qr-sm" src="' + QR + '" alt="" width="72" height="72">';
+      end.appendChild(link('btn', 'Give feedback →'));
+      end.querySelector('img').addEventListener('error', function(){ this.remove(); });
+      anchor.parentNode.insertBefore(end, anchor.nextSibling);
+    }
+  }
+
   /* ============ the "you did it" dialog ============ */
   var dialog = null;
   function build(){

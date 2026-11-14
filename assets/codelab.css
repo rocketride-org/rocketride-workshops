@@ -392,6 +392,7 @@ figure{margin:0 0 24px}
 @media (max-width:480px){ .fb-act{align-self:stretch; align-items:stretch} .fb-act .fb-go{justify-content:center} }
 .fb-confetti{position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:10}
 
+.feedback.fb-end{margin:18px 0 6px}
 .feedback.fb-hub{margin:0 0 34px; padding:20px 24px; border-left-width:5px; box-shadow:var(--shadow)}
 .feedback.fb-hub p{font-size:16px}
 .fb-qr-sm{width:72px; height:72px; padding:4px; background:#fff; border:1px solid #CFE8DE; border-radius:6px}
