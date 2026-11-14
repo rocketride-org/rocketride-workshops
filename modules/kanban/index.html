@@ -51,10 +51,11 @@
   <div class="grid"><table>
     <thead><tr><th>When</th><th>Step</th></tr></thead>
     <tbody>
-      <tr><td>At home</td><td>2. Install the tools and sign in</td></tr>
-      <tr><td>0:00</td><td>3. Start the project: two commands</td></tr>
-      <tr><td>0:02</td><td>4. Build the board: Claude Code, or paste one file</td></tr>
-      <tr><td>0:06</td><td>5. Deploy it: one command</td></tr>
+      <tr><td>At home</td><td>2. Install the tools</td></tr>
+      <tr><td>0:00</td><td>3. Get your account ready: sign up, workshop code, developer id</td></tr>
+      <tr><td>0:03</td><td>4. Start the project: two commands</td></tr>
+      <tr><td>0:05</td><td>5. Build the board: Claude Code, or paste one file</td></tr>
+      <tr><td>0:09</td><td>6. Deploy it: one command</td></tr>
     </tbody>
   </table></div>
 
@@ -91,12 +92,56 @@ pnpm --version
 rocketride --version</pre></div>
       <p class="see">Three version numbers: Node <code>v20</code> or higher, pnpm <code>10</code> or higher, RocketRide <code>1.6.0</code> or higher.</p>
     </li>
-    <li><b>Sign in to Claude Code.</b> Run <code>claude</code>, follow its sign-in, then type <code>/exit</code> and press <kbd>Enter</kbd>. It needs a Claude Pro or Max plan, or an Anthropic Console account. No plan? Skip this and use the <strong>Files</strong> tab in Step 4.</li>
-    <li><b>Make a RocketRide Cloud account.</b> <a href="https://auth.rocketride.ai/ui/v2/login/register" data-signup>Sign up for RocketRide Cloud</a> (the <strong>Sign up</strong> button at the top of this page), confirm your email, then redeem the workshop code <code>WORKSHOP_LA_001</code> in the <strong>Have a promo code?</strong> bar at the bottom of your desktop at cloud.rocketride.ai. The code activates your plan: you don't need to buy a subscription. Kanban needs no model key.</li>
-    <li><b>Make the project folder and go into it.</b> Paste this and press <kbd>Enter</kbd>:
-      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>mkdir kanban
-cd kanban</pre></div>
-      <p class="see">The line where you type now ends in <code>kanban</code>. Remember where this folder is: you open it again in the room.</p>
+    <li><b>Sign in to Claude Code.</b> Run <code>claude</code>, follow its sign-in, then type <code>/exit</code> and press <kbd>Enter</kbd>. It needs a Claude Pro or Max plan, or an Anthropic Console account. No plan? Skip this and use the <strong>Files</strong> tab in Step 5.</li>
+    <li><b>Make the project folder.</b> Paste this and press <kbd>Enter</kbd>:
+      <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>mkdir kanban</pre></div>
+      <p class="see">Nothing prints. Remember where this folder is: you open it again in the room.</p>
+    </li>
+  </ol>
+
+  <div class="note"><b class="k">Want a head start?</b><p>Do Step 3, <strong>Get your account ready</strong>, at home too. In the room you only check it.</p></div>
+
+  <details class="fold"><summary>Mac or Linux: <code>EACCES: permission denied</code> when installing</summary><div class="fb"><p>Your Node can't install tools for every user without permission. Run the same command with <code>sudo</code> in front and type your computer's password when it asks. Nothing shows while you type it: that's normal.</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>sudo npm install -g pnpm@latest rocketride@latest</pre></div></div></details>
+  <details class="fold"><summary>Windows: <code>running scripts is disabled on this system</code></summary><div class="fb"><p>PowerShell blocks tools installed with npm until you allow them. Paste this, press <kbd>Enter</kbd>, close PowerShell, open a new one, and try again:</p>
+    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</pre></div></div></details>
+  <details class="fold"><summary>A version is missing or too old</summary><div class="fb"><p>Install it from the link in action 1, or run the install in action 3 again. Then close the terminal, open a new one, and check again.</p></div></details>
+  <details class="fold"><summary>Stuck on anything</summary><div class="fb"><p>Ask in the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a>, read <a href="https://docs.rocketride.org">docs.rocketride.org</a>, or come 10 minutes early for the help desk.</p></div></details>
+
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Three version numbers, Claude Code signed in, and a <code>kanban</code> folder.</span></label>
+</section>
+
+<!-- ===== 3 ===== -->
+<section class="phase" data-title="Get your account ready" data-dur="3">
+
+  <div class="lead">
+    <span class="stepno">03</span>
+    <div>
+      <p class="kicker">In the room <i>/ 3 minutes</i></p>
+      <h1>Get your account ready</h1>
+      <p class="lede">A RocketRide Cloud account, the workshop code that turns on your plan, and a developer id that every app you make starts with. Did this at home? Do actions 6 to 9 to check, and skip the rest.</p>
+    </div>
+  </div>
+
+  <ol class="run">
+    <li><b>Open the sign-up page.</b> Click <a href="https://auth.rocketride.ai/ui/v2/login/register" data-signup>Sign up for RocketRide Cloud</a>, or the <strong>Sign up for RocketRide Cloud</strong> button at the top of this page. Already have an account? Skip to action 4.
+      <p class="see">The RocketRide sign-up form.</p>
+    </li>
+    <li><b>Make your account.</b> Fill in the form and send it.
+      <p class="see">An email from RocketRide arrives in your inbox.</p>
+    </li>
+    <li><b>Confirm your email.</b> Open that email and click its confirm link.
+      <p class="see">You're signed in. If no page opens, go to <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a> and sign in.</p>
+    </li>
+    <li><b>Copy the workshop code.</b> Click <strong>Copy</strong> on this box:
+      <div class="src"><div class="bar2"><span>workshop code</span><button class="cp-btn" data-promo>Copy</button></div><pre>WORKSHOP_LA_001</pre></div>
+    </li>
+    <li><b>Redeem it.</b> Open <a href="https://cloud.rocketride.ai">cloud.rocketride.ai</a>. In the <strong>Have a promo code?</strong> bar at the bottom of your desktop, paste the code and click <strong>Redeem</strong>.
+      <p class="see">The bar confirms the code. Your plan is on: you don't need to buy a subscription. Kanban needs no model key.</p>
+    </li>
+    <li><b>Open the <code>kanban</code> folder in your editor.</b> Click <strong>File</strong>, then <strong>Open Folder</strong>, pick the <code>kanban</code> folder you made at home, and click <strong>Open</strong>. If the editor asks whether you trust the folder, click <strong>Trust</strong>.</li>
+    <li><b>Open a terminal in the editor.</b> Click <strong>Terminal</strong>, then <strong>New Terminal</strong>.
+      <p class="see">A terminal opens at the bottom of the editor. The line where you type ends in <code>kanban</code>.</p>
     </li>
     <li><b>Sign in to RocketRide.</b> Paste this and press <kbd>Enter</kbd>. Your browser opens; sign in there with your RocketRide Cloud account:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride login --uri https://api.rocketride.ai</pre></div>
@@ -108,25 +153,24 @@ cd kanban</pre></div>
     </li>
     <li><b>Claim one, if you don't have one.</b> Pick something like <code>yourname_dev</code> (letters and underscores). It can't be renamed later. Copy this, put your pick in place of <code>yourname_dev</code>, and press <kbd>Enter</kbd>:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app developer register yourname_dev</pre></div>
+      <p class="see">Run the check in the action above again: it now shows your id.</p>
     </li>
   </ol>
+  <div class="note good"><b class="k">Done when</b><p>The code is redeemed, the terminal in <code>kanban</code> is signed in, and <code>rocketride app developer status</code> shows your developer id.</p></div>
 
-  <details class="fold"><summary>Mac or Linux: <code>EACCES: permission denied</code> when installing</summary><div class="fb"><p>Your Node can't install tools for every user without permission. Run the same command with <code>sudo</code> in front and type your computer's password when it asks. Nothing shows while you type it: that's normal.</p>
-    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>sudo npm install -g pnpm@latest rocketride@latest</pre></div></div></details>
-  <details class="fold"><summary>Windows: <code>running scripts is disabled on this system</code></summary><div class="fb"><p>PowerShell blocks tools installed with npm until you allow them. Paste this, press <kbd>Enter</kbd>, close PowerShell, open a new one, and try again:</p>
-    <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</pre></div></div></details>
-  <details class="fold"><summary>A version is missing or too old</summary><div class="fb"><p>Install it from the link in action 1, or run the install in action 3 again. Then close the terminal, open a new one, and check again.</p></div></details>
+  <details class="fold"><summary>No confirm email</summary><div class="fb"><p>Check your spam folder. Still nothing after two minutes? Ask a facilitator.</p></div></details>
+  <details class="fold"><summary>I can't find <strong>Have a promo code?</strong></summary><div class="fb"><p>It's a bar along the bottom of your desktop at cloud.rocketride.ai, under the app icons. Make the window wider or scroll down. Still missing? Ask a facilitator.</p></div></details>
   <details class="fold"><summary>The browser didn't open</summary><div class="fb"><p>The terminal prints <code>If it did not open, visit:</code> and a link. Copy that link into your browser and sign in there.</p></div></details>
-  <details class="fold"><summary>Stuck on anything</summary><div class="fb"><p>Ask in the <a href="https://discord.gg/PMXrtenMsY">RocketRide Discord</a>, read <a href="https://docs.rocketride.org">docs.rocketride.org</a>, or come 10 minutes early for the help desk.</p></div></details>
+  <details class="fold"><summary>I don't have a <code>kanban</code> folder</summary><div class="fb"><p>Make one: in a terminal, paste <code>mkdir kanban</code> and press <kbd>Enter</kbd>, then open it in your editor (action 6).</p></div></details>
 
-  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Three version numbers, Claude Code signed in, a <code>kanban</code> folder signed in to RocketRide, and your developer id.</span></label>
+  <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>Code redeemed, signed in, and your developer id.</span></label>
 </section>
 
-<!-- ===== 3 ===== -->
+<!-- ===== 4 ===== -->
 <section class="phase" data-title="Start the project" data-dur="2">
 
   <div class="lead">
-    <span class="stepno">03</span>
+    <span class="stepno">04</span>
     <div>
       <p class="kicker">In the room <i>/ 2 minutes</i></p>
       <h1>Start the project</h1>
@@ -135,10 +179,7 @@ cd kanban</pre></div>
   </div>
 
   <ol class="run">
-    <li><b>Open the folder in your editor.</b> Click <strong>File</strong>, then <strong>Open Folder</strong>, pick the <code>kanban</code> folder you made at home, and click <strong>Open</strong>. If the editor asks whether you trust the folder, click <strong>Trust</strong>.</li>
-    <li><b>Open a terminal in the editor.</b> Click <strong>Terminal</strong>, then <strong>New Terminal</strong>.
-      <p class="see">A terminal opens at the bottom of the editor. The line where you type ends in <code>kanban</code>.</p>
-    </li>
+    <li><b>Check the terminal is in <code>kanban</code>.</b> Use the editor's terminal from Step 3. The line where you type ends in <code>kanban</code>.</li>
     <li><b>Set up the project.</b> Paste this and press <kbd>Enter</kbd>. It uses the sign-in from home, adds the RocketRide docs, and installs the packages apps need:
       <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride init --uri https://api.rocketride.ai</pre></div>
       <p class="see">A <code>.rocketride</code> folder and a <code>CLAUDE.md</code> appear in the Explorer. They teach Claude Code about RocketRide.</p>
@@ -150,19 +191,19 @@ cd kanban</pre></div>
   </ol>
   <div class="note good"><b class="k">Done when</b><p><code>apps/kanban-ui</code> is in the Explorer.</p></div>
 
-  <details class="fold"><summary>The browser opens to sign in</summary><div class="fb"><p>You didn't sign in at home, or you're in a different folder. Sign in in the browser; the command carries on by itself. If the folder is wrong, check the line where you type ends in <code>kanban</code>.</p></div></details>
+  <details class="fold"><summary>The browser opens to sign in</summary><div class="fb"><p>You skipped the sign-in in Step 3, or you're in a different folder. Sign in in the browser; the command carries on by itself. If the folder is wrong, check the line where you type ends in <code>kanban</code>.</p></div></details>
   <details class="fold"><summary><code>rocketride</code> or <code>pnpm</code>: command not found</summary><div class="fb"><p>Run <code>npm install -g pnpm@latest rocketride@latest</code>, close the editor's terminal, open a new one, and run the command again.</p></div></details>
-  <details class="fold"><summary><code>app create</code> warns it's using <code>'local'</code></summary><div class="fb"><p>It couldn't find your developer id, so the app id starts with <code>local</code>, and deploying will fail. Run <code>rocketride app developer status</code> and, if there isn't one, claim it (Step 2). Then delete the <code>apps/kanban-ui</code> folder and make the app again with your id, putting it in place of <code>yourname_dev</code>:</p>
+  <details class="fold"><summary><code>app create</code> warns it's using <code>'local'</code></summary><div class="fb"><p>It couldn't find your developer id, so the app id starts with <code>local</code>, and deploying will fail. Run <code>rocketride app developer status</code> and, if there isn't one, claim it (Step 3). Then delete the <code>apps/kanban-ui</code> folder and make the app again with your id, putting it in place of <code>yourname_dev</code>:</p>
     <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app create kanban --name "Kanban" --developer yourname_dev</pre></div></div></details>
 
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b><code>apps/kanban-ui</code> exists.</span></label>
 </section>
 
-<!-- ===== 4 ===== -->
+<!-- ===== 5 ===== -->
 <section class="phase" data-title="Build the board" data-dur="4">
 
   <div class="lead">
-    <span class="stepno">04</span>
+    <span class="stepno">05</span>
     <div>
       <p class="kicker">The build <i>/ 4 minutes</i></p>
       <h1>Build the board</h1>
@@ -199,7 +240,7 @@ Then run pnpm typecheck in apps/kanban-ui and fix anything it reports.</pre></di
         </li>
         <li><b>Leave Claude Code:</b> type <code>/exit</code> and press <kbd>Enter</kbd>.</li>
       </ol>
-      <p>Claude's board will differ a little from the one in the <strong>Files</strong> tab. If Step 5 fails, paste that file over Claude's.</p>
+      <p>Claude's board will differ a little from the one in the <strong>Files</strong> tab. If Step 6 fails, paste that file over Claude's.</p>
     </div>
     <div class="tp">
       <h3 class="fileh"><small>File 1 of 1</small><code>apps/kanban-ui/src/App.tsx</code></h3>
@@ -509,11 +550,11 @@ export default App;</pre></div>
   <label class="cp"><input type="checkbox"><span class="tx"><b>Checkpoint</b>The board is in <code>App.tsx</code>, saved.</span></label>
 </section>
 
-<!-- ===== 5 ===== -->
+<!-- ===== 6 ===== -->
 <section class="phase" data-title="Deploy it" data-dur="4">
 
   <div class="lead">
-    <span class="stepno">05</span>
+    <span class="stepno">06</span>
     <div>
       <p class="kicker">The finish <i>/ 4 minutes</i></p>
       <h1>Deploy it</h1>
@@ -541,7 +582,7 @@ export default App;</pre></div>
   <details class="fold"><summary>The build failed</summary><div class="fb"><p>Read the build log. The reason is near the end:</p>
     <div class="src"><div class="bar2"><span>terminal</span><button class="cp-btn">Copy</button></div><pre>rocketride app log kanban</pre></div>
     <p>Paste it into Claude Code and ask for a fix, or paste the <strong>Files</strong> tab's <code>App.tsx</code> over yours. Then run the deploy command again.</p></div></details>
-  <details class="fold"><summary>It mentions a developer id, namespace or <code>local</code></summary><div class="fb"><p>The app id doesn't start with your developer id. See <strong><code>app create</code> warns it's using <code>'local'</code></strong> in Step 3, then deploy again.</p></div></details>
+  <details class="fold"><summary>It mentions a developer id, namespace or <code>local</code></summary><div class="fb"><p>The app id doesn't start with your developer id. See <strong><code>app create</code> warns it's using <code>'local'</code></strong> in Step 4, then deploy again.</p></div></details>
   <details class="fold"><summary>It mentions a plan, subscription or credits</summary><div class="fb"><p>Your account has no active plan. Redeem the workshop code in the <strong>Have a promo code?</strong> bar at the bottom of your desktop at cloud.rocketride.ai, then run the deploy command again. Already redeemed it? Ask a facilitator.</p></div></details>
   <details class="fold"><summary>Kanban isn't on my desktop</summary><div class="fb"><p>The desktop picks up new apps when it loads. Reload cloud.rocketride.ai.</p></div></details>
 
