@@ -2,6 +2,14 @@
 
 Operational notes for running this module. Time box: **32 minutes**, the last project of the one-hour workshop (Kanban 10, Excalidraw 15, Specter Mutual 32, then 3 minutes of feedback). It ends on **Finish**, which opens the feedback dialog (confetti, button and QR code).
 
+## Say these out loud
+
+Don't skip these on stage. Each one stalled the LA run when it was skipped, and the LA feedback form got 0 responses because nobody mentioned it.
+
+- [ ] **Before Build the brain:** "Your `ROCKETRIDE_ANTHROPIC_KEY` from Excalidraw is used here too. Check it's still in **Settings → Environment Variables**."
+- [ ] **Start the project:** "The New App wizard builds the app id from your developer id. No id? Do Kanban Step 3 now."
+- [ ] **Close (do not skip):** put `images/feedback-qr.svg` on the projector and the last slide, and say: "Scan this before you go: 2 minutes, 500 free tokens." Every guide's last step also has a **Give feedback** box.
+
 ## Run of show
 
 | Guide step | Time | What happens | Where people fall behind |
