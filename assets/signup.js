@@ -1,8 +1,17 @@
 /* Sign-up modal, shared by the hub and every project guide.
    Any element with data-signup opens it. A page whose <body> has data-signup-auto
    also opens it the first time a browser loads that page.
-   It closes on its ×, Esc, or a click outside the box. Styles live in codelab.css. */
+   It closes on its ×, Esc, or a click outside the box. Styles live in codelab.css.
+   The workshop code expires: from PROMO_ENDS (local time) the modal's redeem step and
+   every guide element marked data-promo-step are removed. */
 (function(){
+  var PROMO_ENDS = new Date(2026, 10, 20); // shown through Thu 19 Nov 2026
+  var promoLive = new Date() < PROMO_ENDS;
+  if (!promoLive) {
+    var steps = document.querySelectorAll('[data-promo-step]');
+    for (var i = 0; i < steps.length; i++) steps[i].parentNode.removeChild(steps[i]);
+  }
+
   var SIGNUP = 'https://auth.rocketride.ai/ui/v2/login/register';
   var CLOUD = 'https://cloud.rocketride.ai';
   var SETUP = 'https://github.com/rocketride-org/rocketride-workshops/blob/main/SETUP.md';
@@ -18,16 +27,16 @@
           '<div class="btns"><a class="btn" href="' + SIGNUP + '" target="_blank" rel="noopener">Sign up →</a></div>' +
           '<p class="see">You land on your desktop at cloud.rocketride.ai.</p>' +
         '</li>' +
-        '<li><b>Redeem the workshop code.</b> In the <strong>Have a promo code?</strong> bar at the bottom of your ' +
+        (promoLive ? '<li><b>Redeem the workshop code.</b> In the <strong>Have a promo code?</strong> bar at the bottom of your ' +
           '<a href="' + CLOUD + '" target="_blank" rel="noopener">desktop</a>, paste it and click <strong>Redeem</strong>.' +
           '<div class="promo">' +
             '<div class="pc">' +
-              '<span class="code">WORKSHOP_LA_001</span>' +
+              '<span class="code">WORKSHOP_SJ_001</span>' +
               '<button type="button" class="promo-cp">Copy</button>' +
             '</div>' +
           '</div>' +
           '<p class="see">Your plan is active. There\'s no subscription to buy.</p>' +
-        '</li>' +
+        '</li>' : '') +
       '</ol>' +
       '<div class="note">' +
         '<b class="k">Next, at home</b>' +

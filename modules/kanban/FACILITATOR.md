@@ -6,7 +6,7 @@ Operational notes for running this module. Time box: **10 minutes** in the room.
 
 Don't skip these on stage. Each one stalled the LA run when it was skipped.
 
-- [ ] **Step 3, before anything else:** "Sign up, then redeem `WORKSHOP_LA_001` in the **Have a promo code?** bar at the bottom of your desktop." Show the bar on the projector. Without it, the deploy fails on a plan error.
+- [ ] **Step 3, before anything else:** "Sign up, then redeem `WORKSHOP_SJ_001` in the **Have a promo code?** bar at the bottom of your desktop." Show the bar on the projector. Without it, the deploy fails on a plan error.
 - [ ] **Step 3:** "Run `rocketride app developer status`. No id? Register one now." Without it, `app create` uses `local` and the deploy fails.
 - [ ] **End of Step 6:** point at the **Give feedback** box under "Done when". Anyone leaving early should fill it in now.
 - [ ] **Questions:** take them at the Step 3 and Step 6 checkpoints, not mid-step.
@@ -23,7 +23,7 @@ Don't skip these on stage. Each one stalled the LA run when it was skipped.
 ## Before the event
 
 - [ ] Each attendee's new account is its own organization and they are its admin. There is no shared workshop org: every attendee claims their own developer id in Step 3 (Get your account ready), in the room or at home.
-- [ ] Attendees redeem the workshop code `WORKSHOP_LA_001` in the **Have a promo code?** bar on their cloud.rocketride.ai desktop. It activates their plan; they never buy a subscription.
+- [ ] Attendees redeem the workshop code `WORKSHOP_SJ_001` in the **Have a promo code?** bar on their cloud.rocketride.ai desktop. It activates their plan; they never buy a subscription.
 - [ ] To clear a developer id: a sys.admin opens admin-ui → Orgs → the org → Edit, clears **Developer Id** and saves. Users can't rename or remove a claimed id themselves.
 - [ ] Do the whole guide yourself on the venue wifi, from an empty folder, and time `init`, `app create` and the cloud build.
 - [ ] Open the published board on cloud.rocketride.ai: add a card, edit it, drag it to another column and reorder it, delete one, reload, and check it all stayed.
@@ -49,7 +49,7 @@ rocketride app developer register yourname_dev   # letters and underscores; can'
 | `running scripts is disabled` (Windows)                 | PowerShell's execution policy blocks npm's shims.                        | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, new PowerShell.                                   |
 | `init` opens the browser in the room                    | No `.env` in this folder: a different folder, or no sign-in at home.     | Sign in; it carries on. Check the prompt ends in `kanban`.                                              |
 | `app create` warns it's using `'local'`                 | The org has no developer id, or the sign-in didn't load.                 | Claim the id, delete `apps/kanban-ui`, rerun `app create` (with `--developer <id>` if needed).          |
-| The deploy mentions a plan, subscription or credits     | The workshop code wasn't redeemed.                                       | Redeem `WORKSHOP_LA_001` in the **Have a promo code?** bar on the desktop, deploy again.         |
+| The deploy mentions a plan, subscription or credits     | The workshop code wasn't redeemed.                                       | Redeem `WORKSHOP_SJ_001` in the **Have a promo code?** bar on the desktop, deploy again.         |
 | `claude: command not found`                             | Claude Code isn't installed.                                             | Use the **Files** tab.                                                                                  |
 | The deploy fails at the build                           | The board doesn't compile.                                               | `rocketride app log kanban`, then fix with Claude or paste the Files tab's `App.tsx`, deploy again.      |
 | The deploy fails on the app id or namespace             | The id starts with `local` or another org's id.                          | As for the `'local'` warning above.                                                                     |
